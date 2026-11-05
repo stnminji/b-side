@@ -60,6 +60,7 @@
         <button class="tile" data-go="library" type="button"><b>📚 내 서재</b><span>담아 둔 노래</span></button>
         <button class="tile" data-go="memos" type="button"><b>📝 내 메모</b><span>노래마다 남긴 감상</span></button>
         <button class="tile" data-go="records" type="button"><b>🎧 추천 기록</b><span>AI가 추천해 준 결과</span></button>
+        <button class="tile" data-go="notes" type="button"><b>✍️ 자유 메모</b><span>노래와 상관없는 음악 일기</span></button>
       </div>
       <div class="row center">
         <button class="btn-ghost go-home">처음으로</button>
@@ -209,6 +210,8 @@
         <div class="others">
           <h3 class="memo-title">💬 다른 사람들의 감상</h3>
           <div id="others-list" class="records-list"></div>
+          <h3 class="memo-title">👥 이 곡을 담은 사람</h3>
+          <div id="song-people" class="related-list"></div>
         </div>
       </div>
       <div class="song-panel" data-tab="band" hidden><div class="result-list"></div></div>
@@ -242,6 +245,9 @@
       <h3 class="memo-title">💿 앨범</h3>
       <div id="artist-albums" class="album-grid"></div>
 
+      <h3 class="memo-title">👥 이 아티스트를 담은 사람</h3>
+      <div id="artist-people" class="related-list"></div>
+
       <h3 class="memo-title">🔗 비슷한 아티스트</h3>
       <div id="artist-related" class="related-list"></div>
       <button id="artist-ai" class="btn-small" type="button">✨ AI로 비슷한 인디 아티스트 찾기</button>
@@ -254,16 +260,38 @@
       </div>
     </section>
 
+    <!-- 공개 프로필: 그 사람이 '공개'한 것만 -->
+    <section id="step-profile" class="card" hidden>
+      <h2 id="profile-name" class="song-name"></h2>
+      <p id="profile-stats" class="hint small"></p>
+      <p id="profile-common" class="common" hidden></p>
+      <div class="song-tabs">
+        <button class="btn-small profile-tab" data-ptab="library">📚 서재</button>
+        <button class="btn-small ghost profile-tab" data-ptab="memos">💬 노래 감상</button>
+        <button class="btn-small ghost profile-tab" data-ptab="notes">✍️ 자유 메모</button>
+        <button class="btn-small ghost profile-tab" data-ptab="records">🎧 추천 기록</button>
+      </div>
+      <div id="profile-list" class="records-list"></div>
+      <div class="row center">
+        <button id="profile-back" class="btn-ghost" type="button">← 뒤로</button>
+        <button class="btn-ghost go-home">처음으로</button>
+      </div>
+    </section>
+
     <!-- 공개 피드: 사람들이 공개한 음악 기록 (로그인 없이도 보기 가능) -->
     <section id="step-feed" class="card" hidden>
       <h2 class="result-title">디깅 피드</h2>
       <div class="song-tabs">
         <button class="btn-small feed-tab" data-ftab="records">🎧 추천 기록</button>
         <button class="btn-small ghost feed-tab" data-ftab="memos">💬 노래 감상</button>
+        <button class="btn-small ghost feed-tab" data-ftab="notes">✍️ 자유 메모</button>
+        <button class="btn-small ghost feed-tab" data-ftab="neighbors">🤝 취향 이웃</button>
       </div>
       <p class="hint">다른 사람들이 공개한 음악 기록이에요. <b>나와 비교</b>를 누르면 AI가 두 사람의 취향 교집합을 찾아줘요.</p>
       <div id="feed-list" class="records-list"></div>
       <div id="feed-memos" class="records-list" hidden></div>
+      <div id="feed-notes" class="records-list" hidden></div>
+      <div id="feed-neighbors" class="records-list" hidden></div>
       <div class="row center">
         <button class="btn-ghost go-home">처음으로</button>
       </div>
@@ -276,6 +304,18 @@
         <button class="btn-small records-tab" data-rtab="library">📚 내 서재</button>
         <button class="btn-small ghost records-tab" data-rtab="memos">📝 내 메모</button>
         <button class="btn-small ghost records-tab" data-rtab="records">🎧 추천 기록</button>
+        <button class="btn-small ghost records-tab" data-rtab="notes">✍️ 자유 메모</button>
+      </div>
+      <div id="notes-panel" hidden>
+        <div class="memo">
+          <textarea id="note-text" rows="3" maxlength="1000" placeholder="오늘 들은 음악, 공연 후기, 요즘 꽂힌 소리… 자유롭게 적어 보세요"></textarea>
+          <div class="memo-row">
+            <button id="note-visibility" class="btn-small ghost" type="button">🔒 나만 보기</button>
+            <span id="note-count" class="hint small">0 / 1000</span>
+            <button id="note-save" class="btn-small" type="button">기록하기</button>
+          </div>
+        </div>
+        <div id="notes-list" class="records-list"></div>
       </div>
       <div id="memos-panel" hidden>
         <p class="hint">노래마다 남긴 메모예요. 누르면 곡 페이지로 가요.</p>
@@ -359,6 +399,7 @@
           crossorigin="anonymous"></script>
   <script src="app.js"></script>
   <script src="auth.js"></script>
+  <script src="social.js"></script>
   <script src="feed.js"></script>
   <script src="song.js"></script>
   <script src="search.js"></script>

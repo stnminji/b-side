@@ -503,6 +503,21 @@ def song_info(payload):
 
 
 # ---------- 2-4) 노래·아티스트 검색 (결과 목록) ----------
+def curated_names():
+    """B-SIDE 인디 아티스트 목록: 비교용 이름(한글·영문) → 화면에 쓸 한글 이름"""
+    names = {}
+    for a in load_artists():
+        names[_norm(a["name"])] = a["name"]
+        for n in re_split_names(a.get("name_en") or ""):
+            names[_norm(n)] = a["name"]
+    return names
+
+
+def re_split_names(text):
+    # "OWALLOIL (오월오일)" 같은 표기에서 이름들만 뽑는다
+    return [x for x in re.split(r"[()/,]", text) if x.strip()]
+
+
 def search(payload):
     """검색어로 음악 DB(Deezer)의 아티스트와 노래를 찾는다. 결과는 전부 실제 데이터 (AI 사용 안 함 → 빠름)"""
     q = str(payload.get("q") or "").strip()[:100]
@@ -514,8 +529,30 @@ def search(payload):
             f"https://api.deezer.com/search?limit=15&q={urllib.parse.quote(q)}"]
     with ThreadPoolExecutor(max_workers=2) as pool:  # 아티스트·노래를 동시에 검색
         artists, tracks = pool.map(lambda u: (_get_json(u) or {}).get("data", []), urls)
-    curated = {_norm(a["name"]): a["name"] for a in load_artists()}
-    curated.update({_norm(a.get("name_en", "")): a["name"] for a in load_artists() if a.get("name_en")})
+    curated = curated_names()
+    # (범위 좁히기) B-SIDE가 직접 정리한 '인디 아티스트' 목록에 있는 아티스트와 그 노래만 보여준다
+    artists = [a for a in artists if _norm(a["name"]) in curated]
+    tracks = [t for t in tracks if _norm(t["artist"]["name"]) in curated]
+    # 검색어가 목록의 한글/영문 이름과 같으면, 그 아티스트를 Deezer에서 직접 찾아 넣는다 (예: '잔나비' → Jannabi)
+    hit = curated.get(_norm(q))
+    if hit and not artists:
+        try:
+            more = _get_json(f"https://api.deezer.com/search/artist?limit=5&q={urllib.parse.quote(q)}").get("data", [])
+            artists = [a for a in more if _norm(a["name"]) in curated][:3]
+        except Exception:
+            pass
+    # 아티스트는 찾았는데 노래가 없으면, 그 아티스트(팬 많은 프로필)의 노래로 채운다
+    if artists and not tracks:
+        top = max(artists, key=lambda a: a.get("nb_fan") or 0)
+        try:
+            tracks = _get_json(f"https://api.deezer.com/artist/{top['id']}/top?limit=12").get("data", [])
+            if len(tracks) < 6:  # 인디는 인기곡 통계가 적음 → 최근 앨범 수록곡으로 채움
+                for al in _get_json(f"https://api.deezer.com/artist/{top['id']}/albums?limit=3").get("data", []):
+                    for t in _get_json(f"https://api.deezer.com/album/{al['id']}/tracks?limit=15").get("data", []):
+                        t.setdefault("album", {"title": al.get("title", ""), "cover_small": al.get("cover_small", "")})
+                        tracks.append(t)
+        except Exception:
+            pass
     seen = set()
     track_list = []
     for t in tracks:
@@ -529,7 +566,7 @@ def search(payload):
     return {
         "artists": [{"artist_id": a["id"], "name": curated.get(_norm(a["name"]), a["name"])[:100],
                      "name_db": a["name"][:100], "picture": safe(a.get("picture_small")),
-                     "fans": int(a.get("nb_fan") or 0), "curated": _norm(a["name"]) in curated}
+                     "fans": int(a.get("nb_fan") or 0), "curated": True}
                     for a in sorted(artists, key=lambda a: -(a.get("nb_fan") or 0))],  # 같은 이름이면 팬 많은 쪽(공식)이 먼저
         "tracks": track_list[:12],
     }
@@ -585,8 +622,8 @@ def artist_info(payload):
         "top": [{"track_id": t["id"], "title": t["title"][:200], "album": t.get("album", {}).get("title", "")[:120]}
                 for t in got["top"]],
         "albums": albums[:10],
-        "related": [{"artist_id": r["id"], "name": r["name"][:100], "picture": safe(r.get("picture_medium"))}
-                    for r in got["related"]],
+        "related": [{"artist_id": r["id"], "name": curated_names()[_norm(r["name"])], "picture": safe(r.get("picture_medium"))}
+                    for r in got["related"] if _norm(r["name"]) in curated_names()],  # 인디 목록 안에서만
         "source_link": f"https://www.deezer.com/artist/{a['id']}",
     }
 

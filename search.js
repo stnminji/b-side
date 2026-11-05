@@ -6,7 +6,7 @@
 // =====================================================
 (function () {
   const $ = (sel) => document.querySelector(sel);
-  const PAGES = ["step-search", "step-song", "step-artist", "step-records"];
+  const PAGES = ["step-search", "step-song", "step-artist", "step-records", "step-feed", "step-profile"];
   const history = []; // 지나온 페이지 (검색 결과·노래·아티스트만)
 
   function el(tag, cls, text) {
@@ -57,7 +57,8 @@
     // 아티스트
     const artists = $("#search-artists");
     artists.innerHTML = "";
-    if (!result.artists.length) artists.appendChild(el("p", "hint small", "찾은 아티스트가 없어요."));
+    // 지금은 B-SIDE가 정리한 '인디 아티스트'만 검색돼요 (범위를 좁힘)
+    if (!result.artists.length) artists.appendChild(el("p", "hint small", "B-SIDE 인디 아티스트 목록에서 찾지 못했어요. 지금은 인디 아티스트만 검색돼요."));
     result.artists.forEach((a) => {
       const b = el("button", "track-row");
       if (a.picture) {

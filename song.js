@@ -35,6 +35,7 @@
     loadMemo();
     loadLibraryState();
     loadOthers();
+    window.renderPeople($("#song-people"), "track_id", song.track_id, "이 곡을");
   }
 
   function renderSong() {
@@ -240,19 +241,18 @@
     const { data: s } = await client.auth.getSession();
     const myId = s.session ? s.session.user.id : null;
     const { data: rows, error } = await client.from("song_memos")
-      .select("user_id, memo, updated_at, profiles(nickname)")
+      .select("id, user_id, memo, updated_at, profiles(nickname)")
       .eq("track_id", song.track_id).eq("is_public", true)
       .order("updated_at", { ascending: false }).limit(20);
     list.textContent = "";
     const others = (rows || []).filter((r) => r.user_id !== myId);
     if (error || !others.length) return (list.textContent = "아직 공개된 감상이 없어요. 내 메모를 🌐 공개로 저장하면 첫 감상이 돼요.");
+    const counts = await window.loadSocialCounts(others.map((r) => r.id));
     others.forEach((r) => {
       const item = el("article", "record");
-      const nick = (r.profiles && r.profiles.nickname) || "익명";
-      item.append(
-        el("p", "record-who", "@" + nick + " · " + new Date(r.updated_at).toLocaleDateString("ko-KR")),
-        el("p", "record-summary", r.memo) // 남이 쓴 글 → textContent로만
-      );
+      const who = el("p", "record-who");
+      who.append(window.nickButton(r.profiles && r.profiles.nickname, r.user_id), " · " + new Date(r.updated_at).toLocaleDateString("ko-KR"));
+      item.append(who, el("p", "record-summary", r.memo), window.socialBar("song_memo", r.id, counts[r.id])); // 남이 쓴 글 → textContent로만
       list.appendChild(item);
     });
   }
@@ -344,6 +344,7 @@
     });
     $("#artist-ai-list").innerHTML = "";
     $("#artist-ai").disabled = false;
+    window.renderPeople($("#artist-people"), "artist_id", artist.artist_id, "이 아티스트의 노래를");
   }
 
   // AI로 비슷한 인디 아티스트 찾기 (기존 추천 기능 재사용, 실존 검증 포함)
@@ -376,7 +377,9 @@
     $("#library-panel").hidden = tab !== "library";
     $("#memos-panel").hidden = tab !== "memos";
     $("#records-panel").hidden = tab !== "records";
+    $("#notes-panel").hidden = tab !== "notes";
     if (tab === "library") loadLibraryList();
+    if (tab === "notes") loadNoteList();
     if (tab === "memos") loadMemoList();
   }
   document.querySelectorAll(".records-tab").forEach((b) => b.addEventListener("click", () => selectRecordsTab(b.dataset.rtab)));
@@ -444,6 +447,72 @@
       b.appendChild(text);
       b.addEventListener("click", () => go(() => window.openSongById(r.track_id)));
       list.appendChild(b);
+    });
+  }
+
+  // ----- 내 기록 화면의 '자유 메모' 탭 (쓰기 + 목록) -----
+  let notePublic = false;
+  function paintNoteVisibility() {
+    const btn = $("#note-visibility");
+    btn.textContent = notePublic ? "🌐 공개" : "🔒 나만 보기";
+    btn.classList.toggle("ghost", !notePublic);
+  }
+  $("#note-text").addEventListener("input", () => ($("#note-count").textContent = `${$("#note-text").value.length} / 1000`));
+  $("#note-visibility").addEventListener("click", () => {
+    if (!notePublic && !confirm("이 메모를 공개할까요? 다른 사람이 닉네임과 함께 볼 수 있어요.")) return;
+    notePublic = !notePublic;
+    paintNoteVisibility();
+  });
+  $("#note-save").addEventListener("click", async () => {
+    const body = $("#note-text").value.trim();
+    if (!body) return;
+    const client = sb();
+    const { data: s } = await client.auth.getSession();
+    if (!s.session) return alert("로그인이 필요해요.");
+    if (window.bsideEnsureProfile && !(await window.bsideEnsureProfile(s.session.user.id))) return;
+    $("#note-save").disabled = true;
+    const { error } = await client.from("notes").insert({ body: body.slice(0, 1000), is_public: notePublic });
+    $("#note-save").disabled = false;
+    if (error) return alert("저장하지 못했어요.");
+    $("#note-text").value = "";
+    $("#note-count").textContent = "0 / 1000";
+    notePublic = false;
+    paintNoteVisibility();
+    loadNoteList();
+  });
+
+  async function loadNoteList() {
+    const list = $("#notes-list");
+    list.textContent = "불러오는 중…";
+    const client = sb();
+    const { data: s } = await client.auth.getSession();
+    if (!s.session) return (list.textContent = "로그인이 필요해요.");
+    // 남의 '공개' 메모도 읽히므로 반드시 '내 것'만
+    const { data: rows, error } = await client.from("notes").select("id, body, is_public, created_at")
+      .eq("user_id", s.session.user.id).order("created_at", { ascending: false }).limit(200);
+    list.textContent = "";
+    if (error) return (list.textContent = "불러오지 못했어요.");
+    if (!rows.length) return (list.textContent = "아직 자유 메모가 없어요. 위에 첫 기록을 남겨 보세요.");
+    const counts = await window.loadSocialCounts(rows.map((r) => r.id));
+    rows.forEach((r) => {
+      const item = el("article", "record");
+      const vis = el("button", "btn-small" + (r.is_public ? "" : " ghost"), r.is_public ? "🌐 공개" : "🔒 비공개");
+      vis.addEventListener("click", async () => {
+        if (!r.is_public && !confirm("이 메모를 공개할까요?")) return;
+        const { error: e } = await client.from("notes").update({ is_public: !r.is_public }).eq("id", r.id);
+        if (!e) loadNoteList();
+      });
+      const del = el("button", "btn-small ghost", "삭제");
+      del.addEventListener("click", async () => {
+        if (!confirm("이 메모를 지울까요? 달린 좋아요·댓글도 함께 지워져요.")) return;
+        const { error: e } = await client.from("notes").delete().eq("id", r.id);
+        if (!e) item.remove();
+      });
+      const actions = el("div", "record-actions");
+      actions.append(vis, del);
+      item.append(el("p", "hint small", new Date(r.created_at).toLocaleString("ko-KR")), el("p", "record-summary", r.body), actions);
+      if (r.is_public) item.appendChild(window.socialBar("note", r.id, counts[r.id]));
+      list.appendChild(item);
     });
   }
 })();
