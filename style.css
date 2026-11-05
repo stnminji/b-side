@@ -269,3 +269,5 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 .compare-line { margin: 4px 0; font-size: 14px; }
 .compare-line b { display: inline-block; min-width: 92px; color: var(--muted); font-size: 13px; }
 .save-status { margin: 4px 0 10px; font-weight: 700; color: var(--accent2); }
+/* 지금 보고 있는 화면의 상단 버튼 (피드 / 내 기록) */
+.btn-small.active, .btn-small.ghost.active { background: var(--text); border-color: var(--text); color: var(--card); }

@@ -104,6 +104,9 @@ function localRecommend(query) {
 const STEPS = ["step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed"];
 function showStep(id) {
   STEPS.forEach((s) => ($("#" + s).hidden = s !== id));
+  // 상단 버튼 중 지금 보고 있는 화면의 버튼을 검정으로 채워서 표시
+  $("#btn-feed").classList.toggle("active", id === "step-feed");
+  $("#btn-my-records").classList.toggle("active", id === "step-records");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
