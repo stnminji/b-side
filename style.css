@@ -440,3 +440,15 @@ body.searching #search-form { animation: search-in 0.25s ease; }
 .btn-small.danger { color: #b5462a; border-color: #e3b9a8; }
 .edit-box { margin-top: 10px; }
 .edit-box textarea { width: 100%; resize: vertical; }
+
+/* ===== 감상 카드 다시 디자인: 상자 안의 상자 없애기 ===== */
+.note-card { background: var(--card); border: 1px solid var(--line); box-shadow: 0 2px 8px rgba(90, 60, 30, 0.05); }
+.note-card .track-row { background: transparent; border: none; padding: 0; border-radius: 0; }
+.note-card .track-row:hover { border: none; }
+.note-card .track-row:hover .track-title { text-decoration: underline; }
+.note-card .track-cover { width: 48px; height: 48px; }
+/* 내 감상: 왼쪽 테라코타 줄로 '인용'처럼 */
+.note-card .record-summary { margin: 12px 0 4px; padding: 2px 0 2px 12px; border-left: 3px solid var(--accent); font-size: 15px; line-height: 1.6; }
+.note-card > .hint.small { margin: 6px 0 0; }
+.note-card .record-actions { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.note-card .btn-small.ghost { background: transparent; }
