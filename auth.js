@@ -66,6 +66,7 @@
     return null;
   }
   let pendingNickname = ""; // 가입할 때 입력한 닉네임 (가입 직후 프로필 만들 때 사용)
+  window.bsideEnsureProfile = ensureProfile; // 노래 메모(song.js)에서도 닉네임 확인에 사용
 
   // 3) 로그인 / 회원가입 창
   const dialog = $("#login-dialog");

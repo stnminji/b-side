@@ -376,6 +376,113 @@ def check_outside(b):
             "songs": songs, "discovered": True}  # discovered: 우리 데이터 밖에서 AI가 새로 찾은 아티스트
 
 
+# ---------- 2-2) 노래 검색: 곡 정보 + AI 소개말 ----------
+SONG_PROMPT = """너는 한국 인디 음악 큐레이터다. 아래 [곡 정보]의 노래를 처음 듣는 사람에게 소개하라.
+
+규칙:
+1. 사실(발매일, 수상, 멤버, 가사 내용, 차트 순위 등)은 [곡 정보]에 있는 것만 쓴다. 모르는 사실은 지어내지 않는다.
+2. 소개는 이 곡의 사운드·분위기·어울리는 순간 위주로 쓴다. 이 곡을 잘 모르면 아티스트의 전반적인 스타일을 기준으로 쓰고, based_on을 "artist"로 한다.
+3. 짧고 친근한 존댓말.
+   - genre: 장르 (15자 이내, 예: "드림팝 · 인디록")
+   - intro: 소개말 2문장 (100자 이내)
+   - moment: 이 곡이 어울리는 순간 (25자 이내, 예: "새벽 산책할 때")
+   - tags: 분위기 키워드 3개 (#으로 시작)
+   - based_on: 이 곡을 알고 쓰면 "song", 아티스트 스타일로 추정하면 "artist"
+
+JSON 형식으로만 답하라:
+{"genre": "...", "intro": "...", "moment": "...", "tags": ["#..."], "based_on": "song"}
+
+[곡 정보]
+{info}"""
+
+
+def find_track(artist, title):
+    """Deezer에서 실제 곡을 찾는다. 없으면 None (지어내지 않음)
+    Deezer에는 한국 곡이 영어 제목으로 등록된 경우가 많고(예: 한로로 '입춘' → 'Let Me Love My Youth'),
+    같은 이름의 아티스트 프로필이 여러 개인 경우도 있어서(예: 잔나비) 여러 방법을 차례로 쓴다."""
+    want_title = _norm(title)
+    title_ok = lambda t: _norm(t["title"]).startswith(want_title) or want_title.startswith(_norm(t["title"]))
+    # 1) 같은 이름의 아티스트 프로필을 모두 후보로 (팬 많은 순)
+    try:
+        cands = _get_json(f"https://api.deezer.com/search/artist?limit=5&q={urllib.parse.quote(artist)}").get("data", [])
+    except Exception:
+        cands = []
+    want = _norm(artist)
+    ids = {c["id"] for c in cands[:3]}
+    name_ok = lambda t: t["artist"]["id"] in ids or (want and (want in _norm(t["artist"]["name"]) or _norm(t["artist"]["name"]) in want))
+    # 2) 제목만 검색 + 아티스트 확인 → Deezer가 한국어 원제를 내부적으로 알고 있으면 영어 제목 곡도 찾아줌
+    for q in (title, f"{artist} {title}"):
+        try:
+            hits = _get_json(f"https://api.deezer.com/search?limit=50&q={urllib.parse.quote(q)}").get("data", [])
+        except Exception:
+            continue
+        exact = [t for t in hits if name_ok(t) and title_ok(t)]
+        if exact:
+            return exact[0]
+        if q == title:
+            loose = [t for t in hits if t["artist"]["id"] in ids]  # 제목 표기는 달라도 검색엔진이 그 아티스트 곡으로 찾은 경우
+            if loose:
+                return loose[0]
+    # 3) 마지막: 팬이 가장 많은 프로필의 앨범 수록곡을 직접 확인 (예: 'Echo'처럼 흔한 제목)
+    for c in sorted(cands[:3], key=lambda c: -c.get("nb_fan", 0))[:2]:
+        try:
+            for al in _get_json(f"https://api.deezer.com/artist/{c['id']}/albums?limit=25").get("data", []):
+                for t in _get_json(f"https://api.deezer.com/album/{al['id']}/tracks?limit=50").get("data", []):
+                    if title_ok(t):
+                        t.setdefault("album", {"id": al["id"], "title": al.get("title", ""), "cover_medium": al.get("cover_medium", "")})
+                        t.setdefault("artist", {"id": c["id"], "name": c["name"]})
+                        return t
+        except Exception:
+            continue
+    return None
+
+
+def song_info(payload):
+    artist = str(payload.get("artist") or "").strip()[:100]
+    title = str(payload.get("title") or "").strip()[:200]
+    if not artist or not title:
+        raise ValueError("아티스트와 노래 제목을 모두 적어 주세요.")
+    track = find_track(artist, title)
+    if not track:
+        raise ValueError("음악 데이터베이스에서 이 노래를 찾지 못했어요. 아티스트와 제목을 확인해 주세요.")
+    # 실제 곡 정보 (사실 정보는 전부 데이터베이스에서 가져온다)
+    album, genres = {}, []
+    try:
+        album = _get_json(f"https://api.deezer.com/album/{track['album']['id']}")
+        genres = [g["name"] for g in album.get("genres", {}).get("data", [])]
+    except Exception:
+        pass
+    ours = next((a for a in load_artists() if _norm(a["name"]) in (_norm(artist), _norm(track["artist"]["name"]))
+                 or _norm(a.get("name_en", "")) == _norm(track["artist"]["name"])), None)
+    info = {
+        "아티스트": ours["name"] if ours else track["artist"]["name"],
+        "곡 제목": korean_title(track),
+        "앨범": track["album"].get("title", ""),
+        "발매일": album.get("release_date", ""),
+        "음악 DB 장르": genres,
+    }
+    if ours:  # 우리가 직접 정리한 아티스트라면 그 정보도 같이 준다
+        info.update({"아티스트 장르": ours["genre"], "아티스트 분위기": ours["mood"], "아티스트 사운드": ours["sound"]})
+    try:
+        ai = call_gemini([{"text": SONG_PROMPT.replace("{info}", json.dumps(info, ensure_ascii=False))}])
+    except Exception as e:
+        print("서버 오류:", type(e).__name__, str(e)[:200], flush=True)
+        ai = {}  # AI가 안 돼도 곡 정보는 보여준다
+    cover = track["album"].get("cover_medium") or ""
+    return {
+        "track_id": int(track["id"]),
+        "title": info["곡 제목"], "artist": info["아티스트"],
+        "album": info["앨범"][:200], "release_date": info["발매일"],
+        "cover": cover if cover.startswith("https://") else "",
+        "genre": str(ai.get("genre") or (ours["genre"] if ours else " · ".join(genres)))[:40],
+        "intro": str(ai.get("intro", ""))[:200],
+        "moment": str(ai.get("moment", ""))[:60],
+        "tags": [str(t)[:20] for t in (ai.get("tags") or [])][:4],
+        "based_on": "artist" if ai.get("based_on") == "artist" else "song",
+        "in_data": bool(ours),
+    }
+
+
 # ---------- 3) 취향 교집합: 내 기록 vs 다른 사람의 공개 기록 ----------
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
@@ -468,7 +575,7 @@ def compare(payload):
             "nickname": ((other.get("profiles") or {}).get("nickname") or "")[:16]}
 
 
-ACTIONS = {"extract": extract, "recommend": recommend, "compare": compare}
+ACTIONS = {"extract": extract, "recommend": recommend, "compare": compare, "song_info": song_info}
 
 
 def server_error(e):

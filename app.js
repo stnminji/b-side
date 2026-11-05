@@ -101,7 +101,7 @@ function localRecommend(query) {
 }
 
 // ----- 화면 단계 전환 -----
-const STEPS = ["step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed"];
+const STEPS = ["step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed", "step-song"];
 function showStep(id) {
   STEPS.forEach((s) => ($("#" + s).hidden = s !== id));
   // 상단 버튼 중 지금 보고 있는 화면의 버튼을 검정으로 채워서 표시
@@ -234,6 +234,7 @@ let textMode = "mood";
 setupOptions("#text-options", (btn) => {
   textMode = btn.dataset.mode;
   document.querySelectorAll(".mode-panel").forEach((p) => (p.hidden = p.dataset.mode !== textMode));
+  $("#btn-text").textContent = textMode === "song" ? "노래 찾기" : "추천받기";
   updateTextButton();
 });
 
@@ -265,10 +266,8 @@ function buildTextQuery() {
       const moods = [...document.querySelectorAll("#mood-chips .chip.on")].map((c) => c.textContent);
       return moods.length ? `듣고 싶은 분위기: ${moods.join(", ")}` : "";
     }
-    case "band":
-      return v("band-input") ? `좋아하는 아티스트: ${v("band-input")}` : "";
-    case "song":
-      return v("song-title") ? `좋아하는 노래: ${v("song-artist")} - ${v("song-title")}` : "";
+    case "song": // 노래 검색: 아티스트와 제목이 둘 다 있어야 버튼이 켜짐
+      return v("song-title") && v("song-artist") ? `좋아하는 노래: ${v("song-artist")} - ${v("song-title")}` : "";
     case "feel":
       return v("feel-input") ? `원하는 느낌: ${v("feel-input")}` : "";
     case "free":
@@ -281,7 +280,11 @@ function updateTextButton() {
   $("#btn-text").disabled = !buildTextQuery();
 }
 
-$("#btn-text").addEventListener("click", () => recommend(textMode, buildTextQuery()));
+// '노래 검색'은 곡 페이지로, 나머지는 바로 추천으로
+$("#btn-text").addEventListener("click", () => {
+  if (textMode === "song" && window.openSong) return window.openSong($("#song-artist").value.trim(), $("#song-title").value.trim());
+  recommend(textMode, buildTextQuery());
+});
 
 // 엔터를 누르면 바로 검색 (자유 설명 칸은 Shift+Enter로 줄바꿈)
 // e.isComposing: 한글 조합 중 엔터는 무시해야 두 번 검색되지 않는다
@@ -383,9 +386,10 @@ $("#btn-more").addEventListener("click", async () => {
   btn.textContent = "더 찾아보기";
 });
 
-function appendBands(bands) {
+// target: 카드를 넣을 곳 (기본은 추천 결과 화면, 노래 페이지의 탭에서도 같이 씀)
+function appendBands(bands, target = $("#result-list"), track = true) {
   bands.forEach((b, i) => {
-    if (lastSearch) lastSearch.shown.push(b.name);
+    if (track && lastSearch) lastSearch.shown.push(b.name);
     const card = document.createElement("article");
     card.className = "band";
     card.style.animationDelay = `${i * 0.1}s`;
@@ -416,7 +420,7 @@ function appendBands(bands) {
 
     // 밴드에 연결된 노래 목록
     b.songs.forEach((s, j) => card.querySelector(".songs").appendChild(songRow(b.name, s, j === 0)));
-    $("#result-list").appendChild(card);
+    target.appendChild(card);
   });
 }
 

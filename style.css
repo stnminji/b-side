@@ -271,3 +271,25 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 .save-status { margin: 4px 0 10px; font-weight: 700; color: var(--accent2); }
 /* 지금 보고 있는 화면의 상단 버튼 (피드 / 내 기록) */
 .btn-small.active, .btn-small.ghost.active { background: var(--text); border-color: var(--text); color: var(--card); }
+
+/* ===== 작은 버튼 공통 반응 (로그인 버튼과 같은 느낌으로 통일) ===== */
+.btn-small { cursor: pointer; transition: transform 0.08s ease, background 0.15s ease, color 0.15s ease, border-color 0.15s ease; text-decoration: none; display: inline-block; border: 1px solid var(--text); }
+.btn-small:hover { opacity: 0.9; }
+.btn-small:active { transform: scale(0.95); }
+.btn-small:disabled { opacity: 0.45; cursor: default; transform: none; }
+.btn-small.ghost { border-color: var(--line); }
+
+/* ===== 노래 페이지 ===== */
+.song-head { display: flex; gap: 16px; align-items: center; margin-bottom: 10px; }
+.song-cover { width: 96px; height: 96px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 14px rgba(60, 40, 20, 0.18); flex-shrink: 0; }
+.song-name { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.4px; }
+.song-by { margin: 2px 0 4px; font-weight: 700; color: var(--accent); }
+.song-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 16px; }
+.song-genre { margin: 0 0 8px; }
+.song-intro { margin: 0 0 6px; line-height: 1.6; }
+#song-play { margin-top: 10px; }
+.memo { margin-top: 20px; padding: 16px; border-radius: 14px; background: var(--soft); }
+.memo-title { margin: 0 0 8px; font-size: 15px; }
+.memo textarea { width: 100%; resize: vertical; }
+.memo-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.memo-row .hint { margin-left: auto; }
