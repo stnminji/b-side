@@ -480,3 +480,7 @@ body.searching #search-form { animation: search-in 0.25s ease; }
 .logo-disc, .cycle-logo { border-radius: 10px; }
 .logo:hover .logo-disc { transform: rotate(-8deg); }
 .cycle-tagline { font-size: 11px; color: var(--muted); }
+/* CD 로고로 되돌림: 둥근 모서리 없이, 가운데는 로고만 크게 */
+.logo-disc, .cycle-logo { border-radius: 0; }
+.logo:hover .logo-disc { transform: rotate(360deg); }
+.cycle-logo { width: 88px; height: 88px; }
