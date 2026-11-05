@@ -30,7 +30,39 @@
   }
   const { data } = await sb.auth.getSession();
   updateButtons(data.session);
-  sb.auth.onAuthStateChange((_event, session) => updateButtons(session));
+  if (data.session) ensureProfile(data.session.user.id);
+  sb.auth.onAuthStateChange((event, session) => {
+    updateButtons(session);
+    // 로그인 직후 닉네임이 있는지 확인 (콜백 안에서 바로 DB를 부르면 멈출 수 있어 잠깐 뒤로 미룸)
+    if (event === "SIGNED_IN" && session) setTimeout(() => ensureProfile(session.user.id), 0);
+  });
+
+  // 닉네임 규칙 (DB에도 같은 규칙이 걸려 있음): 한글·영문·숫자·밑줄 2~16자
+  const NICK_RE = /^[가-힣A-Za-z0-9_]{2,16}$/;
+
+  async function nicknameTaken(nick) {
+    const { data: rows } = await sb.from("profiles").select("id").eq("nickname", nick).limit(1);
+    return !!(rows && rows.length);
+  }
+
+  // 닉네임(프로필)이 없으면 만들게 한다. 공개 기록에는 이메일 대신 이 닉네임만 보인다
+  async function ensureProfile(uid) {
+    const { data: rows } = await sb.from("profiles").select("nickname").eq("id", uid).limit(1);
+    if (rows && rows.length) return rows[0].nickname;
+    let nick = pendingNickname;
+    pendingNickname = "";
+    for (let tries = 0; tries < 5; tries++) {
+      if (!nick) nick = (prompt("커뮤니티에서 쓸 닉네임을 정해 주세요. (한글·영문·숫자 2~16자)") || "").trim();
+      if (!nick) return null; // 취소하면 나중에 다시 묻는다
+      if (!NICK_RE.test(nick)) { alert("닉네임은 한글·영문·숫자 2~16자로 해 주세요."); nick = ""; continue; }
+      const { error } = await sb.from("profiles").insert({ nickname: nick });
+      if (!error) return nick;
+      alert(/duplicate|unique/i.test(error.message) ? "이미 있는 닉네임이에요. 다른 걸로 해 주세요." : "닉네임을 저장하지 못했어요.");
+      nick = "";
+    }
+    return null;
+  }
+  let pendingNickname = ""; // 가입할 때 입력한 닉네임 (가입 직후 프로필 만들 때 사용)
 
   // 3) 로그인 / 회원가입 창
   const dialog = $("#login-dialog");
@@ -40,6 +72,7 @@
     $("#btn-login-submit").textContent = mode === "login" ? "로그인" : "가입하기";
     $("#signup-notice").hidden = mode !== "signup";
     $("#confirm-wrap").hidden = mode !== "signup";
+    $("#nickname-wrap").hidden = mode !== "signup";
     $("#login-password2").value = "";
     $("#login-password").autocomplete = mode === "login" ? "current-password" : "new-password";
     $("#login-message").textContent = "";
@@ -79,6 +112,11 @@
       if (bad) return (msg.textContent = bad);
       // 비밀번호 확인: 두 칸이 같아야 가입
       if (password !== $("#login-password2").value) return (msg.textContent = "비밀번호가 서로 달라요. 다시 확인해 주세요.");
+      const nick = $("#login-nickname").value.trim();
+      if (!NICK_RE.test(nick)) return (msg.textContent = "닉네임은 한글·영문·숫자 2~16자로 해 주세요.");
+      // 계정을 만들기 전에 닉네임이 겹치는지 먼저 확인
+      if (await nicknameTaken(nick)) return (msg.textContent = "이미 있는 닉네임이에요. 다른 걸로 해 주세요.");
+      pendingNickname = nick;
     }
     const btn = $("#btn-login-submit");
     btn.disabled = true;
@@ -107,6 +145,7 @@
   window.saveRecord = async (mode, query, result) => {
     const { data: s } = await sb.auth.getSession();
     if (!s.session) return; // 로그인 안 했으면 저장하지 않음
+    if (!(await ensureProfile(s.session.user.id))) return; // 닉네임이 있어야 저장 (기록은 프로필에 연결됨)
     // 필요한 정보만 골라서 저장 (사진 주소 등은 빼고 크기를 작게)
     const bands = (result.bands || []).slice(0, 6).map((b) => ({
       name: b.name, genre: b.genre, reason: b.reason, discovered: !!b.discovered,
@@ -124,8 +163,12 @@
     const list = $("#records-list");
     list.textContent = "불러오는 중…";
     showStep("step-records");
+    const { data: s } = await sb.auth.getSession();
+    if (!s.session) return (list.textContent = "로그인이 필요해요.");
+    // DB 규칙상 남의 '공개' 기록도 읽을 수 있으므로, 여기서는 반드시 '내 것'만 고른다
     const { data: rows, error } = await sb
-      .from("records").select("id, query, summary, tags, bands, created_at")
+      .from("records").select("id, query, summary, tags, bands, created_at, is_public")
+      .eq("user_id", s.session.user.id)
       .order("created_at", { ascending: false }).limit(50);
     list.textContent = "";
     if (error) return (list.textContent = "기록을 불러오지 못했어요.");
@@ -153,7 +196,29 @@
         const { error: e } = await sb.from("records").delete().eq("id", r.id);
         if (!e) item.remove();
       });
-      item.append(date, q, sum, artists, del);
+      // 공개 / 비공개 전환 (DB 규칙상 내 기록의 '공개 여부' 칸만 바꿀 수 있음)
+      const vis = document.createElement("button");
+      vis.className = "btn-small" + (r.is_public ? "" : " ghost");
+      const paint = () => {
+        vis.textContent = r.is_public ? "🌐 공개" : "🔒 비공개";
+        vis.className = "btn-small" + (r.is_public ? "" : " ghost");
+        vis.title = r.is_public ? "다른 사람도 닉네임과 함께 볼 수 있어요. 누르면 비공개로" : "나만 볼 수 있어요. 누르면 공개로";
+      };
+      paint();
+      vis.addEventListener("click", async () => {
+        const next = !r.is_public;
+        if (next && !confirm("이 기록을 공개할까요? 다른 사람이 닉네임과 함께 볼 수 있어요. (이메일은 보이지 않아요)")) return;
+        vis.disabled = true;
+        const { error: e } = await sb.from("records").update({ is_public: next }).eq("id", r.id);
+        vis.disabled = false;
+        if (e) return alert("바꾸지 못했어요. 잠시 후 다시 해 주세요.");
+        r.is_public = next;
+        paint();
+      });
+      const actions = document.createElement("div");
+      actions.className = "record-actions";
+      actions.append(vis, del);
+      item.append(date, q, sum, artists, actions);
       list.appendChild(item);
     });
   }

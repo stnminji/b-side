@@ -257,3 +257,4 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 .record-query { margin: 4px 0; font-weight: 800; }
 .record-summary { margin: 0 0 4px; font-size: 14px; }
 .record-artists { margin: 0 0 8px; font-size: 13px; color: var(--accent2); font-weight: 700; }
+.record-actions { display: flex; gap: 6px; }

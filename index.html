@@ -138,7 +138,7 @@
     <!-- 내 기록 (로그인한 사용자만) -->
     <section id="step-records" class="card" hidden>
       <h2 class="result-title">내 기록</h2>
-      <p class="hint">추천받은 결과가 저장돼요. 나만 볼 수 있어요.</p>
+      <p class="hint">추천받은 결과가 저장돼요. 처음엔 🔒 나만 보기이고, 🌐 공개로 바꾸면 다른 사람도 닉네임과 함께 볼 수 있어요.</p>
       <div id="records-list" class="records-list"></div>
       <div class="row center">
         <button class="btn-ghost go-home">처음으로</button>
@@ -176,6 +176,10 @@
       </label>
       <label class="field-label">비밀번호
         <input id="login-password" class="field" type="password" autocomplete="current-password" minlength="8" maxlength="72" required />
+      </label>
+      <!-- 회원가입 때만 보이는 '닉네임' 칸 (공개 기록에는 이메일 대신 닉네임만 보임) -->
+      <label id="nickname-wrap" class="field-label" hidden>닉네임 <span class="hint small">(한글·영문·숫자 2~16자)</span>
+        <input id="login-nickname" class="field" type="text" autocomplete="nickname" maxlength="16" />
       </label>
       <!-- 회원가입 때만 보이는 '비밀번호 확인' 칸 -->
       <label id="confirm-wrap" class="field-label" hidden>비밀번호 확인
