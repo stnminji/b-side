@@ -9,6 +9,7 @@
   $("#hub-archive").addEventListener("click", () => showStep("step-archive"));
   // 순환의 1단계 '검색': 위쪽 검색창으로 데려간다
   $("#hub-search").addEventListener("click", () => {
+    document.body.classList.add("searching"); // 홈에서 숨겨 둔 검색창을 보여 준다
     window.scrollTo({ top: 0, behavior: "smooth" });
     $("#search-q").focus();
   });

@@ -106,6 +106,9 @@ function showStep(id) {
   // '취향으로 연결' 화면을 떠나면 그 화면의 글자를 비운다 (connect.js)
   if (id !== "step-connect" && !$("#step-connect").hidden && window.resetConnect) window.resetConnect();
   STEPS.forEach((s) => ($("#" + s).hidden = s !== id));
+  // 지금 화면 이름을 body에 표시 → 홈에서는 검색창을 숨기는 데 사용 (style.css)
+  document.body.dataset.step = id;
+  if (id === "step-home") document.body.classList.remove("searching");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
