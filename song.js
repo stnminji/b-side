@@ -691,9 +691,43 @@
       if (r.memo) {
         card = memoCard("artist_memos", r, head, () => (r.liked ? loadFavList() : null));
       } else {
-        // 감상 없이 ♡만 한 아티스트
+        // 감상 없이 ♡만 한 아티스트 → 원하면 여기서 바로 감상을 쓸 수 있게 (기록은 선택)
         card = el("article", "record note-card");
-        card.append(head, el("p", "hint small", "감상 아직 없음 · 아티스트 페이지에서 남길 수 있어요"));
+        const hint = el("p", "hint small", "감상은 선택이에요. 남기고 싶을 때 써 보세요.");
+        card.append(head, hint);
+        const write = el("button", "btn-small ghost");
+        write.innerHTML = ic("pen") + "감상 쓰기";
+        write.addEventListener("click", () => {
+          if (card.querySelector("textarea")) return;
+          const box = el("div", "edit-box");
+          const ta = el("textarea");
+          ta.maxLength = 1000;
+          ta.rows = 3;
+          ta.placeholder = "이 아티스트의 어떤 점이 좋은지, 처음 알게 된 순간…";
+          const row = el("div", "record-actions");
+          const save = el("button", "btn-small", "저장");
+          const cancel = el("button", "btn-small ghost", "취소");
+          row.append(save, cancel);
+          box.append(ta, row);
+          card.insertBefore(box, hint.nextSibling);
+          ta.focus();
+          cancel.addEventListener("click", () => box.remove());
+          save.addEventListener("click", async () => {
+            const text = ta.value.trim();
+            if (!text) return alert("감상을 적어 주세요.");
+            save.disabled = true;
+            // 기본은 나만 보기로 저장 (공개는 저장 후 '공개로' 버튼)
+            const { error } = await sb().from("artist_memos").insert({
+              artist_id: r.artist_id, name: r.name.slice(0, 100), picture: r.picture || null, memo: text.slice(0, 1000),
+            });
+            save.disabled = false;
+            if (error) return alert("저장하지 못했어요." + (/relation|does not exist|schema cache/i.test(error.message) ? " (아티스트 감상 기능 준비 중)" : ""));
+            loadFavList();
+          });
+        });
+        const actions = el("div", "record-actions");
+        actions.appendChild(write);
+        card.appendChild(actions);
       }
       if (r.liked) {
         const unlike = el("button", "btn-small ghost");
