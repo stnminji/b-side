@@ -60,7 +60,7 @@
     const artists = $("#search-artists");
     artists.innerHTML = "";
     // 지금은 B-SIDE가 정리한 '인디 아티스트'만 검색돼요 (범위를 좁힘)
-    if (!result.artists.length) artists.appendChild(el("p", "hint small", "B-SIDE 인디 아티스트 목록에서 찾지 못했어요. 지금은 인디 아티스트만 검색돼요."));
+    if (!result.artists.length) artists.appendChild(el("p", "hint small", "결 인디 아티스트 목록에서 찾지 못했어요. 지금은 인디 아티스트만 검색돼요."));
     result.artists.forEach((a) => {
       const b = el("button", "track-row");
       if (a.picture) {
@@ -72,7 +72,7 @@
       }
       const text = el("span", "track-text");
       // 외부(Deezer) 팬 수는 화면에 쓰지 않는다 (B-SIDE 팬으로 오해할 수 있어서). 공식 프로필 고르는 데만 서버에서 사용
-      const sub = [a.name_db !== a.name ? a.name_db : "", a.curated ? "B-SIDE 큐레이션" : ""]
+      const sub = [a.name_db !== a.name ? a.name_db : "", a.curated ? "결 큐레이션" : ""]
         .filter(Boolean).join(" · ");
       text.append(el("span", "track-title", a.name), el("span", "hint small", sub));
       b.appendChild(text);

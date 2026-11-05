@@ -173,7 +173,7 @@ SEARCH_MODES = {"band", "song", "photo_artists", "photo_songs"}
 
 
 def _get_json(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "B-SIDE/1.0 (hackathon demo)"})
+    req = urllib.request.Request(url, headers={"User-Agent": "Gyeol/1.0 (hackathon demo)"})
     with urllib.request.urlopen(req, timeout=6) as res:
         return json.loads(res.read().decode("utf-8"))
 

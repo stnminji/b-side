@@ -662,7 +662,7 @@
     $("#artist-meta").textContent = [
       artist.name_db !== artist.name ? artist.name_db : "",
       artist.albums_count ? `앨범 ${artist.albums_count}장` : "",
-      `B-SIDE 팬 ${artist.bsideFans ? artist.bsideFans.toLocaleString() + "명" : "-"}`,
+      `결 팬 ${artist.bsideFans ? artist.bsideFans.toLocaleString() + "명" : "-"}`,
     ].filter(Boolean).join(" · ");
   }
 
