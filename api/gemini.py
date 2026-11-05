@@ -78,16 +78,16 @@ def call_gemini(parts, models=None, budget=TIME_BUDGET):
             break
         try:
             data = _post(model, body, api_key, timeout=min(15, remaining))  # 한 모델당 최대 15초
-            break
+            text = data["candidates"][0]["content"]["parts"][0]["text"]
+            return json.loads(text)
         except GeminiError as e:
             last_error = e
             if e.code in (400, 401, 403):  # 키 문제 등은 다른 모델로 바꿔도 안 되므로 바로 멈춘다
                 raise
-    if not data:
-        raise last_error or GeminiError(504, "AI가 지금 바빠요. 잠시 후 다시 시도해 주세요.")
-
-    text = data["candidates"][0]["content"]["parts"][0]["text"]
-    return json.loads(text)
+        except (KeyError, IndexError, ValueError):
+            # AI가 빈 답이나 깨진 JSON을 보내면 다음 모델로 다시 시도한다
+            last_error = GeminiError(502, f"AI 응답 형식이 올바르지 않아요 ({model})")
+    raise last_error or GeminiError(504, "AI가 지금 바빠요. 잠시 후 다시 시도해 주세요.")
 
 
 # ---------- 1) 캡처 읽기 (아티스트 목록 / 노래 목록) ----------
