@@ -31,6 +31,11 @@
 
   <header class="hero">
     <h1>오늘의 디깅,<br /><em>인디로부터</em></h1>
+    <!-- 노래·아티스트 검색 → 결과에서 노래 페이지 / 아티스트 페이지로 -->
+    <form id="search-form" class="search-bar" role="search">
+      <input id="search-q" type="search" maxlength="100" placeholder="노래나 아티스트를 검색해 보세요" autocomplete="off" aria-label="노래·아티스트 검색" />
+      <button class="btn-small" type="submit">검색</button>
+    </form>
   </header>
 
   <main>
@@ -63,7 +68,6 @@
       <div id="panel-text" class="panel" hidden>
         <div class="options options-wrap" id="text-options">
           <button class="option active" data-mode="mood">분위기</button>
-          <button class="option" data-mode="song">노래 검색</button>
           <button class="option" data-mode="feel">비슷한 느낌</button>
           <button class="option" data-mode="free">자유 설명</button>
         </div>
@@ -85,11 +89,6 @@
           </div>
         </div>
 
-        <div class="mode-panel" data-mode="song" hidden>
-          <input type="text" class="field" id="song-artist" placeholder="아티스트 (예: 우효)" />
-          <input type="text" class="field" id="song-title" placeholder="노래 제목 (예: 민들레)" />
-          <p class="hint small">곡 정보와 AI 소개를 보고, 비슷한 아티스트·노래도 찾을 수 있어요. 나만의 메모도 남겨 보세요.</p>
-        </div>
 
         <div class="mode-panel" data-mode="feel" hidden>
           <input type="text" class="field" id="feel-input" placeholder="장면 · 영화 · 계절 · 장소" />
@@ -127,6 +126,19 @@
     </section>
 
     <!-- 3단계: 결과 -->
+    <!-- 검색 결과 -->
+    <section id="step-search" class="card" hidden>
+      <h2 class="result-title" id="search-title">검색 결과</h2>
+      <h3 class="memo-title">🎤 아티스트</h3>
+      <div id="search-artists" class="track-list"></div>
+      <h3 class="memo-title">🎵 노래</h3>
+      <div id="search-tracks" class="track-list"></div>
+      <p class="source">음악 정보 제공: Deezer</p>
+      <div class="row center">
+        <button class="btn-ghost go-home">처음으로</button>
+      </div>
+    </section>
+
     <!-- 노래 페이지: 곡 정보 / 비슷한 아티스트 / 비슷한 노래 탭 + 내 메모 -->
     <section id="step-song" class="card" hidden>
       <div class="song-head">
@@ -176,6 +188,7 @@
 
       <p class="source">음악 정보 제공: <a id="song-source" target="_blank" rel="noopener">Deezer</a> · 소개말은 AI가 작성</p>
       <div class="row center">
+        <button id="song-back" class="btn-ghost" type="button">← 뒤로</button>
         <button class="btn-ghost go-home">처음으로</button>
       </div>
     </section>
@@ -208,7 +221,7 @@
 
       <p class="source">음악 정보 제공: <a id="artist-source" target="_blank" rel="noopener">Deezer</a></p>
       <div class="row center">
-        <button id="artist-back" class="btn-ghost" type="button">← 곡으로</button>
+        <button id="artist-back" class="btn-ghost" type="button">← 뒤로</button>
         <button class="btn-ghost go-home">처음으로</button>
       </div>
     </section>
@@ -310,5 +323,6 @@
   <script src="auth.js"></script>
   <script src="feed.js"></script>
   <script src="song.js"></script>
+  <script src="search.js"></script>
 </body>
 </html>

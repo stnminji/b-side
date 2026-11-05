@@ -25,7 +25,7 @@
     } catch (e) {
       stopLoadingSteps();
       alert(e.message || "노래를 찾지 못했어요.");
-      return showStep("step-input");
+      return window.goBack ? window.goBack() : showStep("step-input");
     }
     stopLoadingSteps();
     song.query = typed || { artist: song.artist, title: song.title };
@@ -265,8 +265,11 @@
     return e;
   }
   let artist = null;
-  $("#song-by").addEventListener("click", () => song && window.openArtist(song.artist_id));
-  $("#artist-back").addEventListener("click", () => (song ? showStep("step-song") : showStep("step-input")));
+  // 페이지를 옮길 때마다 지금 페이지를 기억 → '뒤로'로 돌아올 수 있게 (search.js)
+  const go = (fn) => { if (window.rememberPage) window.rememberPage(); fn(); };
+  $("#song-by").addEventListener("click", () => song && go(() => window.openArtist(song.artist_id)));
+  $("#artist-back").addEventListener("click", () => window.goBack());
+  $("#song-back").addEventListener("click", () => window.goBack());
 
   window.openArtist = async (artistId) => {
     if (!artistId) return;
@@ -277,7 +280,7 @@
     } catch (e) {
       stopLoadingSteps();
       alert(e.message || "아티스트 정보를 불러오지 못했어요.");
-      return song ? showStep("step-song") : showStep("step-input");
+      return window.goBack ? window.goBack() : showStep("step-input");
     }
     stopLoadingSteps();
     renderArtist();
@@ -312,7 +315,7 @@
       const text = el("span", "track-text");
       text.append(el("span", "track-title", t.title), el("span", "hint small", t.album));
       b.appendChild(text);
-      b.addEventListener("click", () => window.openSongById(t.track_id));
+      b.addEventListener("click", () => go(() => window.openSongById(t.track_id)));
       tracks.appendChild(b);
     });
     // 앨범
@@ -336,7 +339,7 @@
     if (!artist.related.length) rel.appendChild(el("p", "hint small", "음악 DB에 비슷한 아티스트 정보가 없어요. 아래 AI 찾기를 눌러 보세요."));
     artist.related.forEach((r) => {
       const b = el("button", "btn-small ghost", r.name);
-      b.addEventListener("click", () => window.openArtist(r.artist_id));
+      b.addEventListener("click", () => go(() => window.openArtist(r.artist_id)));
       rel.appendChild(b);
     });
     $("#artist-ai-list").innerHTML = "";
@@ -402,7 +405,7 @@
       const text = el("span", "track-text");
       text.append(el("span", "track-title", r.title), el("span", "hint small", r.artist + (r.album ? " · " + r.album : "")));
       b.appendChild(text);
-      b.addEventListener("click", () => window.openSongById(r.track_id));
+      b.addEventListener("click", () => go(() => window.openSongById(r.track_id)));
       list.appendChild(b);
     });
   }

@@ -101,7 +101,7 @@ function localRecommend(query) {
 }
 
 // ----- 화면 단계 전환 -----
-const STEPS = ["step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed", "step-song", "step-artist"];
+const STEPS = ["step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed", "step-song", "step-artist", "step-search"];
 function showStep(id) {
   STEPS.forEach((s) => ($("#" + s).hidden = s !== id));
   // 상단 버튼 중 지금 보고 있는 화면의 버튼을 검정으로 채워서 표시
@@ -234,7 +234,6 @@ let textMode = "mood";
 setupOptions("#text-options", (btn) => {
   textMode = btn.dataset.mode;
   document.querySelectorAll(".mode-panel").forEach((p) => (p.hidden = p.dataset.mode !== textMode));
-  $("#btn-text").textContent = textMode === "song" ? "노래 찾기" : "추천받기";
   updateTextButton();
 });
 
@@ -266,8 +265,6 @@ function buildTextQuery() {
       const moods = [...document.querySelectorAll("#mood-chips .chip.on")].map((c) => c.textContent);
       return moods.length ? `듣고 싶은 분위기: ${moods.join(", ")}` : "";
     }
-    case "song": // 노래 검색: 아티스트와 제목이 둘 다 있어야 버튼이 켜짐
-      return v("song-title") && v("song-artist") ? `좋아하는 노래: ${v("song-artist")} - ${v("song-title")}` : "";
     case "feel":
       return v("feel-input") ? `원하는 느낌: ${v("feel-input")}` : "";
     case "free":
@@ -280,9 +277,7 @@ function updateTextButton() {
   $("#btn-text").disabled = !buildTextQuery();
 }
 
-// '노래 검색'은 곡 페이지로, 나머지는 바로 추천으로
 $("#btn-text").addEventListener("click", () => {
-  if (textMode === "song" && window.openSong) return window.openSong($("#song-artist").value.trim(), $("#song-title").value.trim());
   recommend(textMode, buildTextQuery());
 });
 

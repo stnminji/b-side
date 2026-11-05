@@ -502,6 +502,39 @@ def song_info(payload):
     }
 
 
+# ---------- 2-4) 노래·아티스트 검색 (결과 목록) ----------
+def search(payload):
+    """검색어로 음악 DB(Deezer)의 아티스트와 노래를 찾는다. 결과는 전부 실제 데이터 (AI 사용 안 함 → 빠름)"""
+    q = str(payload.get("q") or "").strip()[:100]
+    if not q:
+        raise ValueError("검색어를 적어 주세요.")
+    def safe(url):
+        return url if isinstance(url, str) and url.startswith("https://") and "/artist//" not in url else ""
+    urls = [f"https://api.deezer.com/search/artist?limit=6&q={urllib.parse.quote(q)}",
+            f"https://api.deezer.com/search?limit=15&q={urllib.parse.quote(q)}"]
+    with ThreadPoolExecutor(max_workers=2) as pool:  # 아티스트·노래를 동시에 검색
+        artists, tracks = pool.map(lambda u: (_get_json(u) or {}).get("data", []), urls)
+    curated = {_norm(a["name"]): a["name"] for a in load_artists()}
+    curated.update({_norm(a.get("name_en", "")): a["name"] for a in load_artists() if a.get("name_en")})
+    seen = set()
+    track_list = []
+    for t in tracks:
+        if t["id"] in seen:
+            continue
+        seen.add(t["id"])
+        track_list.append({"track_id": t["id"], "title": t["title"][:200],
+                           "artist": curated.get(_norm(t["artist"]["name"]), t["artist"]["name"])[:100],
+                           "album": t.get("album", {}).get("title", "")[:120],
+                           "cover": safe(t.get("album", {}).get("cover_small"))})
+    return {
+        "artists": [{"artist_id": a["id"], "name": curated.get(_norm(a["name"]), a["name"])[:100],
+                     "name_db": a["name"][:100], "picture": safe(a.get("picture_small")),
+                     "fans": int(a.get("nb_fan") or 0), "curated": _norm(a["name"]) in curated}
+                    for a in sorted(artists, key=lambda a: -(a.get("nb_fan") or 0))],  # 같은 이름이면 팬 많은 쪽(공식)이 먼저
+        "tracks": track_list[:12],
+    }
+
+
 # ---------- 2-3) 아티스트 페이지 ----------
 def artist_info(payload):
     """아티스트 정보는 전부 음악 DB(Deezer)에서 가져온다 (AI가 지어내지 않음).
@@ -651,7 +684,7 @@ def compare(payload):
 
 
 ACTIONS = {"extract": extract, "recommend": recommend, "compare": compare, "song_info": song_info,
-           "artist_info": artist_info}
+           "artist_info": artist_info, "search": search}
 
 
 def server_error(e):
