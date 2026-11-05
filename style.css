@@ -376,3 +376,15 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 
 /* 잠시 숨긴 기능 (서재). 데이터·DB는 그대로, HTML의 class="off"만 지우면 다시 보임 */
 .off { display: none !important; }
+
+/* ===== 취향으로 연결 ===== */
+.taste-card { padding: 16px; margin-bottom: 18px; border-radius: 14px; background: var(--soft); }
+.taste-card .memo-title { margin-top: 0; }
+.consent { display: flex; align-items: center; gap: 6px; margin-left: auto; font-size: 13px; font-weight: 700; color: var(--text); cursor: pointer; }
+.consent input { width: 16px; height: 16px; accent-color: var(--accent); }
+#btn-match, #profile-discover { margin: 4px 0 10px; }
+.pick-reason { margin-top: 2px; font-size: 12px; color: var(--accent2); font-weight: 700; white-space: normal; }
+.record .btn-small { margin-top: 8px; }
+.lib-row { display: flex; align-items: center; gap: 6px; }
+.lib-row .track-row { flex: 1; min-width: 0; }
+.vis-btn { flex-shrink: 0; }

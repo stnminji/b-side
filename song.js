@@ -395,7 +395,7 @@
     if (!s.session) return (list.textContent = "로그인이 필요해요.");
     // DB 규칙상 남의 '공개' 서재도 읽을 수 있으므로 반드시 '내 것'만
     const { data: rows, error } = await client.from("library")
-      .select("id, track_id, artist, title, album, cover, created_at")
+      .select("id, track_id, artist, title, album, cover, is_public, created_at")
       .eq("user_id", s.session.user.id).order("created_at", { ascending: false }).limit(200);
     list.textContent = "";
     if (error) return (list.textContent = "음악 창고를 불러오지 못했어요.");
@@ -413,7 +413,23 @@
       text.append(el("span", "track-title", r.title), el("span", "hint small", r.artist + (r.album ? " · " + r.album : "")));
       b.appendChild(text);
       b.addEventListener("click", () => go(() => window.openSongById(r.track_id)));
-      list.appendChild(b);
+      // 공개로 바꾸면 '같은 노래를 좋아하는 사람'에 내가 보이고, 다른 사람이 나에게서 새 음악을 발견할 수 있어요
+      const vis = el("button", "btn-small vis-btn" + (r.is_public ? "" : " ghost"));
+      const paintVis = () => {
+        vis.innerHTML = r.is_public ? ic("globe") + "공개" : ic("lock") + "나만";
+        vis.classList.toggle("ghost", !r.is_public);
+      };
+      paintVis();
+      vis.addEventListener("click", async () => {
+        if (!r.is_public && !confirm("이 곡을 공개할까요? 같은 노래를 좋아하는 사람에게 내 닉네임이 보여요.")) return;
+        const { error: e } = await client.from("library").update({ is_public: !r.is_public }).eq("id", r.id);
+        if (e) return alert("바꾸지 못했어요.");
+        r.is_public = !r.is_public;
+        paintVis();
+      });
+      const row = el("div", "lib-row");
+      row.append(b, vis);
+      list.appendChild(row);
     });
   }
 

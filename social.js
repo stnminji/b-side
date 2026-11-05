@@ -196,7 +196,11 @@
   window.openProfile = async (userId) => {
     if (!userId) return;
     profileUser = userId;
+    window.currentProfileUser = userId; // '이 사람에게서 새 음악 발견'에서 사용 (connect.js)
     showStep("step-profile");
+    $("#profile-picks").innerHTML = "";
+    const viewer = await me();
+    $("#profile-discover").hidden = !viewer || viewer === userId; // 로그인했고 남의 프로필일 때만
     const client = sb();
     $("#profile-name").textContent = "불러오는 중…";
     $("#profile-stats").textContent = "";

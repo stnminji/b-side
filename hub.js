@@ -7,10 +7,7 @@
   const $ = (sel) => document.querySelector(sel);
 
   $("#hub-archive").addEventListener("click", () => showStep("step-archive"));
-  $("#hub-social").addEventListener("click", () => {
-    if (window.openFeed) return window.openFeed();
-    alert("소셜 기능을 불러오는 중이에요. 잠시 후 다시 눌러 주세요.");
-  });
+  $("#hub-social").addEventListener("click", () => window.openConnect());
 
   // 로그인이 필요한 메뉴는 먼저 확인하고, 안 했으면 로그인 창을 연다
   async function needLogin() {
@@ -30,6 +27,7 @@
     tile.addEventListener("click", async () => {
       const go = tile.dataset.go;
       if (go === "ai") return showStep("step-input"); // AI 디깅은 로그인 없이도 사용
+      if (go === "taste") return window.openConnect(); // 감상 결은 '취향으로 연결'에서
       if (await needLogin()) return;
       if (window.rememberPage) window.rememberPage();
       await window.showRecords();       // '내 기록' 화면 열기 (추천 기록 목록도 불러옴)

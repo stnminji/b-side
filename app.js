@@ -101,7 +101,7 @@ function localRecommend(query) {
 }
 
 // ----- 화면 단계 전환 -----
-const STEPS = ["step-home", "step-archive", "step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed", "step-song", "step-artist", "step-search", "step-profile"];
+const STEPS = ["step-home", "step-archive", "step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed", "step-song", "step-artist", "step-search", "step-profile", "step-connect"];
 function showStep(id) {
   STEPS.forEach((s) => ($("#" + s).hidden = s !== id));
   window.scrollTo({ top: 0, behavior: "smooth" });

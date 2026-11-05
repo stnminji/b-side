@@ -41,27 +41,28 @@
     <section id="step-home" class="home-hub">
       <button id="hub-archive" class="hub-btn" type="button">
         <span class="hub-icon"><i data-ic="disc"></i></span>
-        <span class="hub-name">기록</span>
-        <span class="hub-desc">AI 디깅 · 음악 창고 · 메모</span>
+        <span class="hub-name">나의 음악 저장소</span>
+        <span class="hub-desc">저장한 곡 · 감상 메모 · 좋아하는 아티스트</span>
       </button>
       <button id="hub-social" class="hub-btn" type="button">
         <span class="hub-icon"><i data-ic="chat"></i></span>
-        <span class="hub-name">소셜</span>
-        <span class="hub-desc">디깅 피드 · 취향 비교</span>
+        <span class="hub-name">취향으로 연결</span>
+        <span class="hub-desc">같은 노래 · 같은 이유로 사람과 새 음악 발견</span>
       </button>
     </section>
 
     <!-- 기록 모음 -->
     <section id="step-archive" class="card" hidden>
-      <h2 class="result-title">기록</h2>
-      <p class="hint">내 음악 취향과 감상을 쌓아 가는 곳이에요.</p>
+      <h2 class="result-title">나의 음악 저장소</h2>
+      <p class="hint">검색한 노래를 저장하고, 나만의 감상을 쌓아 가는 곳이에요.</p>
       <div class="tile-grid">
-        <button class="tile" data-go="ai" type="button"><b><i data-ic="sparkle"></i>AI 디깅</b><span>플레이리스트 캡처나 분위기로 취향 분석 · 인디 추천</span></button>
+        <button class="tile off" data-go="ai" type="button"><b><i data-ic="sparkle"></i>AI 디깅</b><span>플레이리스트 캡처나 분위기로 취향 분석 · 인디 추천</span></button>
         <button class="tile" data-go="library" type="button"><b><i data-ic="box"></i>내 음악 창고</b><span>담아 둔 노래</span></button>
-        <button class="tile" data-go="memos" type="button"><b><i data-ic="pen"></i>내 메모</b><span>노래마다 남긴 감상</span></button>
-        <button class="tile" data-go="records" type="button"><b><i data-ic="headphones"></i>추천 기록</b><span>AI가 추천해 준 결과</span></button>
+        <button class="tile" data-go="memos" type="button"><b><i data-ic="pen"></i>감상 메모</b><span>노래마다 남긴 나만의 감상</span></button>
+        <button class="tile" data-go="taste" type="button"><b><i data-ic="sparkle"></i>AI 감상 결</b><span>내 감상을 AI가 읽고 요약 · 연결의 시작</span></button>
+        <button class="tile off" data-go="records" type="button"><b><i data-ic="headphones"></i>추천 기록</b><span>AI가 추천해 준 결과</span></button>
         <button class="tile" data-go="artists" type="button"><b><i data-ic="mic"></i>좋아하는 아티스트</b><span><i data-ic="heart"></i>누른 아티스트</span></button>
-        <button class="tile" data-go="notes" type="button"><b><i data-ic="note"></i>자유 메모</b><span>노래와 상관없는 음악 일기</span></button>
+        <button class="tile off" data-go="notes" type="button"><b><i data-ic="note"></i>자유 메모</b><span>노래와 상관없는 음악 일기</span></button>
       </div>
       <div class="row center">
         <button class="btn-ghost go-home">처음으로</button>
@@ -268,6 +269,36 @@
       </div>
     </section>
 
+    <!-- 취향으로 연결: 감상 결 → 같은 노래 / 같은 이유 → 그 사람에게서 새 음악 발견 -->
+    <section id="step-connect" class="card" hidden>
+      <h2 class="result-title">취향으로 연결</h2>
+      <p class="hint">노래 검색 → 감상 기록 → 같은 노래·같은 이유로 좋아하는 사람 → 그 사람에게서 새 음악 발견</p>
+
+      <div class="taste-card">
+        <h3 class="memo-title"><i data-ic="sparkle"></i>나의 감상 결</h3>
+        <p id="taste-me-summary" class="song-intro"></p>
+        <div id="taste-me-tags" class="tags"></div>
+        <p id="taste-me-meta" class="hint small"></p>
+        <div class="memo-row">
+          <button id="btn-analyze" class="btn-small" type="button"><i data-ic="sparkle"></i>AI로 감상 결 분석</button>
+          <label class="consent"><input id="taste-consent" type="checkbox" /> 다른 사람과 연결하기</label>
+        </div>
+        <p class="hint small">연결을 켜면 <b>감상 결 요약만</b> 다른 사용자와 AI 매칭에 쓰여요. 메모·저장 곡 원문은 공유되지 않아요. 언제든 끌 수 있어요.</p>
+        <p id="taste-status" class="hint small" role="status"></p>
+      </div>
+
+      <h3 class="memo-title"><i data-ic="music"></i>같은 노래를 좋아하는 사람</h3>
+      <div id="same-song-list" class="records-list"></div>
+
+      <h3 class="memo-title"><i data-ic="users"></i>같은 이유로 연결된 사람 <span class="tag">AI</span></h3>
+      <button id="btn-match" class="btn-small" type="button"><i data-ic="link"></i>감상 결이 닮은 사람 찾기</button>
+      <div id="match-list" class="records-list"></div>
+
+      <div class="row center">
+        <button class="btn-ghost go-home">처음으로</button>
+      </div>
+    </section>
+
     <!-- 공개 프로필: 그 사람이 '공개'한 것만 -->
     <section id="step-profile" class="card" hidden>
       <h2 id="profile-name" class="song-name"></h2>
@@ -276,9 +307,11 @@
       <div class="song-tabs">
         <button class="btn-small profile-tab" data-ptab="library"><i data-ic="box"></i>음악 창고</button>
         <button class="btn-small ghost profile-tab" data-ptab="memos"><i data-ic="chat"></i>노래 감상</button>
-        <button class="btn-small ghost profile-tab" data-ptab="notes"><i data-ic="note"></i>자유 메모</button>
-        <button class="btn-small ghost profile-tab" data-ptab="records"><i data-ic="headphones"></i>추천 기록</button>
+        <button class="btn-small ghost profile-tab off" data-ptab="notes"><i data-ic="note"></i>자유 메모</button>
+        <button class="btn-small ghost profile-tab off" data-ptab="records"><i data-ic="headphones"></i>추천 기록</button>
       </div>
+      <button id="profile-discover" class="btn-small" type="button"><i data-ic="sparkle"></i>AI로 이 사람에게서 새 음악 발견</button>
+      <div id="profile-picks" class="track-list"></div>
       <div id="profile-list" class="records-list"></div>
       <div class="row center">
         <button id="profile-back" class="btn-ghost" type="button">← 뒤로</button>
@@ -311,8 +344,8 @@
       <div class="song-tabs">
         <button class="btn-small records-tab" data-rtab="library"><i data-ic="box"></i>내 음악 창고</button>
         <button class="btn-small ghost records-tab" data-rtab="memos"><i data-ic="pen"></i>내 메모</button>
-        <button class="btn-small ghost records-tab" data-rtab="records"><i data-ic="headphones"></i>추천 기록</button>
-        <button class="btn-small ghost records-tab" data-rtab="notes"><i data-ic="note"></i>자유 메모</button>
+        <button class="btn-small ghost records-tab off" data-rtab="records"><i data-ic="headphones"></i>추천 기록</button>
+        <button class="btn-small ghost records-tab off" data-rtab="notes"><i data-ic="note"></i>자유 메모</button>
         <button class="btn-small ghost records-tab" data-rtab="artists"><i data-ic="mic"></i>좋아하는 아티스트</button>
       </div>
       <div id="artists-panel" hidden>
@@ -417,6 +450,7 @@
   <script src="feed.js"></script>
   <script src="song.js"></script>
   <script src="search.js"></script>
+  <script src="connect.js"></script>
   <script src="hub.js"></script>
 </body>
 </html>
