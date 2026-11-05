@@ -563,6 +563,13 @@ def search(payload):
                            "artist": curated.get(_norm(t["artist"]["name"]), t["artist"]["name"])[:100],
                            "album": t.get("album", {}).get("title", "")[:120],
                            "cover": safe(t.get("album", {}).get("cover_small"))})
+    # 같은 B-SIDE 아티스트로 이어지는 Deezer 프로필이 여러 개면(예: OOHYO / 우효) 팬이 가장 많은 공식 프로필 하나만
+    best = {}
+    for ar in artists:
+        key = curated.get(_norm(ar["name"]), ar["name"])
+        if key not in best or (ar.get("nb_fan") or 0) > (best[key].get("nb_fan") or 0):
+            best[key] = ar
+    artists = list(best.values())
     return {
         "artists": [{"artist_id": a["id"], "name": curated.get(_norm(a["name"]), a["name"])[:100],
                      "name_db": a["name"][:100], "picture": safe(a.get("picture_small")),
