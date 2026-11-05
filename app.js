@@ -101,12 +101,9 @@ function localRecommend(query) {
 }
 
 // ----- 화면 단계 전환 -----
-const STEPS = ["step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed", "step-song", "step-artist", "step-search"];
+const STEPS = ["step-home", "step-archive", "step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed", "step-song", "step-artist", "step-search"];
 function showStep(id) {
   STEPS.forEach((s) => ($("#" + s).hidden = s !== id));
-  // 상단 버튼 중 지금 보고 있는 화면의 버튼을 검정으로 채워서 표시
-  $("#btn-feed").classList.toggle("active", id === "step-feed");
-  $("#btn-my-records").classList.toggle("active", id === "step-records");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -457,4 +454,6 @@ function songRow(bandName, song, isFirst) {
 }
 
 // ----- 처음으로 -----
-document.querySelectorAll(".btn-restart, .go-home").forEach((btn) => btn.addEventListener("click", () => showStep("step-input")));
+// '처음으로'는 홈(검색 + 기록 · 소셜)으로, '다시 찾기'는 AI 디깅 입력 화면으로
+document.querySelectorAll(".go-home").forEach((btn) => btn.addEventListener("click", () => showStep("step-home")));
+document.querySelectorAll(".btn-restart").forEach((btn) => btn.addEventListener("click", () => showStep("step-input")));

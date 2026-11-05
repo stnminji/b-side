@@ -25,7 +25,7 @@
     } catch (e) {
       stopLoadingSteps();
       alert(e.message || "노래를 찾지 못했어요.");
-      return window.goBack ? window.goBack() : showStep("step-input");
+      return window.goBack ? window.goBack() : showStep("step-home");
     }
     stopLoadingSteps();
     song.query = typed || { artist: song.artist, title: song.title };
@@ -280,7 +280,7 @@
     } catch (e) {
       stopLoadingSteps();
       alert(e.message || "아티스트 정보를 불러오지 못했어요.");
-      return window.goBack ? window.goBack() : showStep("step-input");
+      return window.goBack ? window.goBack() : showStep("step-home");
     }
     stopLoadingSteps();
     renderArtist();
@@ -374,11 +374,13 @@
       b.classList.toggle("ghost", !on);
     });
     $("#library-panel").hidden = tab !== "library";
+    $("#memos-panel").hidden = tab !== "memos";
     $("#records-panel").hidden = tab !== "records";
     if (tab === "library") loadLibraryList();
+    if (tab === "memos") loadMemoList();
   }
   document.querySelectorAll(".records-tab").forEach((b) => b.addEventListener("click", () => selectRecordsTab(b.dataset.rtab)));
-  $("#btn-my-records").addEventListener("click", () => selectRecordsTab("library"));
+  window.selectRecordsTab = selectRecordsTab; // 홈의 '기록'에서 사용 (hub.js)
 
   async function loadLibraryList() {
     const list = $("#library-list");
@@ -404,6 +406,41 @@
       }
       const text = el("span", "track-text");
       text.append(el("span", "track-title", r.title), el("span", "hint small", r.artist + (r.album ? " · " + r.album : "")));
+      b.appendChild(text);
+      b.addEventListener("click", () => go(() => window.openSongById(r.track_id)));
+      list.appendChild(b);
+    });
+  }
+
+  // ----- 내 기록 화면의 '내 메모' 탭 -----
+  async function loadMemoList() {
+    const list = $("#memos-list");
+    list.textContent = "불러오는 중…";
+    const client = sb();
+    const { data: s } = await client.auth.getSession();
+    if (!s.session) return (list.textContent = "로그인이 필요해요.");
+    // DB 규칙상 남의 '공개' 메모도 읽을 수 있으므로 반드시 '내 것'만
+    const { data: rows, error } = await client.from("song_memos")
+      .select("track_id, artist, title, cover, memo, is_public, updated_at")
+      .eq("user_id", s.session.user.id).order("updated_at", { ascending: false }).limit(200);
+    list.textContent = "";
+    if (error) return (list.textContent = "메모를 불러오지 못했어요.");
+    if (!rows.length) return (list.textContent = "아직 남긴 메모가 없어요. 노래를 검색해서 📝 내 메모를 남겨 보세요.");
+    rows.forEach((r) => {
+      const b = el("button", "track-row memo-row-item");
+      if (r.cover) {
+        const img = el("img", "track-cover");
+        img.src = r.cover;
+        img.alt = "";
+        img.loading = "lazy";
+        b.appendChild(img);
+      }
+      const text = el("span", "track-text");
+      text.append(
+        el("span", "track-title", r.title),
+        el("span", "hint small", r.artist + " · " + (r.is_public ? "🌐 공개" : "🔒 나만 보기") + " · " + new Date(r.updated_at).toLocaleDateString("ko-KR")),
+        el("span", "memo-snippet", r.memo)
+      );
       b.appendChild(text);
       b.addEventListener("click", () => go(() => window.openSongById(r.track_id)));
       list.appendChild(b);

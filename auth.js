@@ -28,7 +28,6 @@
   // 2) 로그인 상태에 따라 상단 버튼 바꾸기
   function updateButtons(session) {
     $("#btn-open-login").hidden = !!session;
-    $("#btn-my-records").hidden = !session;
     $("#btn-logout").hidden = !session;
   }
   const { data } = await sb.auth.getSession();
@@ -142,7 +141,7 @@
 
   $("#btn-logout").addEventListener("click", async () => {
     await sb.auth.signOut();
-    showStep("step-input");
+    showStep("step-home");
   });
 
   // 4) 내 기록 저장 (app.js가 추천이 끝나면 부른다)
@@ -230,5 +229,5 @@
       list.appendChild(item);
     });
   }
-  $("#btn-my-records").addEventListener("click", showRecords);
+  window.showRecords = showRecords; // 홈의 '기록'에서 사용 (hub.js)
 })();

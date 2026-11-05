@@ -11,13 +11,75 @@
     const sb = window.bsideSb;
     if (!sb || start.done) return;
     start.done = true;
-    $("#btn-feed").hidden = false;
-    $("#btn-feed").addEventListener("click", () => showFeed(sb));
+    window.openFeed = () => showFeed(sb); // 홈의 '소셜'에서 사용 (hub.js)
   }
   window.addEventListener("bside-ready", start);
   start(); // auth.js가 먼저 준비됐을 수도 있음
 
+  // 피드 탭: 🎧 추천 기록 / 💬 노래 감상
+  function selectFeedTab(tab) {
+    document.querySelectorAll(".feed-tab").forEach((b) => {
+      const on = b.dataset.ftab === tab;
+      b.classList.toggle("active", on);
+      b.classList.toggle("ghost", !on);
+    });
+    $("#feed-list").hidden = tab !== "records";
+    $("#feed-memos").hidden = tab !== "memos";
+    if (tab === "memos") loadMemoFeed(window.bsideSb);
+  }
+  document.querySelectorAll(".feed-tab").forEach((b) => b.addEventListener("click", () => selectFeedTab(b.dataset.ftab)));
+
+  // 사람들이 '공개'로 저장한 노래 메모 (최신순). 누르면 그 노래 페이지로
+  async function loadMemoFeed(sb) {
+    const list = $("#feed-memos");
+    list.textContent = "불러오는 중…";
+    const { data: rows, error } = await sb.from("song_memos")
+      .select("track_id, artist, title, cover, memo, updated_at, profiles(nickname)")
+      .eq("is_public", true).order("updated_at", { ascending: false }).limit(30);
+    list.textContent = "";
+    if (error) return (list.textContent = "감상을 불러오지 못했어요.");
+    if (!rows.length) return (list.textContent = "아직 공개된 노래 감상이 없어요. 노래 페이지에서 메모를 🌐 공개로 저장해 보세요!");
+    rows.forEach((r) => {
+      // 다른 사람이 쓴 글 → textContent로만
+      const item = document.createElement("article");
+      item.className = "record";
+      const who = document.createElement("p");
+      who.className = "record-who";
+      who.textContent = "@" + ((r.profiles && r.profiles.nickname) || "익명") + " · " + new Date(r.updated_at).toLocaleDateString("ko-KR");
+      const song = document.createElement("button");
+      song.className = "track-row";
+      if (r.cover) {
+        const img = document.createElement("img");
+        img.className = "track-cover";
+        img.src = r.cover;
+        img.alt = "";
+        img.loading = "lazy";
+        song.appendChild(img);
+      }
+      const text = document.createElement("span");
+      text.className = "track-text";
+      const t1 = document.createElement("span");
+      t1.className = "track-title";
+      t1.textContent = r.title;
+      const t2 = document.createElement("span");
+      t2.className = "hint small";
+      t2.textContent = r.artist;
+      text.append(t1, t2);
+      song.appendChild(text);
+      song.addEventListener("click", () => {
+        if (window.rememberPage) window.rememberPage();
+        window.openSongById(r.track_id);
+      });
+      const memo = document.createElement("p");
+      memo.className = "record-summary";
+      memo.textContent = r.memo;
+      item.append(who, song, memo);
+      list.appendChild(item);
+    });
+  }
+
   async function showFeed(sb) {
+    selectFeedTab("records");
     const list = $("#feed-list");
     list.textContent = "불러오는 중…";
     showStep("step-feed");

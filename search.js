@@ -26,7 +26,7 @@
   };
   window.goBack = () => {
     const prev = history.pop();
-    showStep(prev || "step-input");
+    showStep(prev || "step-home");
   };
   // 처음 화면으로 가면 기록을 비운다
   document.querySelectorAll(".go-home").forEach((b) => b.addEventListener("click", () => (history.length = 0)));
@@ -45,7 +45,7 @@
     } catch (err) {
       stopLoadingSteps();
       alert(err.message || "검색하지 못했어요. 잠시 후 다시 해 주세요.");
-      return showStep("step-input");
+      return showStep("step-home");
     }
     stopLoadingSteps();
     renderResults(q, result);

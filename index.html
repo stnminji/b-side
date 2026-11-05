@@ -17,9 +17,7 @@
     </button>
     <!-- 로그인 영역: 로그인 전에는 '로그인' 버튼, 후에는 '내 기록'·'로그아웃' -->
     <div class="account">
-      <button id="btn-feed" class="btn-small ghost" hidden>피드</button>
       <button id="btn-open-login" class="btn-small" hidden>로그인</button>
-      <button id="btn-my-records" class="btn-small ghost" hidden>내 기록</button>
       <button id="btn-logout" class="btn-small ghost" hidden>로그아웃</button>
     </div>
     <button class="home-btn go-home" title="처음으로" aria-label="처음으로">
@@ -39,8 +37,38 @@
   </header>
 
   <main>
-    <!-- 1단계: 입력 -->
-    <section id="step-input" class="card">
+    <!-- 홈: 검색창(위) + 기록 · 소셜 -->
+    <section id="step-home" class="home-hub">
+      <button id="hub-archive" class="hub-btn" type="button">
+        <span class="hub-icon">📀</span>
+        <span class="hub-name">기록</span>
+        <span class="hub-desc">AI 디깅 · 내 서재 · 메모</span>
+      </button>
+      <button id="hub-social" class="hub-btn" type="button">
+        <span class="hub-icon">💬</span>
+        <span class="hub-name">소셜</span>
+        <span class="hub-desc">디깅 피드 · 취향 비교</span>
+      </button>
+    </section>
+
+    <!-- 기록 모음 -->
+    <section id="step-archive" class="card" hidden>
+      <h2 class="result-title">기록</h2>
+      <p class="hint">내 음악 취향과 감상을 쌓아 가는 곳이에요.</p>
+      <div class="tile-grid">
+        <button class="tile" data-go="ai" type="button"><b>✨ AI 디깅</b><span>플레이리스트 캡처나 분위기로 취향 분석 · 인디 추천</span></button>
+        <button class="tile" data-go="library" type="button"><b>📚 내 서재</b><span>담아 둔 노래</span></button>
+        <button class="tile" data-go="memos" type="button"><b>📝 내 메모</b><span>노래마다 남긴 감상</span></button>
+        <button class="tile" data-go="records" type="button"><b>🎧 추천 기록</b><span>AI가 추천해 준 결과</span></button>
+      </div>
+      <div class="row center">
+        <button class="btn-ghost go-home">처음으로</button>
+      </div>
+    </section>
+
+    <!-- AI 디깅: 입력 (기록 → AI 디깅) -->
+    <section id="step-input" class="card" hidden>
+      <h2 class="result-title">✨ AI 디깅</h2>
       <div class="tabs" role="tablist">
         <button class="tab active" data-tab="capture" role="tab">사진으로</button>
         <button class="tab" data-tab="text" role="tab">텍스트로</button>
@@ -229,8 +257,13 @@
     <!-- 공개 피드: 사람들이 공개한 음악 기록 (로그인 없이도 보기 가능) -->
     <section id="step-feed" class="card" hidden>
       <h2 class="result-title">디깅 피드</h2>
+      <div class="song-tabs">
+        <button class="btn-small feed-tab" data-ftab="records">🎧 추천 기록</button>
+        <button class="btn-small ghost feed-tab" data-ftab="memos">💬 노래 감상</button>
+      </div>
       <p class="hint">다른 사람들이 공개한 음악 기록이에요. <b>나와 비교</b>를 누르면 AI가 두 사람의 취향 교집합을 찾아줘요.</p>
       <div id="feed-list" class="records-list"></div>
+      <div id="feed-memos" class="records-list" hidden></div>
       <div class="row center">
         <button class="btn-ghost go-home">처음으로</button>
       </div>
@@ -241,7 +274,12 @@
       <h2 class="result-title">내 기록</h2>
       <div class="song-tabs">
         <button class="btn-small records-tab" data-rtab="library">📚 내 서재</button>
+        <button class="btn-small ghost records-tab" data-rtab="memos">📝 내 메모</button>
         <button class="btn-small ghost records-tab" data-rtab="records">🎧 추천 기록</button>
+      </div>
+      <div id="memos-panel" hidden>
+        <p class="hint">노래마다 남긴 메모예요. 누르면 곡 페이지로 가요.</p>
+        <div id="memos-list" class="records-list"></div>
       </div>
       <div id="library-panel">
         <p class="hint">담아 둔 노래예요. 누르면 곡 페이지로 가요.</p>
@@ -324,5 +362,6 @@
   <script src="feed.js"></script>
   <script src="song.js"></script>
   <script src="search.js"></script>
+  <script src="hub.js"></script>
 </body>
 </html>
