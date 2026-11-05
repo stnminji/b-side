@@ -343,7 +343,6 @@
     $("#artist-ai-list").innerHTML = "";
     $("#artist-ai").disabled = false;
     window.renderPeople($("#artist-people"), "artist_id", artist.artist_id, "아직 이 아티스트의 노래를 공개 서재에 담은 사람이 없어요.");
-    window.renderPeople($("#artist-fans"), "artist_id", artist.artist_id, "아직 공개로 ♡ 누른 사람이 없어요.", "favorite_artists");
     loadFavorite();
   }
 
@@ -519,13 +518,12 @@
   }
 
   // ----- 좋아하는 아티스트 (♡) -----
-  // B-SIDE 팬 수 = 이 아티스트에 '공개'로 ♡ 누른 사람 수 (비공개 ♡는 세지 않음, DB 규칙상 남의 비공개는 읽히지도 않음)
+  // B-SIDE 팬 수 = 이 아티스트에 ♡ 누른 사람 수. DB 함수가 '숫자'만 돌려준다 (누가 눌렀는지는 안 보임)
   async function countFans(artistId) {
     const client = sb();
     if (!client) return 0;
-    const { count, error } = await client.from("favorite_artists")
-      .select("id", { count: "exact", head: true }).eq("artist_id", artistId).eq("is_public", true);
-    return error ? 0 : count || 0;
+    const { data, error } = await client.rpc("artist_fan_count", { aid: artistId });
+    return error ? 0 : data || 0;
   }
   let favRow = null;
   function paintFav() {
@@ -533,13 +531,6 @@
     heart.textContent = favRow ? "♥ 좋아함" : "♡ 좋아요";
     heart.classList.toggle("ghost", !favRow);
     heart.classList.toggle("fav-on", !!favRow);
-    const pub = $("#btn-fav-public");
-    pub.hidden = !favRow;
-    if (favRow) {
-      pub.textContent = favRow.is_public ? "🌐 공개" : "🔒 나만 보기";
-      pub.classList.toggle("ghost", !favRow.is_public);
-      pub.title = favRow.is_public ? "B-SIDE 팬으로 표시돼요" : "나만 알아요. 누르면 공개";
-    }
   }
   async function loadFavorite() {
     favRow = null;
@@ -555,7 +546,6 @@
   async function refreshFans() {
     artist.bsideFans = await countFans(artist.artist_id);
     renderArtistMeta();
-    window.renderPeople($("#artist-fans"), "artist_id", artist.artist_id, "아직 공개로 ♡ 누른 사람이 없어요.", "favorite_artists");
   }
   $("#btn-fav").addEventListener("click", async () => {
     const client = sb();
@@ -583,17 +573,6 @@
     paintFav();
     refreshFans();
   });
-  $("#btn-fav-public").addEventListener("click", async () => {
-    if (!favRow) return;
-    const next = !favRow.is_public;
-    if (next && !confirm("이 아티스트를 좋아한다고 공개할까요? 아티스트 페이지에 닉네임이 표시돼요.")) return;
-    const { error } = await sb().from("favorite_artists").update({ is_public: next }).eq("id", favRow.id);
-    if (error) return alert("바꾸지 못했어요.");
-    favRow.is_public = next;
-    paintFav();
-    refreshFans();
-  });
-
   // 아티스트 정보 줄 다시 그리기 (팬 수가 바뀌었을 때)
   function renderArtistMeta() {
     $("#artist-meta").textContent = [
@@ -627,7 +606,7 @@
         b.appendChild(img);
       }
       const text = el("span", "track-text");
-      text.append(el("span", "track-title", r.name), el("span", "hint small", r.is_public ? "🌐 공개" : "🔒 나만 보기"));
+      text.append(el("span", "track-title", r.name), el("span", "hint small", "♥ 좋아하는 아티스트"));
       b.appendChild(text);
       b.addEventListener("click", () => go(() => window.openArtist(r.artist_id)));
       row.appendChild(b);

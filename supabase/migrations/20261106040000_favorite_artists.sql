@@ -36,3 +36,12 @@ create policy "좋아하는 아티스트 공개 설정" on public.favorite_artis
 drop policy if exists "좋아하는 아티스트 취소" on public.favorite_artists;
 create policy "좋아하는 아티스트 취소" on public.favorite_artists for delete to authenticated
   using ((select auth.uid()) = user_id);
+
+-- 팬 수 집계: 이 아티스트에 ♡를 누른 사람 '수'만 돌려준다 (누가 눌렀는지는 절대 돌려주지 않음)
+-- 남의 ♡ 행은 RLS로 읽을 수 없으므로, 숫자 하나만 내주는 함수로 집계한다 (security definer, 결과는 정수 1개)
+create or replace function public.artist_fan_count(aid bigint) returns integer
+language sql stable security definer set search_path = '' as $$
+  select count(*)::int from public.favorite_artists where artist_id = aid;
+$$;
+revoke all on function public.artist_fan_count(bigint) from public;
+grant execute on function public.artist_fan_count(bigint) to anon, authenticated;
