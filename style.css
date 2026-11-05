@@ -1,14 +1,13 @@
-/* ===== 기본 색상: 먹 + 한지 (서비스 이름 '결') ===== */
+/* ===== 기본 색상 (베이지 톤) ===== */
 :root {
-  --bg: #f6f2ea;       /* 한지 미색 */
-  --card: #fffdf8;
-  --soft: #eee8dc;     /* 입력칸, 버튼 바탕 */
-  --line: #ded6c8;
-  --text: #1f1d1a;     /* 먹색 */
-  --muted: #7d776e;
-  --accent: #b8432f;   /* 낙관 빨강 */
-  --accent2: #5e6b6e;  /* 회청 */
-  --serif: "Noto Serif KR", "Pretendard", serif;
+  --bg: #f4ede2;
+  --card: #fffaf2;
+  --soft: #efe6d8;     /* 입력칸, 버튼 바탕 */
+  --line: #e2d6c4;
+  --text: #2e2620;
+  --muted: #8c8073;
+  --accent: #c0643c;   /* 테라코타 */
+  --accent2: #6f7f5c;  /* 올리브 */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,7 +29,7 @@ button { font: inherit; cursor: pointer; border: none; }
   position: sticky; top: 0; z-index: 10;
   display: flex; justify-content: space-between; align-items: center;
   max-width: 600px; margin: 0 auto; padding: 14px 20px;
-  background: rgba(246, 242, 234, 0.92);
+  background: rgba(244, 237, 226, 0.92);
   backdrop-filter: blur(6px);
 }
 /* B-SIDE 로고: LP판 + 글자 */
@@ -62,7 +61,7 @@ main { max-width: 600px; margin: 0 auto; padding: 0 20px 40px; }
   border-radius: 20px;
   padding: 22px;
   margin-bottom: 18px;
-  box-shadow: 0 2px 10px rgba(31, 29, 26, 0.05);
+  box-shadow: 0 2px 10px rgba(90, 60, 30, 0.05);
 }
 .card h2 { font-size: 19px; margin-bottom: 4px; }
 .center { text-align: center; justify-content: center; }
@@ -93,7 +92,7 @@ main { max-width: 600px; margin: 0 auto; padding: 0 20px 40px; }
 .btn-ghost:hover { border-color: var(--muted); }
 
 /* ===== 탭: 아이콘 없이 글자 + 밑줄 ===== */
-.tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--line, #ded6c8); margin-bottom: 18px; }
+.tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--line, #e6dccf); margin-bottom: 18px; }
 .tab, .tab-like { position: relative; padding: 4px 2px 12px; background: transparent; color: var(--muted); font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
 .tab:hover, .tab-like:hover { color: var(--text); }
 .tab.active, .tab-like.active { color: var(--text); }
@@ -105,7 +104,7 @@ main { max-width: 600px; margin: 0 auto; padding: 0 20px 40px; }
   padding: 7px 14px;
   border-radius: 999px;
   background: transparent;
-  border: 1px solid var(--line, #ded6c8);
+  border: 1px solid var(--line, #e6dccf);
   color: var(--muted);
   font-weight: 600;
   font-size: 14px;
@@ -124,7 +123,7 @@ main { max-width: 600px; margin: 0 auto; padding: 0 20px 40px; }
   overflow: hidden;
   transition: border-color 0.2s, background 0.2s;
 }
-.dropzone:hover, .dropzone.drag { border-color: var(--accent); background: #f8ece7; }
+.dropzone:hover, .dropzone.drag { border-color: var(--accent); background: #fbf2ea; }
 .drop-icon { margin-bottom: 4px; color: var(--accent); }
 .drop-icon .ic { width: 32px; height: 32px; }
 /* 선 아이콘: 버튼 글자색을 그대로 따라감 */
@@ -174,10 +173,10 @@ textarea:focus, .field:focus, .song-list input:focus { outline: 2px solid var(--
 @keyframes wave { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
 
 /* ===== 결과 ===== */
-.taste { background: #f3eee4; }
+.taste { background: #f8efe3; }
 .taste p { margin: 6px 0 12px; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.tag { padding: 3px 11px; border-radius: 999px; background: #e6ebec; color: var(--accent2); font-size: 13px; font-weight: 700; }
+.tag { padding: 3px 11px; border-radius: 999px; background: #e7ecdf; color: var(--accent2); font-size: 13px; font-weight: 700; }
 .result-title { font-size: 19px; margin: 28px 0 12px; }
 .result-list { display: flex; flex-direction: column; gap: 14px; }
 
@@ -186,7 +185,7 @@ textarea:focus, .field:focus, .song-list input:focus { outline: 2px solid var(--
   border: 1px solid var(--line);
   border-radius: 20px;
   padding: 18px;
-  box-shadow: 0 2px 10px rgba(31, 29, 26, 0.05);
+  box-shadow: 0 2px 10px rgba(90, 60, 30, 0.05);
   animation: up 0.4s ease both;
 }
 .band-head { display: flex; align-items: center; gap: 14px; }
@@ -205,7 +204,7 @@ textarea:focus, .field:focus, .song-list input:focus { outline: 2px solid var(--
 
 .songs { list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .songs li { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 12px; background: var(--soft); }
-.songs li.first { background: #f6e4df; }
+.songs li.first { background: #fbeee6; }
 .song-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .song-title { font-weight: 700; font-size: 15px; }
 .songs li.first .song-title::before { content: "추천 "; color: var(--accent); font-size: 12px; margin-right: 2px; }
@@ -233,7 +232,7 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 }
 
 /* 숨은 곡 표시 */
-.songs li.hidden-gem .song-title::after { content: "숨은 곡"; margin-left: 6px; padding: 1px 7px; border-radius: 999px; background: #e6ebec; color: var(--accent2); font-size: 11px; font-weight: 700; vertical-align: middle; }
+.songs li.hidden-gem .song-title::after { content: "숨은 곡"; margin-left: 6px; padding: 1px 7px; border-radius: 999px; background: #e7ecdf; color: var(--accent2); font-size: 11px; font-weight: 700; vertical-align: middle; }
 
 /* AI가 데이터 밖에서 새로 찾은 아티스트 배지 */
 .discovered { margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; vertical-align: middle; }
@@ -244,8 +243,8 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 .btn-small.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
 .btn-small.ghost:hover { color: var(--text); border-color: var(--muted); }
 
-.dialog { width: min(92vw, 380px); border: none; border-radius: 18px; padding: 22px; background: var(--card); color: var(--text); box-shadow: 0 12px 40px rgba(31, 29, 26, 0.25); }
-.dialog::backdrop { background: rgba(31, 29, 26, 0.45); }
+.dialog { width: min(92vw, 380px); border: none; border-radius: 18px; padding: 22px; background: var(--card); color: var(--text); box-shadow: 0 12px 40px rgba(60, 40, 20, 0.25); }
+.dialog::backdrop { background: rgba(46, 38, 32, 0.45); }
 .field-label { display: block; margin-bottom: 12px; font-size: 13px; font-weight: 700; color: var(--muted); }
 .field-label .field { display: block; width: 100%; margin-top: 6px; }
 .hint.warn { color: var(--accent); font-weight: 600; }
@@ -282,7 +281,7 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 
 /* ===== 노래 페이지 ===== */
 .song-head { display: flex; gap: 16px; align-items: center; margin-bottom: 10px; }
-.song-cover { width: 96px; height: 96px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 14px rgba(31, 29, 26, 0.18); flex-shrink: 0; }
+.song-cover { width: 96px; height: 96px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 14px rgba(60, 40, 20, 0.18); flex-shrink: 0; }
 .song-name { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.4px; }
 .song-by { margin: 2px 0 4px; font-weight: 700; color: var(--accent); }
 .song-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 16px; }
@@ -321,7 +320,7 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 .track-row { padding: 8px 12px; }
 
 /* ===== 노래·아티스트 검색창 ===== */
-.search-bar { display: flex; gap: 8px; margin-top: 18px; padding: 6px 6px 6px 16px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); box-shadow: 0 2px 10px rgba(31, 29, 26, 0.06); }
+.search-bar { display: flex; gap: 8px; margin-top: 18px; padding: 6px 6px 6px 16px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); box-shadow: 0 2px 10px rgba(90, 60, 30, 0.06); }
 .search-bar:focus-within { border-color: var(--accent); }
 .search-bar input { flex: 1; min-width: 0; border: none; background: transparent; font: inherit; font-size: 15px; outline: none; }
 .search-bar .btn-small { padding: 9px 16px; }
@@ -329,8 +328,8 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 
 /* ===== 홈 허브 (기록 · 소셜) ===== */
 .home-hub { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.hub-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 20px 18px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); text-align: left; cursor: pointer; box-shadow: 0 2px 10px rgba(31, 29, 26, 0.06); transition: transform 0.08s ease, border-color 0.15s ease, box-shadow 0.15s ease; }
-.hub-btn:hover { border-color: var(--accent); box-shadow: 0 6px 18px rgba(31, 29, 26, 0.12); }
+.hub-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 20px 18px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); text-align: left; cursor: pointer; box-shadow: 0 2px 10px rgba(90, 60, 30, 0.06); transition: transform 0.08s ease, border-color 0.15s ease, box-shadow 0.15s ease; }
+.hub-btn:hover { border-color: var(--accent); box-shadow: 0 6px 18px rgba(90, 60, 30, 0.12); }
 .hub-btn:active { transform: scale(0.97); }
 .hub-icon { font-size: 26px; }
 .hub-name { font-size: 20px; font-weight: 900; color: var(--text); }
@@ -357,7 +356,7 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 .comment-body { flex: 1; min-width: 0; word-break: break-word; }
 .comment-form { display: flex; gap: 6px; margin-top: 8px; }
 .comment-form .field { flex: 1; margin: 0; padding: 8px 10px; }
-.common { margin: 8px 0 12px; padding: 10px 12px; border-radius: 12px; background: #e6ebec; color: var(--accent2); font-weight: 700; font-size: 14px; }
+.common { margin: 8px 0 12px; padding: 10px 12px; border-radius: 12px; background: #e7ecdf; color: var(--accent2); font-weight: 700; font-size: 14px; }
 .neighbor-head { display: flex; align-items: center; gap: 8px; }
 
 /* ===== 좋아하는 아티스트 ♡ ===== */
@@ -394,7 +393,7 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 .taste-result { margin: 4px 0 10px; padding: 16px 18px; border-radius: 14px; background: var(--text); color: var(--card); }
 .taste-result p { margin: 0 0 10px; line-height: 1.6; font-weight: 600; }
 .taste-result .tags { margin: 0; }
-.taste-result .tag { background: rgba(255, 253, 248, 0.14); color: #f0b9ac; }
+.taste-result .tag { background: rgba(255, 250, 242, 0.14); color: #f3c9a8; }
 .consent-note { margin: -8px 4px 18px; }
 .match-group { margin: 12px 0 18px; }
 .match-title { display: flex; align-items: center; gap: 4px; margin: 0 0 8px; font-size: 15px; }
@@ -411,10 +410,10 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
   width: 132px; padding: 14px 10px 12px; border-radius: 20px;
   display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center;
   background: var(--card); border: 1px solid var(--line); cursor: pointer;
-  box-shadow: 0 4px 14px rgba(31, 29, 26, 0.08);
+  box-shadow: 0 4px 14px rgba(90, 60, 30, 0.08);
   transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.cycle-node:hover { border-color: var(--accent); box-shadow: 0 8px 22px rgba(31, 29, 26, 0.14); }
+.cycle-node:hover { border-color: var(--accent); box-shadow: 0 8px 22px rgba(90, 60, 30, 0.14); }
 .cycle-node:active { transform: translate(-50%, -50%) scale(0.96); }
 .cycle-node .ic { width: 26px; height: 26px; margin: 0; color: var(--accent); stroke-width: 1.7; }
 .cycle-node b { font-size: 15px; font-weight: 900; color: var(--text); letter-spacing: -0.3px; }
@@ -443,7 +442,7 @@ body.searching #search-form { animation: search-in 0.25s ease; }
 .edit-box textarea { width: 100%; resize: vertical; }
 
 /* ===== 감상 카드 다시 디자인: 상자 안의 상자 없애기 ===== */
-.note-card { background: var(--card); border: 1px solid var(--line); box-shadow: 0 2px 8px rgba(31, 29, 26, 0.05); }
+.note-card { background: var(--card); border: 1px solid var(--line); box-shadow: 0 2px 8px rgba(90, 60, 30, 0.05); }
 .note-card .track-row { background: transparent; border: none; padding: 0; border-radius: 0; }
 .note-card .track-row:hover { border: none; }
 .note-card .track-row:hover .track-title { text-decoration: underline; }
@@ -460,7 +459,7 @@ body.searching #search-form { animation: search-in 0.25s ease; }
 /* ===== 취향은 다르지만 (공통점 다리) ===== */
 .contrast { margin-top: 26px; padding-top: 18px; border-top: 1px dashed var(--line); }
 #btn-contrast { margin: 4px 0 12px; }
-.bridge { display: flex; align-items: center; gap: 4px; margin: 6px 0 4px; padding: 7px 10px; border-radius: 10px; background: #e6ebec; color: var(--accent2); font-size: 13px; font-weight: 700; }
+.bridge { display: flex; align-items: center; gap: 4px; margin: 6px 0 4px; padding: 7px 10px; border-radius: 10px; background: #e7ecdf; color: var(--accent2); font-size: 13px; font-weight: 700; }
 .bridge .ic { width: 15px; height: 15px; margin: 0 2px 0 0; }
 
 /* ===== 디깅 순환: 4단계 (12·3·6·9시) + 가운데 로고 ===== */
@@ -470,44 +469,14 @@ body.searching #search-form { animation: search-in 0.25s ease; }
 .n3 { left: 50%; top: 83.3%; }
 .n4 { left: 16.7%; top: 50%; }
 .cycle-center { transform: translate(-50%, -50%); gap: 6px; }
-.cycle-logo { width: 64px; height: 64px; filter: drop-shadow(0 4px 10px rgba(31, 29, 26, 0.25)); }
+.cycle-logo { width: 64px; height: 64px; filter: drop-shadow(0 4px 10px rgba(46, 38, 32, 0.25)); }
 .cycle-center .logo-word { font-size: 15px; }
 .contrast.first { margin-top: 0; padding-top: 0; border-top: none; }
 @media (max-width: 420px) { .cycle-node { width: 104px; padding: 12px 6px 10px; } .cycle-node b { font-size: 13px; } .cycle-logo { width: 52px; height: 52px; } }
 
-
-/* ===== '결' 디자인: 먹 + 한지 ===== */
-/* 제목은 붓글씨 느낌의 명조체 */
-.hero h1, .result-title, .song-name, .logo-word, .cycle-node b, .memo-title, .match-title { font-family: var(--serif); }
-.hero h1 { font-weight: 800; letter-spacing: -0.5px; }
-.hero h1 em { color: var(--accent); }
-.result-title, .song-name { font-weight: 800; }
-/* 로고: 낙관 도장 + '결' 한 글자 */
-.logo-word { font-size: 24px; font-weight: 800; letter-spacing: 0; }
-.logo-disc { border-radius: 8px; }
-.logo:hover .logo-disc { transform: rotate(-6deg) scale(1.05); }
-.logo-disc { transition: transform 0.25s ease; }
-/* 한지 결: 배경에 아주 옅은 가로 물결 */
-body {
-  background-color: var(--bg);
-  background-image: repeating-linear-gradient(0deg, rgba(31, 29, 26, 0.018) 0 1px, transparent 1px 6px);
-}
-/* 카드: 종이 느낌으로 테두리를 얇게, 그림자는 약하게 */
-.card { border: 1px solid var(--line); box-shadow: 0 1px 0 rgba(31, 29, 26, 0.03); }
-/* 버튼: 먹색 / 선택은 낙관 빨강 테두리 */
-.btn-primary { background: var(--text); }
-.btn-primary:disabled { background: #c9c2b6; }
-.tag { background: #e6ebec; color: var(--accent2); }
-/* 순환 가운데: 도장 + '결' + 한 줄 소개 */
-.cycle-logo { border-radius: 14px; filter: drop-shadow(0 4px 10px rgba(184, 67, 47, 0.25)); }
+/* ===== 이름 '결' + 물결 로고 (디자인·색은 기존 그대로) ===== */
+.logo .logo-word, .cycle-center .logo-word { font-size: 22px; font-weight: 900; letter-spacing: 0; color: var(--text); margin-left: 0; }
 .cycle-center .logo-word { font-size: 26px; line-height: 1; }
-.cycle-tagline { font-size: 11px; color: var(--muted); letter-spacing: 0.5px; }
-.cycle-step { background: var(--accent); }
-footer { font-family: var(--serif); }
-/* 상단·가운데 '결' 글자: 이전 로고 글자 스타일(작은 회색) 덮어쓰기 */
-.logo .logo-word, .cycle-center .logo-word { font-size: 24px; letter-spacing: 0; color: var(--text); margin-left: 0; font-weight: 800; }
-.cycle-center .logo-word { font-size: 28px; }
-/* 명조체는 폭이 넓어서 순환 칸 제목이 줄바꿈되지 않게 */
-.cycle-node { width: 126px; }
-.cycle-node b { font-size: 14px; white-space: nowrap; letter-spacing: -0.5px; }
-@media (max-width: 420px) { .cycle-node { width: 110px; } .cycle-node b { font-size: 13px; } }
+.logo-disc, .cycle-logo { border-radius: 10px; }
+.logo:hover .logo-disc { transform: rotate(-8deg); }
+.cycle-tagline { font-size: 11px; color: var(--muted); }

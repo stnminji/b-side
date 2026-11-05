@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- 결 로고: 낙관(도장)처럼 붉은 사각형 안에 세 줄의 물결(나뭇결·물결·소리의 결) -->
-  <rect x="4" y="4" width="56" height="56" rx="14" fill="#B8432F"/>
-  <g fill="none" stroke="#F6F2EA" stroke-width="3.6" stroke-linecap="round">
+  <!-- 결 로고: 둥근 사각형 안에 세 줄의 물결 (나뭇결·물결·소리의 결), 기존 테라코타 색 -->
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="#c0643c"/>
+  <g fill="none" stroke="#fffaf2" stroke-width="3.6" stroke-linecap="round">
     <path d="M15 22c5.7-5 11.3-5 17 0s11.3 5 17 0"/>
     <path d="M15 32c5.7-5 11.3-5 17 0s11.3 5 17 0"/>
     <path d="M15 42c5.7-5 11.3-5 17 0s11.3 5 17 0"/>
