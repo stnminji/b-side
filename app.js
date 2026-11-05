@@ -103,6 +103,8 @@ function localRecommend(query) {
 // ----- 화면 단계 전환 -----
 const STEPS = ["step-home", "step-archive", "step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed", "step-song", "step-artist", "step-search", "step-profile", "step-connect"];
 function showStep(id) {
+  // '취향으로 연결' 화면을 떠나면 그 화면의 글자를 비운다 (connect.js)
+  if (id !== "step-connect" && !$("#step-connect").hidden && window.resetConnect) window.resetConnect();
   STEPS.forEach((s) => ($("#" + s).hidden = s !== id));
   window.scrollTo({ top: 0, behavior: "smooth" });
 }

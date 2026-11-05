@@ -24,21 +24,28 @@
     return data.session;
   }
 
-  window.openConnect = async () => {
-    if (window.rememberPage) window.rememberPage();
+  // fromBack: '뒤로'로 돌아올 때는 방문 기록을 다시 쌓지 않는다
+  window.openConnect = async (fromBack) => {
+    if (!fromBack && window.rememberPage) window.rememberPage();
     showStep("step-connect");
+    window.resetConnect();
     const s = await session();
-    $("#match-list").innerHTML = "";
     if (!s) {
       $("#taste-me-summary").textContent = "로그인하면 내 감상을 AI가 읽고 취향을 분석해 드려요.";
-      $("#taste-me-tags").innerHTML = "";
-      $("#taste-me-meta").textContent = "";
-      $("#same-song-list").textContent = "로그인 후 노래를 저장하거나 감상을 남기면, 같은 노래를 좋아하는 사람을 찾아드려요.";
       return;
     }
     if (window.bsideEnsureProfile && !(await window.bsideEnsureProfile(s.user.id))) return;
     await loadMyTaste(s);
-    loadSameSong(s);
+  };
+
+  // 화면을 나가면(다른 화면으로 가면) 이 화면에 쓰여 있던 글자를 모두 비운다 (app.js의 showStep이 부름)
+  window.resetConnect = () => {
+    myProfile = null;
+    ["#taste-me-summary", "#taste-me-meta", "#taste-status"].forEach((sel) => ($(sel).textContent = ""));
+    $("#taste-me-tags").innerHTML = "";
+    $("#match-list").innerHTML = "";
+    $("#taste-consent").checked = false;
+    $("#taste-delete").hidden = true;
   };
 
   // ----- ② 나의 감상 결 -----
@@ -55,8 +62,10 @@
       $("#taste-me-meta").textContent = "";
       $("#taste-consent").checked = false;
       $("#taste-consent").disabled = true;
+      $("#taste-delete").hidden = true;
       return;
     }
+    $("#taste-delete").hidden = false;
     $("#taste-me-summary").textContent = myProfile.summary;
     (myProfile.tags || []).forEach((t) => tags.appendChild(el("span", "tag", t)));
     $("#taste-me-meta").textContent = "마지막 분석: " + new Date(myProfile.updated_at).toLocaleString("ko-KR");
@@ -88,6 +97,17 @@
     btn.disabled = false;
   });
 
+  $("#taste-delete").addEventListener("click", async () => {
+    const s = await session();
+    if (!s || !myProfile) return;
+    if (!confirm("내 취향 분석을 지울까요? 다른 사람과의 AI 연결에서도 바로 빠져요.")) return;
+    const { error } = await sb().from("taste_profiles").delete().eq("user_id", s.user.id);
+    if (error) return alert("지우지 못했어요.");
+    myProfile = null;
+    paintTaste();
+    $("#taste-status").textContent = "취향 분석을 지웠어요.";
+  });
+
   $("#taste-consent").addEventListener("change", async (e) => {
     const s = await session();
     if (!s || !myProfile) return (e.target.checked = false);
@@ -105,68 +125,100 @@
     $("#taste-status").textContent = on ? "✓ 연결을 켰어요. 취향이 닮은 사람을 찾을 수 있어요." : "연결을 껐어요. 다른 사람의 매칭에서 바로 빠져요.";
   });
 
-  // ----- ③ 같은 노래를 좋아하는 사람 (공개 저장·감상 기준) -----
-  async function loadSameSong(s) {
-    const list = $("#same-song-list");
-    list.textContent = "불러오는 중…";
-    const client = sb();
-    const [lib, memo] = await Promise.all([
-      client.from("library").select("track_id, title").eq("user_id", s.user.id).limit(300),
-      client.from("song_memos").select("track_id, title").eq("user_id", s.user.id).limit(300),
-    ]);
-    const mine = new Map();
-    [...(lib.data || []), ...(memo.data || [])].forEach((x) => mine.set(x.track_id, x.title));
-    if (!mine.size) return (list.textContent = "노래를 검색해서 저장하거나 감상을 남기면, 같은 노래를 좋아하는 사람이 보여요.");
-    const ids = [...mine.keys()].slice(0, 200);
-    // DB 규칙상 남의 것은 '공개'만 읽힌다 (is_public 조건도 함께)
-    const [olib, omemo] = await Promise.all([
-      client.from("library").select("user_id, track_id, profiles(nickname)").in("track_id", ids).eq("is_public", true).neq("user_id", s.user.id).limit(300),
-      client.from("song_memos").select("user_id, track_id, profiles(nickname)").in("track_id", ids).eq("is_public", true).neq("user_id", s.user.id).limit(300),
-    ]);
-    const people = new Map();
-    [...(olib.data || []), ...(omemo.data || [])].forEach((x) => {
-      const p = people.get(x.user_id) || { nickname: x.profiles && x.profiles.nickname, songs: new Set() };
-      p.songs.add(mine.get(x.track_id));
-      people.set(x.user_id, p);
-    });
-    list.textContent = "";
-    if (!people.size) return list.appendChild(el("p", "hint", "아직 같은 노래를 공개한 사람이 없어요. 아래 'AI로 같은 이유 찾기'로 넓혀 보세요."));
-    [...people.entries()].sort((a, b) => b[1].songs.size - a[1].songs.size).slice(0, 10).forEach(([uid, p]) => {
-      const item = el("article", "record");
-      const head = el("div", "neighbor-head");
-      head.append(window.nickButton(p.nickname, uid), el("span", "tag", `같은 노래 ${p.songs.size}곡`));
-      item.append(head, el("p", "record-artists", [...p.songs].join(" · ")), discoverButton(uid));
-      list.appendChild(item);
-    });
-  }
-
-  // ----- ③ 같은 이유로 연결 (AI) -----
+  // ----- ③ 취향으로 연결된 사람: 같은 노래 · 같은 아티스트 · 같은 이유(AI) -----
+  // 같은 노래·같은 아티스트: 남의 것은 '공개'로 저장·감상한 것만 (DB 규칙 + is_public 조건)
+  // 같은 이유: '연결 동의'한 사람의 취향 분석 요약끼리 AI가 비교
   $("#btn-match").addEventListener("click", async () => {
     const s = await session();
     if (!s) return alert("로그인 후에 쓸 수 있어요.");
-    const list = $("#match-list");
     const btn = $("#btn-match");
+    const list = $("#match-list");
     btn.disabled = true;
-    list.textContent = "AI가 취향이 닮은 사람을 찾고 있어요…";
-    try {
-      const r = await callAI({ action: "match_taste", token: s.access_token });
-      list.textContent = "";
-      if (!r.matches.length) list.appendChild(el("p", "hint", "아직 연결에 동의한 사람 중 취향이 닮은 사람이 없어요."));
-      r.matches.forEach((m) => {
-        const item = el("article", "record");
-        const head = el("div", "neighbor-head");
-        head.append(window.nickButton(m.nickname, m.user_id), el("span", "tag", `닮은 정도 ${m.score}%`));
-        item.append(head, el("p", "record-summary", m.reason));
-        const tags = el("div", "tags");
-        m.tags.forEach((t) => tags.appendChild(el("span", "tag", t)));
-        item.append(tags, discoverButton(m.user_id));
-        list.appendChild(item);
-      });
-    } catch (e) {
-      list.textContent = e.message || "찾지 못했어요. 잠시 후 다시 해 주세요.";
-    }
+    list.textContent = "찾고 있어요… (AI 연결은 10초 안팎)";
+    const [shared, ai] = await Promise.all([findShared(s), findByReason(s)]);
+    list.textContent = "";
+    renderGroup(list, "music", "같은 노래", shared.songs, "아직 내 곡을 공개로 저장·감상한 사람이 없어요.");
+    renderGroup(list, "mic", "같은 아티스트", shared.artists, "아직 같은 아티스트를 공개로 좋아하는 사람이 없어요.");
+    renderGroup(list, "sparkle", "같은 이유 (AI)", ai.people, ai.message);
     btn.disabled = false;
   });
+
+  // 같은 노래 / 같은 아티스트
+  async function findShared(s) {
+    const client = sb();
+    const [lib, memo] = await Promise.all([
+      client.from("library").select("track_id, title, artist_id, artist").eq("user_id", s.user.id).limit(300),
+      client.from("song_memos").select("track_id, title, artist").eq("user_id", s.user.id).limit(300),
+    ]);
+    const mine = [...(lib.data || []), ...(memo.data || [])];
+    if (!mine.length) return { songs: [], artists: [] };
+    const myTracks = new Map(mine.map((x) => [x.track_id, x.title]));
+    const myArtists = new Map(mine.map((x) => [norm(x.artist), x.artist]));
+    // 남의 '공개' 곡 (같은 아티스트를 찾으려면 아티스트 이름으로 비교해야 해서 최근 공개 곡을 넉넉히)
+    const [olib, omemo] = await Promise.all([
+      client.from("library").select("user_id, track_id, artist, profiles(nickname)").eq("is_public", true).neq("user_id", s.user.id).order("created_at", { ascending: false }).limit(500),
+      client.from("song_memos").select("user_id, track_id, artist, profiles(nickname)").eq("is_public", true).neq("user_id", s.user.id).order("updated_at", { ascending: false }).limit(500),
+    ]);
+    const songs = new Map();
+    const artists = new Map();
+    [...(olib.data || []), ...(omemo.data || [])].forEach((x) => {
+      const nick = x.profiles && x.profiles.nickname;
+      if (myTracks.has(x.track_id)) add(songs, x.user_id, nick, myTracks.get(x.track_id));
+      else if (myArtists.has(norm(x.artist))) add(artists, x.user_id, nick, myArtists.get(norm(x.artist)));
+    });
+    // 같은 노래로 이미 나온 사람은 '같은 아티스트'에서 빼서 중복 없이
+    songs.forEach((_, uid) => artists.delete(uid));
+    const toList = (m, unit) => [...m.entries()].sort((a, b) => b[1].items.size - a[1].items.size).slice(0, 10)
+      .map(([uid, p]) => ({ user_id: uid, nickname: p.nickname, badge: `${unit} ${p.items.size}`, detail: [...p.items].join(" · ") }));
+    return { songs: toList(songs, "같은 노래"), artists: toList(artists, "같은 아티스트") };
+  }
+  function add(map, uid, nickname, item) {
+    const p = map.get(uid) || { nickname, items: new Set() };
+    p.items.add(item);
+    map.set(uid, p);
+  }
+  function norm(t) {
+    return String(t || "").replace(/\s|\(.*?\)/g, "").toLowerCase();
+  }
+
+  // 같은 이유 (AI)
+  async function findByReason(s) {
+    if (!myProfile) return { people: [], message: "먼저 위에서 'AI로 취향 분석'을 해 주세요." };
+    if (!myProfile.consent) return { people: [], message: "'다른 사람과 연결하기'를 켜면 취향이 닮은 사람을 AI가 찾아줘요. (서로 동의한 사람끼리만)" };
+    try {
+      const r = await callAI({ action: "match_taste", token: s.access_token });
+      return {
+        people: r.matches.map((m) => ({ user_id: m.user_id, nickname: m.nickname, badge: `닮은 정도 ${m.score}%`, detail: m.reason, tags: m.tags })),
+        message: "아직 연결에 동의한 사람 중 취향이 닮은 사람이 없어요.",
+      };
+    } catch (e) {
+      return { people: [], message: e.message || "AI 연결을 불러오지 못했어요." };
+    }
+  }
+
+  // 결과 묶음 하나 (제목 + 사람 카드들)
+  function renderGroup(list, icon, title, people, empty) {
+    const group = el("div", "match-group");
+    const h = el("h4", "match-title");
+    h.innerHTML = ic(icon);
+    h.append(`${title} `, el("span", "hint small", `${people.length}명`));
+    group.appendChild(h);
+    if (!people.length) group.appendChild(el("p", "hint small", empty));
+    people.forEach((p) => {
+      const item = el("article", "record");
+      const head = el("div", "neighbor-head");
+      head.append(window.nickButton(p.nickname, p.user_id), el("span", "tag", p.badge));
+      item.append(head, el("p", "record-summary", p.detail));
+      if (p.tags && p.tags.length) {
+        const tags = el("div", "tags");
+        p.tags.forEach((t) => tags.appendChild(el("span", "tag", t)));
+        item.appendChild(tags);
+      }
+      item.appendChild(discoverButton(p.user_id));
+      group.appendChild(item);
+    });
+    list.appendChild(group);
+  }
 
   // ----- ④ 그 사람에게서 새 음악 발견 (AI) -----
   function discoverButton(userId, target) {

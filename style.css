@@ -395,3 +395,6 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 .taste-result .tags { margin: 0; }
 .taste-result .tag { background: rgba(255, 250, 242, 0.14); color: #f3c9a8; }
 .consent-note { margin: -8px 4px 18px; }
+.match-group { margin: 12px 0 18px; }
+.match-title { display: flex; align-items: center; gap: 4px; margin: 0 0 8px; font-size: 15px; }
+.match-title .ic { color: var(--accent); }

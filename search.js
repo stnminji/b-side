@@ -26,6 +26,8 @@
   };
   window.goBack = () => {
     const prev = history.pop();
+    // '취향으로 연결'은 나갈 때 글자를 비우므로, 돌아오면 저장된 취향 분석을 다시 불러온다
+    if (prev === "step-connect" && window.openConnect) return window.openConnect(true);
     showStep(prev || "step-home");
   };
   // 처음 화면으로 가면 기록을 비운다
