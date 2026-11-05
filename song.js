@@ -345,6 +345,8 @@
     $("#artist-ai").disabled = false;
     window.renderPeople($("#artist-people"), "artist_id", artist.artist_id, "아직 이 아티스트의 노래를 공개 음악 창고에 담은 사람이 없어요.");
     loadFavorite();
+    loadArtistMemo();
+    loadArtistOthers();
   }
 
   // AI로 비슷한 인디 아티스트 찾기 (기존 추천 기능 재사용, 실존 검증 포함)
@@ -607,14 +609,19 @@
     const client = sb();
     const { data: s } = await client.auth.getSession();
     if (!s.session) return (list.textContent = "로그인이 필요해요.");
-    // 남의 '공개' ♡도 읽히므로 반드시 '내 것'만
-    const { data: rows, error } = await client.from("favorite_artists").select("id, artist_id, name, picture, is_public")
-      .eq("user_id", s.session.user.id).order("created_at", { ascending: false }).limit(200);
+    // 남의 '공개' 글도 읽히므로 반드시 '내 것'만
+    const [favs, memos] = await Promise.all([
+      client.from("favorite_artists").select("artist_id, name, picture, created_at").eq("user_id", s.session.user.id).limit(300),
+      client.from("artist_memos").select("artist_id, name, picture, memo, is_public, updated_at").eq("user_id", s.session.user.id).limit(300),
+    ]);
+    // 같은 아티스트는 한 줄로 (♡ + 감상)
+    const byId = new Map();
+    (favs.data || []).forEach((f) => byId.set(f.artist_id, { ...f, liked: true, when: f.created_at }));
+    (memos.data || []).forEach((m) => byId.set(m.artist_id, { ...(byId.get(m.artist_id) || {}), ...m, when: m.updated_at }));
+    const rows = [...byId.values()].sort((x, y) => String(y.when).localeCompare(String(x.when)));
     list.textContent = "";
-    if (error) return (list.textContent = "불러오지 못했어요.");
-    if (!rows.length) return (list.textContent = "아직 좋아요한 아티스트가 없어요. 아티스트 페이지에서 하트를 눌러 보세요.");
+    if (!rows.length) return (list.textContent = "아직 아티스트 감상이 없어요. 아티스트 페이지에서 감상을 남기거나 하트를 눌러 보세요.");
     rows.forEach((r) => {
-      const row = el("div", "fav-item");
       const b = el("button", "track-row");
       if (r.picture) {
         const img = el("img", "track-cover round");
@@ -624,11 +631,93 @@
         b.appendChild(img);
       }
       const text = el("span", "track-text");
-      text.append(el("span", "track-title", r.name), el("span", "hint small", "좋아하는 아티스트"));
+      const meta = [r.liked ? "좋아요" : "", r.memo ? (r.is_public ? "공개 감상" : "나만 보는 감상") : "감상 아직 없음"].filter(Boolean).join(" · ");
+      text.append(el("span", "track-title", r.name), el("span", "hint small", meta));
+      if (r.memo) text.appendChild(el("span", "memo-snippet", r.memo));
       b.appendChild(text);
       b.addEventListener("click", () => go(() => window.openArtist(r.artist_id)));
-      row.appendChild(b);
-      list.appendChild(row);
+      list.appendChild(b);
+    });
+  }
+
+  // ----- 아티스트 페이지: 내 감상 노트 (기본 나만 보기) -----
+  let amemo = null;
+  let amemoPublic = false;
+  function paintAmemoVis() {
+    const btn = $("#amemo-visibility");
+    btn.innerHTML = amemoPublic ? ic("globe") + "공개" : ic("lock") + "나만 보기";
+    btn.classList.toggle("ghost", !amemoPublic);
+  }
+  $("#amemo-text").addEventListener("input", () => ($("#amemo-count").textContent = `${$("#amemo-text").value.length} / 1000`));
+  $("#amemo-visibility").addEventListener("click", () => {
+    if (!amemoPublic && !confirm("이 감상을 공개할까요? 저장하면 다른 사람이 닉네임과 함께 볼 수 있어요.")) return;
+    amemoPublic = !amemoPublic;
+    paintAmemoVis();
+    $("#amemo-status").textContent = "저장을 눌러야 바뀐 공개 설정이 적용돼요.";
+  });
+
+  async function loadArtistMemo() {
+    amemo = null;
+    amemoPublic = false;
+    $("#amemo-text").value = "";
+    $("#amemo-count").textContent = "0 / 1000";
+    $("#amemo-status").textContent = "";
+    paintAmemoVis();
+    const { data: s } = await sb().auth.getSession();
+    $("#amemo-text").disabled = !s.session;
+    $("#amemo-save").disabled = !s.session;
+    if (!s.session) return ($("#amemo-status").textContent = "로그인하면 이 아티스트에 대한 나만의 감상을 남길 수 있어요.");
+    const { data: rows } = await sb().from("artist_memos").select("id, memo, is_public, updated_at")
+      .eq("user_id", s.session.user.id).eq("artist_id", artist.artist_id).limit(1);
+    if (rows && rows.length) {
+      amemo = rows[0];
+      amemoPublic = amemo.is_public;
+      $("#amemo-text").value = amemo.memo;
+      $("#amemo-count").textContent = `${amemo.memo.length} / 1000`;
+      paintAmemoVis();
+      $("#amemo-status").textContent = "마지막 저장: " + new Date(amemo.updated_at).toLocaleString("ko-KR");
+    }
+  }
+
+  $("#amemo-save").addEventListener("click", async () => {
+    const text = $("#amemo-text").value.trim();
+    if (!text) return ($("#amemo-status").textContent = "감상을 적어 주세요.");
+    const { data: s } = await sb().auth.getSession();
+    if (!s.session) return;
+    if (window.bsideEnsureProfile && !(await window.bsideEnsureProfile(s.session.user.id))) return;
+    $("#amemo-save").disabled = true;
+    $("#amemo-status").textContent = "저장 중…";
+    const cols = "id, memo, is_public, updated_at";
+    const res = amemo
+      ? await sb().from("artist_memos").update({ memo: text.slice(0, 1000), is_public: amemoPublic }).eq("id", amemo.id).select(cols)
+      : await sb().from("artist_memos").insert({
+          artist_id: artist.artist_id, name: artist.name.slice(0, 100), picture: artist.picture || null,
+          memo: text.slice(0, 1000), is_public: amemoPublic,
+        }).select(cols);
+    $("#amemo-save").disabled = false;
+    if (res.error || !res.data || !res.data.length) return ($("#amemo-status").textContent = "저장하지 못했어요. 잠시 후 다시 해 주세요.");
+    amemo = res.data[0];
+    $("#amemo-status").textContent = "✓ 저장했어요 · " + new Date(amemo.updated_at).toLocaleString("ko-KR") + (amemo.is_public ? " · 공개" : " · 나만 보기");
+    loadArtistOthers();
+  });
+
+  // 같은 아티스트에 대해 다른 사람들이 '공개'한 감상
+  async function loadArtistOthers() {
+    const list = $("#artist-others");
+    list.textContent = "불러오는 중…";
+    const { data: s } = await sb().auth.getSession();
+    const my = s.session ? s.session.user.id : null;
+    const { data: rows } = await sb().from("artist_memos").select("user_id, memo, updated_at, profiles(nickname)")
+      .eq("artist_id", artist.artist_id).eq("is_public", true).order("updated_at", { ascending: false }).limit(20);
+    const others = (rows || []).filter((r) => r.user_id !== my);
+    list.textContent = "";
+    if (!others.length) return (list.textContent = "아직 공개된 감상이 없어요. 내 감상을 '공개'로 저장하면 첫 감상이 돼요.");
+    others.forEach((r) => {
+      const item = el("article", "record");
+      const who = el("p", "record-who");
+      who.append(window.nickButton(r.profiles && r.profiles.nickname, r.user_id), " · " + new Date(r.updated_at).toLocaleDateString("ko-KR"));
+      item.append(who, el("p", "record-summary", r.memo)); // 남이 쓴 글 → textContent로만
+      list.appendChild(item);
     });
   }
 })();

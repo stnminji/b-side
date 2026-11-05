@@ -90,7 +90,7 @@
       myProfile = res.data[0];
       paintTaste();
       const b = r.based_on;
-      $("#taste-status").textContent = `✓ 분석했어요 (감상 메모 ${b.memos} · 저장 곡 ${b.saved} · 좋아하는 아티스트 ${b.artists}개 기준)`;
+      $("#taste-status").textContent = `✓ 분석했어요 (노래 감상 ${b.memos} · 아티스트 감상 ${b.artist_memos} · 좋아하는 아티스트 ${b.artists} 기준)`;
     } catch (e) {
       $("#taste-status").textContent = e.message || "분석하지 못했어요. 잠시 후 다시 해 주세요.";
     }
@@ -146,21 +146,28 @@
   // 같은 노래 / 같은 아티스트
   async function findShared(s) {
     const client = sb();
-    const [lib, memo] = await Promise.all([
+    const [lib, memo, amemo] = await Promise.all([
       client.from("library").select("track_id, title, artist_id, artist").eq("user_id", s.user.id).limit(300),
       client.from("song_memos").select("track_id, title, artist").eq("user_id", s.user.id).limit(300),
+      client.from("artist_memos").select("name").eq("user_id", s.user.id).limit(300),
     ]);
     const mine = [...(lib.data || []), ...(memo.data || [])];
-    if (!mine.length) return { songs: [], artists: [] };
+    if (!mine.length && !(amemo.data || []).length) return { songs: [], artists: [] };
     const myTracks = new Map(mine.map((x) => [x.track_id, x.title]));
     const myArtists = new Map(mine.map((x) => [norm(x.artist), x.artist]));
+    (amemo.data || []).forEach((x) => myArtists.set(norm(x.name), x.name));
     // 남의 '공개' 곡 (같은 아티스트를 찾으려면 아티스트 이름으로 비교해야 해서 최근 공개 곡을 넉넉히)
-    const [olib, omemo] = await Promise.all([
+    const [olib, omemo, oamemo] = await Promise.all([
       client.from("library").select("user_id, track_id, artist, profiles(nickname)").eq("is_public", true).neq("user_id", s.user.id).order("created_at", { ascending: false }).limit(500),
       client.from("song_memos").select("user_id, track_id, artist, profiles(nickname)").eq("is_public", true).neq("user_id", s.user.id).order("updated_at", { ascending: false }).limit(500),
+      client.from("artist_memos").select("user_id, name, profiles(nickname)").eq("is_public", true).neq("user_id", s.user.id).order("updated_at", { ascending: false }).limit(500),
     ]);
     const songs = new Map();
     const artists = new Map();
+    // 남이 '공개'로 쓴 아티스트 감상 → 같은 아티스트
+    (oamemo.data || []).forEach((x) => {
+      if (myArtists.has(norm(x.name))) add(artists, x.user_id, x.profiles && x.profiles.nickname, myArtists.get(norm(x.name)));
+    });
     [...(olib.data || []), ...(omemo.data || [])].forEach((x) => {
       const nick = x.profiles && x.profiles.nickname;
       if (myTracks.has(x.track_id)) add(songs, x.user_id, nick, myTracks.get(x.track_id));

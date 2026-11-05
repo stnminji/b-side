@@ -6,7 +6,13 @@
 (function () {
   const $ = (sel) => document.querySelector(sel);
 
-  $("#hub-archive").addEventListener("click", () => showStep("step-archive"));
+  // 나의 음악 저장소 = 감상 노트 [음악 | 아티스트] (로그인 필요)
+  $("#hub-archive").addEventListener("click", async () => {
+    if (await needLogin()) return;
+    if (window.rememberPage) window.rememberPage();
+    await window.showRecords();
+    window.selectRecordsTab("memos");
+  });
   // 순환의 1단계 '검색': 위쪽 검색창으로 데려간다
   $("#hub-search").addEventListener("click", () => {
     document.body.classList.add("searching"); // 홈에서 숨겨 둔 검색창을 보여 준다
@@ -24,7 +30,7 @@
     }
     const { data } = await sb.auth.getSession();
     if (data.session) return false;
-    alert("로그인하면 내 음악 창고·메모·기록을 볼 수 있어요.");
+    alert("로그인하면 나만의 감상 노트를 쓰고 볼 수 있어요.");
     $("#btn-open-login").click();
     return true;
   }

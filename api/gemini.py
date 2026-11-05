@@ -795,19 +795,24 @@ def analyze_taste(payload):
     memos = _supabase(f"/rest/v1/song_memos?user_id=eq.{me}&select=artist,title,memo&order=updated_at.desc&limit=30", token)
     favs = _supabase(f"/rest/v1/favorite_artists?user_id=eq.{me}&select=name&limit=30", token)
     lib = _supabase(f"/rest/v1/library?user_id=eq.{me}&select=artist,title&order=created_at.desc&limit=50", token)
-    if not memos and not lib and not favs:
+    try:
+        amemos = _supabase(f"/rest/v1/artist_memos?user_id=eq.{me}&select=name,memo&order=updated_at.desc&limit=20", token)
+    except Exception:
+        amemos = []  # 표가 아직 없을 때도 분석은 계속
+    if not memos and not lib and not favs and not amemos:
         raise ValueError("먼저 노래를 저장하거나 감상 메모를 남겨 주세요.")
     records = {
         "감상 메모": [{"곡": f"{m['artist']} - {m['title']}"[:120], "감상": str(m["memo"])[:300]} for m in memos],
         "저장한 곡": [f"{x['artist']} - {x['title']}"[:120] for x in lib],
         "좋아하는 아티스트": [str(f["name"])[:60] for f in favs],
+        "아티스트 감상": [{"아티스트": str(a["name"])[:60], "감상": str(a["memo"])[:300]} for a in amemos],
     }
     result = call_gemini([{"text": TASTE_PROMPT.replace("{records}", json.dumps(records, ensure_ascii=False))}])
     summary = str(result.get("summary") or "").strip()[:300]
     if not summary:
         raise RuntimeError("취향을 분석하지 못했어요.")
     tags = [str(t).strip()[:20] for t in (result.get("tags") or []) if str(t).strip()][:6]
-    return {"summary": summary, "tags": tags, "based_on": {"memos": len(memos), "saved": len(lib), "artists": len(favs)}}
+    return {"summary": summary, "tags": tags, "based_on": {"memos": len(memos), "artist_memos": len(amemos), "artists": len(favs)}}
 
 
 def match_taste(payload):

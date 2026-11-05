@@ -210,9 +210,8 @@
     $("#profile-name").textContent = "@" + p[0].nickname;
     // 공개된 것만 센다 (내 프로필을 볼 때도 '남에게 보이는 모습' 그대로)
     const pub = (table) => client.from(table).select("id", { count: "exact", head: true }).eq("user_id", userId).eq("is_public", true);
-    const [lib, memo, note, rec] = await Promise.all([pub("library"), pub("song_memos"), pub("notes"), pub("records")]);
-    $("#profile-stats").textContent =
-      `공개 음악 창고 ${lib.count || 0}곡 · 노래 감상 ${memo.count || 0} · 자유 메모 ${note.count || 0} · 추천 기록 ${rec.count || 0}`;
+    const [memo, amemo] = await Promise.all([pub("song_memos"), pub("artist_memos")]);
+    $("#profile-stats").textContent = `공개 감상 노트: 노래 ${memo.count || 0} · 아티스트 ${amemo.count || 0}`;
     // 나와 겹치는 아티스트
     const my = await me();
     if (my && my !== userId) {
@@ -228,7 +227,7 @@
         $("#profile-common").insertAdjacentHTML("afterbegin", ic("users"));
       }
     }
-    selectProfileTab("library");
+    selectProfileTab("memos"); // 음악 창고는 숨김 → 노래 감상이 첫 탭
   };
 
   function selectProfileTab(tab) {
@@ -251,12 +250,18 @@
     if (tab === "library") rows = (await base("library", "track_id, artist, title, album, cover").order("created_at", { ascending: false }).limit(100)).data || [];
     if (tab === "memos") rows = (await base("song_memos", "id, track_id, artist, title, cover, memo, updated_at").order("updated_at", { ascending: false }).limit(50)).data || [];
     if (tab === "notes") rows = (await base("notes", "id, body, created_at").order("created_at", { ascending: false }).limit(50)).data || [];
+    if (tab === "artist_memos") rows = (await base("artist_memos", "id, artist_id, name, picture, memo, updated_at").order("updated_at", { ascending: false }).limit(50)).data || [];
     if (tab === "records") rows = (await base("records", "id, query, summary, bands, created_at").order("created_at", { ascending: false }).limit(50)).data || [];
     list.textContent = "";
     if (!rows.length) return list.appendChild(el("p", "hint", "아직 공개한 내용이 없어요."));
-    const counts = tab === "library" ? {} : await window.loadSocialCounts(rows.map((r) => r.id));
+    const counts = tab === "library" || tab === "artist_memos" ? {} : await window.loadSocialCounts(rows.map((r) => r.id));
     rows.forEach((r) => {
       if (tab === "library") return list.appendChild(trackRow(r));
+      if (tab === "artist_memos") {
+        const item = el("article", "record");
+        item.append(artistRow(r), el("p", "record-summary", r.memo));
+        return list.appendChild(item);
+      }
       const item = el("article", "record");
       if (tab === "memos") item.append(trackRow(r), el("p", "record-summary", r.memo), window.socialBar("song_memo", r.id, counts[r.id]));
       if (tab === "notes") item.append(el("p", "hint small", new Date(r.created_at).toLocaleDateString("ko-KR")), el("p", "record-summary", r.body), window.socialBar("note", r.id, counts[r.id]));
@@ -286,4 +291,25 @@
     return b;
   }
   window.trackRow = trackRow;
+
+  // 아티스트 한 줄 (누르면 아티스트 페이지)
+  function artistRow(r) {
+    const b = el("button", "track-row");
+    if (r.picture) {
+      const img = el("img", "track-cover round");
+      img.src = r.picture;
+      img.alt = "";
+      img.loading = "lazy";
+      b.appendChild(img);
+    }
+    const text = el("span", "track-text");
+    text.append(el("span", "track-title", r.name));
+    b.appendChild(text);
+    b.addEventListener("click", () => {
+      if (window.rememberPage) window.rememberPage();
+      window.openArtist(r.artist_id);
+    });
+    return b;
+  }
+  window.artistRow = artistRow;
 })();

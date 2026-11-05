@@ -207,7 +207,7 @@
           <h2 id="song-name" class="song-name"></h2>
           <button id="song-by" class="song-by link-btn" title="아티스트 페이지로"></button>
           <p id="song-album" class="hint small"></p>
-          <button id="btn-library" class="btn-small ghost" type="button">＋ 창고에 담기</button>
+          <button id="btn-library" class="btn-small ghost off" type="button">＋ 창고에 담기</button>
         </div>
       </div>
       <p id="song-matched" class="hint small warn" hidden></p>
@@ -227,7 +227,7 @@
 
         <!-- 내 메모 (기본 나만 보기, 로그인 필요) -->
         <div class="memo">
-          <h3 class="memo-title"><i data-ic="pen"></i>내 메모</h3>
+          <h3 class="memo-title"><i data-ic="pen"></i>내 감상 노트</h3>
           <textarea id="memo-text" rows="4" maxlength="1000" placeholder="이 노래에 대한 생각, 떠오르는 장면, 좋아하는 부분…"></textarea>
           <div class="memo-row">
             <button id="memo-visibility" class="btn-small ghost" type="button"><i data-ic="lock"></i>나만 보기</button>
@@ -273,6 +273,22 @@
         <p><span id="artist-genre" class="tag"></span></p>
         <p id="artist-sound" class="song-intro"></p>
         <div id="artist-moods" class="tags"></div>
+      </div>
+
+      <!-- 아티스트 감상 노트 (기본 나만 보기) -->
+      <div class="memo">
+        <h3 class="memo-title"><i data-ic="pen"></i>내 감상 노트</h3>
+        <textarea id="amemo-text" rows="3" maxlength="1000" placeholder="이 아티스트의 어떤 점이 좋은지, 처음 알게 된 순간, 공연 기억…"></textarea>
+        <div class="memo-row">
+          <button id="amemo-visibility" class="btn-small ghost" type="button"><i data-ic="lock"></i>나만 보기</button>
+          <span id="amemo-count" class="hint small">0 / 1000</span>
+          <button id="amemo-save" class="btn-small" type="button">저장</button>
+        </div>
+        <p id="amemo-status" class="hint small" role="status"></p>
+      </div>
+      <div class="others">
+        <h3 class="memo-title"><i data-ic="chat"></i>다른 사람들의 감상</h3>
+        <div id="artist-others" class="records-list"></div>
       </div>
 
       <h3 class="memo-title"><i data-ic="music"></i>노래</h3>
@@ -336,8 +352,9 @@
       <p id="profile-stats" class="hint small"></p>
       <p id="profile-common" class="common" hidden></p>
       <div class="song-tabs">
-        <button class="btn-small profile-tab" data-ptab="library"><i data-ic="box"></i>음악 창고</button>
-        <button class="btn-small ghost profile-tab" data-ptab="memos"><i data-ic="chat"></i>노래 감상</button>
+        <button class="btn-small profile-tab off" data-ptab="library"><i data-ic="box"></i>음악 창고</button>
+        <button class="btn-small ghost profile-tab" data-ptab="memos"><i data-ic="music"></i>노래 감상</button>
+        <button class="btn-small ghost profile-tab" data-ptab="artist_memos"><i data-ic="mic"></i>아티스트 감상</button>
         <button class="btn-small ghost profile-tab off" data-ptab="notes"><i data-ic="note"></i>자유 메모</button>
         <button class="btn-small ghost profile-tab off" data-ptab="records"><i data-ic="headphones"></i>추천 기록</button>
       </div>
@@ -371,16 +388,17 @@
 
     <!-- 내 기록 (로그인한 사용자만) -->
     <section id="step-records" class="card" hidden>
-      <h2 class="result-title">내 기록</h2>
+      <h2 class="result-title">나의 음악 저장소</h2>
+      <p class="hint">노래와 아티스트에 남긴 나만의 감상 노트예요.</p>
       <div class="song-tabs">
-        <button class="btn-small records-tab" data-rtab="library"><i data-ic="box"></i>내 음악 창고</button>
-        <button class="btn-small ghost records-tab" data-rtab="memos"><i data-ic="pen"></i>내 메모</button>
+        <button class="btn-small records-tab off" data-rtab="library"><i data-ic="box"></i>내 음악 창고</button>
+        <button class="btn-small ghost records-tab" data-rtab="memos"><i data-ic="music"></i>음악</button>
         <button class="btn-small ghost records-tab off" data-rtab="records"><i data-ic="headphones"></i>추천 기록</button>
         <button class="btn-small ghost records-tab off" data-rtab="notes"><i data-ic="note"></i>자유 메모</button>
-        <button class="btn-small ghost records-tab" data-rtab="artists"><i data-ic="mic"></i>좋아하는 아티스트</button>
+        <button class="btn-small ghost records-tab" data-rtab="artists"><i data-ic="mic"></i>아티스트</button>
       </div>
       <div id="artists-panel" hidden>
-        <p class="hint"><i data-ic="heart"></i>누른 아티스트예요. <i data-ic="heart"></i>하나가 그 아티스트의 'B-SIDE 팬' 1명으로 집계돼요.</p>
+        <p class="hint">감상을 남기거나 <i data-ic="heart"></i>한 아티스트예요. 누르면 아티스트 페이지로 가요.</p>
         <div id="fav-list" class="track-list"></div>
       </div>
       <div id="notes-panel" hidden>
@@ -395,10 +413,10 @@
         <div id="notes-list" class="records-list"></div>
       </div>
       <div id="memos-panel" hidden>
-        <p class="hint">노래마다 남긴 메모예요. 누르면 곡 페이지로 가요.</p>
+        <p class="hint">노래마다 남긴 감상이에요. 누르면 노래 페이지로 가요.</p>
         <div id="memos-list" class="records-list"></div>
       </div>
-      <div id="library-panel">
+      <div id="library-panel" class="off">
         <p class="hint">담아 둔 노래예요. 누르면 곡 페이지로 가요.</p>
         <div id="library-list" class="track-list"></div>
       </div>
