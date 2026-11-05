@@ -59,7 +59,7 @@
         <button class="tile off" data-go="ai" type="button"><b><i data-ic="sparkle"></i>AI 디깅</b><span>플레이리스트 캡처나 분위기로 취향 분석 · 인디 추천</span></button>
         <button class="tile" data-go="library" type="button"><b><i data-ic="box"></i>내 음악 창고</b><span>담아 둔 노래</span></button>
         <button class="tile" data-go="memos" type="button"><b><i data-ic="pen"></i>감상 메모</b><span>노래마다 남긴 나만의 감상</span></button>
-        <button class="tile" data-go="taste" type="button"><b><i data-ic="sparkle"></i>AI 감상 결</b><span>내 감상을 AI가 읽고 요약 · 연결의 시작</span></button>
+        <button class="tile" data-go="taste" type="button"><b><i data-ic="sparkle"></i>나의 취향 분석</b><span>내 감상을 AI가 읽고 요약 · 연결의 시작</span></button>
         <button class="tile off" data-go="records" type="button"><b><i data-ic="headphones"></i>추천 기록</b><span>AI가 추천해 준 결과</span></button>
         <button class="tile" data-go="artists" type="button"><b><i data-ic="mic"></i>좋아하는 아티스트</b><span><i data-ic="heart"></i>누른 아티스트</span></button>
         <button class="tile off" data-go="notes" type="button"><b><i data-ic="note"></i>자유 메모</b><span>노래와 상관없는 음악 일기</span></button>
@@ -275,23 +275,26 @@
       <p class="hint">노래 검색 → 감상 기록 → 같은 노래·같은 이유로 좋아하는 사람 → 그 사람에게서 새 음악 발견</p>
 
       <div class="taste-card">
-        <h3 class="memo-title"><i data-ic="sparkle"></i>나의 감상 결</h3>
-        <p id="taste-me-summary" class="song-intro"></p>
-        <div id="taste-me-tags" class="tags"></div>
+        <h3 class="memo-title"><i data-ic="sparkle"></i>나의 취향 분석</h3>
+        <!-- 내 취향 요약은 어두운 바탕으로 강조 -->
+        <div class="taste-result">
+          <p id="taste-me-summary"></p>
+          <div id="taste-me-tags" class="tags"></div>
+        </div>
         <p id="taste-me-meta" class="hint small"></p>
         <div class="memo-row">
-          <button id="btn-analyze" class="btn-small" type="button"><i data-ic="sparkle"></i>AI로 감상 결 분석</button>
+          <button id="btn-analyze" class="btn-small" type="button"><i data-ic="sparkle"></i>AI로 취향 분석</button>
           <label class="consent"><input id="taste-consent" type="checkbox" /> 다른 사람과 연결하기</label>
         </div>
-        <p class="hint small">연결을 켜면 <b>감상 결 요약만</b> 다른 사용자와 AI 매칭에 쓰여요. 메모·저장 곡 원문은 공유되지 않아요. 언제든 끌 수 있어요.</p>
         <p id="taste-status" class="hint small" role="status"></p>
       </div>
+      <p class="hint small consent-note">연결을 켜면 <b>취향 분석 요약만</b> 다른 사용자와 AI 매칭에 쓰여요. 메모·저장 곡 원문은 공유되지 않아요. 언제든 끌 수 있어요.</p>
 
       <h3 class="memo-title"><i data-ic="music"></i>같은 노래를 좋아하는 사람</h3>
       <div id="same-song-list" class="records-list"></div>
 
       <h3 class="memo-title"><i data-ic="users"></i>같은 이유로 연결된 사람 <span class="tag">AI</span></h3>
-      <button id="btn-match" class="btn-small" type="button"><i data-ic="link"></i>감상 결이 닮은 사람 찾기</button>
+      <button id="btn-match" class="btn-small" type="button"><i data-ic="link"></i>취향이 닮은 사람 찾기</button>
       <div id="match-list" class="records-list"></div>
 
       <div class="row center">

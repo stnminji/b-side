@@ -805,7 +805,7 @@ def analyze_taste(payload):
     result = call_gemini([{"text": TASTE_PROMPT.replace("{records}", json.dumps(records, ensure_ascii=False))}])
     summary = str(result.get("summary") or "").strip()[:300]
     if not summary:
-        raise RuntimeError("감상 결을 만들지 못했어요.")
+        raise RuntimeError("취향을 분석하지 못했어요.")
     tags = [str(t).strip()[:20] for t in (result.get("tags") or []) if str(t).strip()][:6]
     return {"summary": summary, "tags": tags, "based_on": {"memos": len(memos), "saved": len(lib), "artists": len(favs)}}
 
@@ -814,7 +814,7 @@ def match_taste(payload):
     token, me = _me(payload)
     mine = _supabase(f"/rest/v1/taste_profiles?user_id=eq.{me}&select=summary,tags,consent", token)
     if not mine:
-        raise ValueError("먼저 'AI 감상 결 분석'을 해 주세요.")
+        raise ValueError("먼저 'AI로 취향 분석'을 해 주세요.")
     if not mine[0]["consent"]:
         raise ValueError("연결 동의를 켜야 다른 사람과 연결돼요. (서로 동의한 사람끼리만 연결돼요)")
     # RLS 때문에 '동의한' 사람의 요약만 읽힌다
@@ -849,7 +849,7 @@ def discover(payload):
         raise ValueError("잘못된 요청이에요.")
     mine = _supabase(f"/rest/v1/taste_profiles?user_id=eq.{me}&select=summary,tags", token)
     if not mine:
-        raise ValueError("먼저 'AI 감상 결 분석'을 해 주세요.")
+        raise ValueError("먼저 'AI로 취향 분석'을 해 주세요.")
     # 상대의 '공개' 곡만 (is_public 조건 + RLS 이중으로)
     lib = _supabase(f"/rest/v1/library?user_id=eq.{target}&is_public=is.true&select=track_id,artist,title,cover&limit=60", token)
     memos = _supabase(f"/rest/v1/song_memos?user_id=eq.{target}&is_public=is.true&select=track_id,artist,title,cover,memo&limit=40", token)

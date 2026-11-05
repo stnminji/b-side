@@ -30,7 +30,7 @@
     const s = await session();
     $("#match-list").innerHTML = "";
     if (!s) {
-      $("#taste-me-summary").textContent = "로그인하면 내 감상을 AI가 읽고 '감상 결'을 만들어 드려요.";
+      $("#taste-me-summary").textContent = "로그인하면 내 감상을 AI가 읽고 취향을 분석해 드려요.";
       $("#taste-me-tags").innerHTML = "";
       $("#taste-me-meta").textContent = "";
       $("#same-song-list").textContent = "로그인 후 노래를 저장하거나 감상을 남기면, 같은 노래를 좋아하는 사람을 찾아드려요.";
@@ -51,7 +51,7 @@
     const tags = $("#taste-me-tags");
     tags.innerHTML = "";
     if (!myProfile) {
-      $("#taste-me-summary").textContent = "아직 감상 결이 없어요. 노래에 감상을 남긴 뒤 'AI로 감상 결 분석'을 눌러 보세요.";
+      $("#taste-me-summary").textContent = "아직 취향 분석이 없어요. 노래에 감상을 남긴 뒤 'AI로 취향 분석'을 눌러 보세요.";
       $("#taste-me-meta").textContent = "";
       $("#taste-consent").checked = false;
       $("#taste-consent").disabled = true;
@@ -92,7 +92,7 @@
     const s = await session();
     if (!s || !myProfile) return (e.target.checked = false);
     const on = e.target.checked;
-    if (on && !confirm("감상 결 요약을 다른 사용자와 AI 매칭에 사용할까요?\n(메모·저장 곡 원문은 공유되지 않아요. 언제든 끌 수 있어요)")) {
+    if (on && !confirm("취향 분석 요약을 다른 사용자와 AI 매칭에 사용할까요?\n(메모·저장 곡 원문은 공유되지 않아요. 언제든 끌 수 있어요)")) {
       e.target.checked = false;
       return;
     }
@@ -102,7 +102,7 @@
       return alert("바꾸지 못했어요.");
     }
     myProfile.consent = on;
-    $("#taste-status").textContent = on ? "✓ 연결을 켰어요. 감상 결이 닮은 사람을 찾을 수 있어요." : "연결을 껐어요. 다른 사람의 매칭에서 바로 빠져요.";
+    $("#taste-status").textContent = on ? "✓ 연결을 켰어요. 취향이 닮은 사람을 찾을 수 있어요." : "연결을 껐어요. 다른 사람의 매칭에서 바로 빠져요.";
   });
 
   // ----- ③ 같은 노래를 좋아하는 사람 (공개 저장·감상 기준) -----
@@ -147,11 +147,11 @@
     const list = $("#match-list");
     const btn = $("#btn-match");
     btn.disabled = true;
-    list.textContent = "AI가 감상 결이 닮은 사람을 찾고 있어요…";
+    list.textContent = "AI가 취향이 닮은 사람을 찾고 있어요…";
     try {
       const r = await callAI({ action: "match_taste", token: s.access_token });
       list.textContent = "";
-      if (!r.matches.length) list.appendChild(el("p", "hint", "아직 연결에 동의한 사람 중 감상 결이 닮은 사람이 없어요."));
+      if (!r.matches.length) list.appendChild(el("p", "hint", "아직 연결에 동의한 사람 중 취향이 닮은 사람이 없어요."));
       r.matches.forEach((m) => {
         const item = el("article", "record");
         const head = el("div", "neighbor-head");

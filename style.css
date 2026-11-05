@@ -388,3 +388,10 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 .lib-row { display: flex; align-items: center; gap: 6px; }
 .lib-row .track-row { flex: 1; min-width: 0; }
 .vis-btn { flex-shrink: 0; }
+
+/* 나의 취향 분석 결과: 어두운 바탕으로 강조 */
+.taste-result { margin: 4px 0 10px; padding: 16px 18px; border-radius: 14px; background: var(--text); color: var(--card); }
+.taste-result p { margin: 0 0 10px; line-height: 1.6; font-weight: 600; }
+.taste-result .tags { margin: 0; }
+.taste-result .tag { background: rgba(255, 250, 242, 0.14); color: #f3c9a8; }
+.consent-note { margin: -8px 4px 18px; }
