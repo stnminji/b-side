@@ -35,7 +35,7 @@
     loadMemo();
     loadLibraryState();
     loadOthers();
-    window.renderPeople($("#song-people"), "track_id", song.track_id, "아직 이 곡을 공개 서재에 담은 사람이 없어요.");
+    window.renderPeople($("#song-people"), "track_id", song.track_id, "아직 이 곡을 공개 음악 창고에 담은 사람이 없어요.");
   }
 
   function renderSong() {
@@ -190,7 +190,7 @@
   let libraryRow = null;
   function paintLibrary() {
     const btn = $("#btn-library");
-    btn.textContent = libraryRow ? "✓ 서재에 담김" : "＋ 서재에 담기";
+    btn.textContent = libraryRow ? "✓ 창고에 담김" : "＋ 창고에 담기";
     btn.classList.toggle("ghost", !libraryRow);
   }
   async function loadLibraryState() {
@@ -209,7 +209,7 @@
     const client = sb();
     const { data: s } = await client.auth.getSession();
     if (!s.session) {
-      alert("서재는 로그인 후에 쓸 수 있어요.");
+      alert("음악 창고는 로그인 후에 쓸 수 있어요.");
       return $("#btn-open-login").click();
     }
     if (window.bsideEnsureProfile && !(await window.bsideEnsureProfile(s.session.user.id))) return;
@@ -343,7 +343,7 @@
     });
     $("#artist-ai-list").innerHTML = "";
     $("#artist-ai").disabled = false;
-    window.renderPeople($("#artist-people"), "artist_id", artist.artist_id, "아직 이 아티스트의 노래를 공개 서재에 담은 사람이 없어요.");
+    window.renderPeople($("#artist-people"), "artist_id", artist.artist_id, "아직 이 아티스트의 노래를 공개 음악 창고에 담은 사람이 없어요.");
     loadFavorite();
   }
 
@@ -398,8 +398,8 @@
       .select("id, track_id, artist, title, album, cover, created_at")
       .eq("user_id", s.session.user.id).order("created_at", { ascending: false }).limit(200);
     list.textContent = "";
-    if (error) return (list.textContent = "서재를 불러오지 못했어요.");
-    if (!rows.length) return (list.textContent = "아직 담은 노래가 없어요. 노래 검색에서 ＋ 서재에 담기를 눌러 보세요.");
+    if (error) return (list.textContent = "음악 창고를 불러오지 못했어요.");
+    if (!rows.length) return (list.textContent = "아직 담은 노래가 없어요. 노래 검색에서 ＋ 창고에 담기를 눌러 보세요.");
     rows.forEach((r) => {
       const b = el("button", "track-row");
       if (r.cover) {

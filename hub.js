@@ -21,7 +21,7 @@
     }
     const { data } = await sb.auth.getSession();
     if (data.session) return false;
-    alert("로그인하면 내 서재·메모·기록을 볼 수 있어요.");
+    alert("로그인하면 내 음악 창고·메모·기록을 볼 수 있어요.");
     $("#btn-open-login").click();
     return true;
   }

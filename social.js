@@ -172,14 +172,14 @@
     const my = await me();
     if (!my) {
       container.textContent = "";
-      container.appendChild(el("p", "hint", "로그인하고 노래를 서재에 담으면, 취향이 겹치는 사람을 찾아드려요."));
+      container.appendChild(el("p", "hint", "로그인하고 노래를 음악 창고에 담으면, 취향이 겹치는 사람을 찾아드려요."));
       return;
     }
     const { data: rows, error } = await sb().rpc("similar_users", { lim: 20 });
     container.textContent = "";
     if (error) return container.appendChild(el("p", "hint", "불러오지 못했어요."));
     if (!rows.length) {
-      container.appendChild(el("p", "hint", "아직 취향이 겹치는 사람이 없어요. 노래를 서재에 더 담아 보세요. (다른 사람의 '공개' 서재와 비교해요)"));
+      container.appendChild(el("p", "hint", "아직 취향이 겹치는 사람이 없어요. 노래를 음악 창고에 더 담아 보세요. (다른 사람의 '공개' 음악 창고와 비교해요)"));
       return;
     }
     rows.forEach((r) => {
@@ -208,7 +208,7 @@
     const pub = (table) => client.from(table).select("id", { count: "exact", head: true }).eq("user_id", userId).eq("is_public", true);
     const [lib, memo, note, rec] = await Promise.all([pub("library"), pub("song_memos"), pub("notes"), pub("records")]);
     $("#profile-stats").textContent =
-      `공개 서재 ${lib.count || 0}곡 · 노래 감상 ${memo.count || 0} · 자유 메모 ${note.count || 0} · 추천 기록 ${rec.count || 0}`;
+      `공개 음악 창고 ${lib.count || 0}곡 · 노래 감상 ${memo.count || 0} · 자유 메모 ${note.count || 0} · 추천 기록 ${rec.count || 0}`;
     // 나와 겹치는 아티스트
     const my = await me();
     if (my && my !== userId) {
@@ -224,7 +224,7 @@
         $("#profile-common").insertAdjacentHTML("afterbegin", ic("users"));
       }
     }
-    selectProfileTab("memos"); // 서재 탭은 잠시 숨김
+    selectProfileTab("library");
   };
 
   function selectProfileTab(tab) {
