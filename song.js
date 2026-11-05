@@ -295,7 +295,8 @@
     $("#artist-meta").textContent = [
       artist.name_db !== artist.name ? artist.name_db : "",
       artist.albums_count ? `앨범 ${artist.albums_count}장` : "",
-      artist.fans ? `Deezer 팬 ${artist.fans.toLocaleString()}명` : "",
+      // 팬 수는 B-SIDE에서 이 아티스트를 '좋아요'한 사람 수만 보여준다. 아직 없으면 '-' (외부 숫자를 B-SIDE 팬처럼 보이게 하지 않음)
+      `B-SIDE 팬 ${artist.bsideFans ? artist.bsideFans.toLocaleString() + "명" : "-"}`,
     ].filter(Boolean).join(" · ");
     $("#artist-source").href = artist.source_link;
     // 우리가 직접 정리한 아티스트라면 설명 표시

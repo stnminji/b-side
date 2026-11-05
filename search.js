@@ -69,7 +69,8 @@
         b.appendChild(img);
       }
       const text = el("span", "track-text");
-      const sub = [a.name_db !== a.name ? a.name_db : "", a.fans ? `팬 ${a.fans.toLocaleString()}명` : "", a.curated ? "B-SIDE 큐레이션" : ""]
+      // 외부(Deezer) 팬 수는 화면에 쓰지 않는다 (B-SIDE 팬으로 오해할 수 있어서). 공식 프로필 고르는 데만 서버에서 사용
+      const sub = [a.name_db !== a.name ? a.name_db : "", a.curated ? "B-SIDE 큐레이션" : ""]
         .filter(Boolean).join(" · ");
       text.append(el("span", "track-title", a.name), el("span", "hint small", sub));
       b.appendChild(text);
