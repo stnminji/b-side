@@ -1,0 +1,10 @@
+# 배포 서버에 올리지 않을 파일 (비밀 정보 + 배포에 필요 없는 개발용 파일)
+.env
+.env.*
+!.env.example
+dev_server.py
+scripts/
+docs/
+_shot/
+__pycache__/
+*.pyc

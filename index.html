@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B-SIDE · 인디음악 디깅</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 상단 바: 로고 / 홈 버튼 (누르면 처음 화면으로) -->
+  <nav class="topbar">
+    <button class="logo go-home" title="처음으로" aria-label="B-SIDE 처음으로">
+      <img class="logo-disc" src="assets/favicon.svg" alt="" width="34" height="34" />
+      <span class="logo-word"><b>B</b><i></i>SIDE</span>
+    </button>
+    <button class="home-btn go-home" title="처음으로" aria-label="처음으로">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>
+      </svg>
+    </button>
+  </nav>
+
+  <header class="hero">
+    <h1>오늘의 디깅,<br /><em>인디로부터</em></h1>
+  </header>
+
+  <main>
+    <!-- 1단계: 입력 -->
+    <section id="step-input" class="card">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="capture" role="tab">사진으로</button>
+        <button class="tab" data-tab="text" role="tab">텍스트로</button>
+      </div>
+
+      <!-- 사진으로 추천받기 -->
+      <div id="panel-capture" class="panel">
+        <div class="options" id="capture-options">
+          <button class="option active" data-kind="artists">아티스트 목록</button>
+          <button class="option" data-kind="songs">노래 목록</button>
+        </div>
+        <label id="dropzone" class="dropzone">
+          <input type="file" id="file-input" accept="image/*,.heic,.heif" hidden />
+          <div id="drop-empty">
+            <p class="drop-icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v4h16v-4"/></svg></p>
+            <p id="drop-title"><strong>아티스트 목록</strong> 캡처를 올려주세요</p>
+            <p class="hint">멜론 · 스포티파이 · 유튜브 뮤직 등</p>
+          </div>
+          <img id="preview" alt="업로드한 캡처" hidden />
+        </label>
+        <button id="btn-capture" class="btn-primary" disabled>캡처 읽기</button>
+      </div>
+
+      <!-- 텍스트로 추천받기 -->
+      <div id="panel-text" class="panel" hidden>
+        <div class="options options-wrap" id="text-options">
+          <button class="option active" data-mode="mood">분위기</button>
+          <button class="option" data-mode="band">비슷한 밴드</button>
+          <button class="option" data-mode="song">비슷한 노래</button>
+          <button class="option" data-mode="feel">비슷한 느낌</button>
+          <button class="option" data-mode="free">자유 설명</button>
+        </div>
+
+        <div class="mode-panel" data-mode="mood">
+          <div class="chips" id="mood-chips">
+            <button class="chip toggle">몽환적인</button>
+            <button class="chip toggle">청량한</button>
+            <button class="chip toggle">서정적인</button>
+            <button class="chip toggle">신나는</button>
+            <button class="chip toggle">우울한</button>
+            <button class="chip toggle">강렬한</button>
+            <button class="chip toggle">잔잔한</button>
+            <button class="chip toggle">청춘</button>
+            <button class="chip toggle">위로가 되는</button>
+            <button class="chip toggle">추억이 떠오르는</button>
+            <button class="chip toggle">새벽 감성</button>
+            <button class="chip toggle">드라이브</button>
+          </div>
+        </div>
+
+        <div class="mode-panel" data-mode="band" hidden>
+          <input type="text" class="field" id="band-input" placeholder="좋아하는 밴드 · 아티스트" />
+          <div class="chips">
+            <button class="chip fill" data-target="band-input">보수동쿨러</button>
+            <button class="chip fill" data-target="band-input">한로로</button>
+            <button class="chip fill" data-target="band-input">잔나비</button>
+          </div>
+        </div>
+
+        <div class="mode-panel" data-mode="song" hidden>
+          <input type="text" class="field" id="song-artist" placeholder="아티스트 (예: 우효)" />
+          <input type="text" class="field" id="song-title" placeholder="노래 제목 (예: 민들레)" />
+        </div>
+
+        <div class="mode-panel" data-mode="feel" hidden>
+          <input type="text" class="field" id="feel-input" placeholder="장면 · 영화 · 계절 · 장소" />
+          <div class="chips">
+            <button class="chip fill" data-target="feel-input">여름밤 한강 자전거</button>
+            <button class="chip fill" data-target="feel-input">비 오는 날 창가</button>
+            <button class="chip fill" data-target="feel-input">청춘 영화 엔딩</button>
+          </div>
+        </div>
+
+        <div class="mode-panel" data-mode="free" hidden>
+          <textarea id="free-input" rows="3" placeholder="듣고 싶은 음악을 편하게 적어주세요"></textarea>
+        </div>
+
+        <button id="btn-text" class="btn-primary" disabled>추천받기</button>
+      </div>
+    </section>
+
+    <!-- 2단계: 캡처에서 읽은 목록 확인 -->
+    <section id="step-confirm" class="card" hidden>
+      <h2 id="confirm-title">이 목록이 맞나요?</h2>
+      <p class="hint">틀린 부분은 고쳐주세요.</p>
+      <ul id="song-list" class="song-list"></ul>
+      <button id="btn-add-song" class="btn-ghost">+ 추가</button>
+      <div class="row">
+        <button class="btn-ghost btn-restart">처음으로</button>
+        <button id="btn-confirm" class="btn-primary">추천받기</button>
+      </div>
+    </section>
+
+    <!-- 로딩 -->
+    <section id="step-loading" class="card center" hidden>
+      <div class="wave"><span></span><span></span><span></span><span></span><span></span></div>
+      <p id="loading-text">결을 분석하고 있어요…</p>
+    </section>
+
+    <!-- 3단계: 결과 -->
+    <section id="step-result" hidden>
+      <div class="card taste">
+        <h2>당신의 결</h2>
+        <p id="taste-summary"></p>
+        <div id="taste-tags" class="tags"></div>
+      </div>
+
+      <h2 class="result-title">이런 아티스트는 어때요?</h2>
+      <div id="result-list" class="result-list"></div>
+
+      <div class="row center">
+        <button id="btn-more" class="btn-ghost">더 찾아보기</button>
+        <button class="btn-ghost btn-restart">다시 찾기</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>B-SIDE · 생성형 AI 해커톤 출품작</footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,2738 @@
+{
+  "_설명": "AI는 추천할 때 이 목록 안에서만 고른다(환각 방지). 실제 아티스트와 실제 곡만 적을 것. 이름·곡명·장르는 웹 자료로 확인했고, mood와 sound는 그 자료를 바탕으로 정리한 것이라 팬의 감각으로 다시 확인할 것(checked를 true로 바꾸기).",
+  "bands": [
+    {
+      "name": "한로로",
+      "name_en": "HANRORO",
+      "type": "솔로",
+      "genre": "인디록 · 팝록",
+      "mood": [
+        "청춘",
+        "불안",
+        "내성적",
+        "위로"
+      ],
+      "sound": "인디팝과 록 사운드를 바탕으로 청춘의 불안을 담은 내성적인 가사",
+      "songs": [
+        {
+          "title": "입춘",
+          "note": "2022년 데뷔 싱글. 한국대중음악상 최우수 모던록 노래 후보"
+        },
+        {
+          "title": "사랑하게 될 거야",
+          "note": "EP 《이상비행》(2023) 수록, 포크록. 가장 인기 있는 곡"
+        },
+        {
+          "title": "0+0",
+          "note": "《자몽살구클럽》(2025) 수록"
+        },
+        {
+          "title": "ㅈㅣㅂ",
+          "note": "EP 《집》 타이틀곡. 한국대중음악상 최우수 모던록 노래 후보"
+        },
+        {
+          "title": "시간을 달리네",
+          "note": ""
+        }
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/Hanroro",
+        "https://music.bugs.co.kr/artist/20155724"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/35b3a03d061adcec10f1c7f34c35afd5/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "내일에서 온 티켓",
+        "__에게",
+        "After Landing",
+        "Playground",
+        "Take-off",
+        "Goldfish",
+        "너와 나",
+        "The Compass",
+        "The last stop of our pain",
+        "Like my groove"
+      ]
+    },
+    {
+      "name": "극동아시아타이거즈",
+      "name_en": "Far East Asia Tigers",
+      "type": "밴드",
+      "genre": "펑크록",
+      "mood": [
+        "추억",
+        "날것",
+        "에너지",
+        "향수"
+      ],
+      "sound": "펑크 기반 4인조 록 밴드. '우당탕탕 음악으로 추억을 노래하는 밴드'",
+      "songs": [
+        {
+          "title": "비냄새",
+          "note": "앨범 《몽유호원》 수록"
+        },
+        {
+          "title": "면목중학교",
+          "note": ""
+        },
+        {
+          "title": "오늘은 비가 와도 좋을 것 같아",
+          "note": ""
+        },
+        {
+          "title": "흐려질거야",
+          "note": ""
+        },
+        {
+          "title": "Hello",
+          "note": "2022 싱글"
+        }
+      ],
+      "sources": [
+        "https://music.bugs.co.kr/artist/20105524",
+        "https://rateyourmusic.com/artist/%EA%B7%B9%EB%8F%99%EC%95%84%EC%8B%9C%EC%95%84%ED%83%80%EC%9D%B4%EA%B1%B0%EC%A6%88"
+      ],
+      "checked": false,
+      "image": null,
+      "deep_songs": []
+    },
+    {
+      "name": "고고학",
+      "name_en": "Gogohawk",
+      "type": "밴드",
+      "genre": "록 (세부 장르 확인 필요)",
+      "mood": [
+        "강렬함",
+        "그루비"
+      ],
+      "sound": "키보드가 있는 4인조 밴드. 힘 있는 드럼과 인상적인 인트로",
+      "songs": [
+        {
+          "title": "Trauma",
+          "note": "정규 1집 《VOL.07》(2025) 수록. 소속사가 꼽은 대표곡, 인트로가 강렬함"
+        },
+        {
+          "title": "파도",
+          "note": "EP 《VOL.04》에서 가장 사랑받은 곡"
+        },
+        {
+          "title": "COMPLEX",
+          "note": "《VOL.05》 타이틀곡. 디안젤로를 떠올리게 하는 인트로"
+        },
+        {
+          "title": "감",
+          "note": ""
+        },
+        {
+          "title": "도시괴담",
+          "note": "《VOL.07》 첫 번째 트랙"
+        }
+      ],
+      "sources": [
+        "https://music.bugs.co.kr/artist/80376550",
+        "https://poclanos.com/archive/sanmanhan-gogohawk/"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/6ed3cba43f89606dde1de69f5f1ca839/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "City Legend",
+        "Future Boy",
+        "KHAKI LIGHTS",
+        "The Cause",
+        "POT",
+        "BLACK OUT",
+        "Rain",
+        "Sunset",
+        "The Closing",
+        "DOPAMINE"
+      ]
+    },
+    {
+      "name": "우효",
+      "name_en": "OOHYO",
+      "type": "솔로",
+      "genre": "신스팝 · 드림팝",
+      "mood": [
+        "몽환적",
+        "노스탤직",
+        "아련함",
+        "산뜻함"
+      ],
+      "sound": "신스팝·일렉트로닉팝 기반의 몽환적이고 향수 어린 사운드",
+      "songs": [
+        {
+          "title": "민들레",
+          "note": "2017 싱글. single ver.과 full ver.이 있음"
+        },
+        {
+          "title": "청춘 (Day)",
+          "note": ""
+        },
+        {
+          "title": "Vineyard",
+          "note": "데뷔 EP 《소녀감성》 수록"
+        },
+        {
+          "title": "PIZZA",
+          "note": ""
+        },
+        {
+          "title": "너를 부르고 있어",
+          "note": "2025 싱글"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%EC%9A%B0%ED%9A%A8",
+        "https://music.bugs.co.kr/artist/80190647"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/ce9a44274d3ab565c7eb21ff1d1ef933/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "NAIVE",
+        "BRAVE",
+        "Reggae",
+        "Madrid",
+        "Perhaps Maybe",
+        "Reggae Returns",
+        "New Shoes",
+        "Piano Dust",
+        "Sand",
+        "Papercut"
+      ]
+    },
+    {
+      "name": "신인류",
+      "name_en": "SHIN IN RYU",
+      "type": "밴드",
+      "genre": "인디록 · 얼터너티브록",
+      "mood": [
+        "청량한",
+        "반짝이는",
+        "응원하는",
+        "청춘"
+      ],
+      "sound": "키보드가 이끄는 3인조. 청량한 신스와 기타 잔향, 단단한 베이스가 어우러진 매끄럽고 다채로운 사운드",
+      "songs": [
+        {
+          "title": "날씨의 요정",
+          "note": "EP 『희망서』(2022), 벅스 인기곡 1위"
+        },
+        {
+          "title": "작가미정",
+          "note": "드라마 〈멜로가 체질〉 OST (2019)"
+        },
+        {
+          "title": "일인칭 관찰자 시점",
+          "note": "정규 1집 『빛나는 스트라이크』(2025) 타이틀곡"
+        },
+        {
+          "title": "정면돌파",
+          "note": "『빛나는 스트라이크』 타이틀곡"
+        },
+        {
+          "title": "주인공 (2026 Ver.)",
+          "note": "〈유미의 세포들 시즌3〉 OST"
+        }
+      ],
+      "sources": [
+        "https://music.bugs.co.kr/artist/20066236",
+        "https://www.izm.co.kr/posts?id=33296"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/e0d0896ca2dd34e35c5d80af705a5edd/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "정우",
+      "name_en": "JUNGWOO",
+      "type": "솔로",
+      "genre": "포크 · 록",
+      "mood": [
+        "서정적인",
+        "맑은",
+        "서사적인",
+        "거친"
+      ],
+      "sound": "맑은 음색과 서정적인 가사의 포크로 시작해, 정규 2집부터 포스트펑크·슈게이즈 계열 록 밴드 사운드로 확장",
+      "songs": [
+        {
+          "title": "나에게서 당신에게",
+          "note": "정규 1집 『여섯 번째 토요일』(2019) 타이틀곡"
+        },
+        {
+          "title": "여섯 번째 토요일",
+          "note": "정규 1집 타이틀곡"
+        },
+        {
+          "title": "뭐든 될 수 있을 거야",
+          "note": "정규 1집 타이틀곡"
+        },
+        {
+          "title": "클라우드 쿠쿠 랜드",
+          "note": "정규 2집(2023) 타이틀곡, 한국대중음악상 후보"
+        },
+        {
+          "title": "철의 삶",
+          "note": "EP 『철의 삶』(2025), 한국대중음악상 후보"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/정우_(인디)",
+        "https://www.melon.com/artist/detail.htm?artistId=2735906"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/f0c2e1107bb7458abc18ebb21e368cfc/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "청요일",
+      "name_en": "Chungyoile",
+      "type": "밴드",
+      "genre": "얼터너티브 · 기타팝",
+      "mood": [
+        "청량한",
+        "우울한",
+        "몽환적인",
+        "차분한"
+      ],
+      "sound": "'청량함과 우울 사이의 푸른 지점'을 연주하는 4인조 혼성 밴드",
+      "songs": [
+        {
+          "title": "내 창의 너머는 초록색이면 좋겠어",
+          "note": "정규 1집(2025), 벅스 인기곡 1위"
+        },
+        {
+          "title": "사쿠라 완구점",
+          "note": "싱글 (2026)"
+        },
+        {
+          "title": "희망",
+          "note": "정규 1집 수록"
+        },
+        {
+          "title": "해피엔드오브어스",
+          "note": "정규 1집 수록"
+        },
+        {
+          "title": "해몽",
+          "note": "데뷔 싱글 (2022)"
+        }
+      ],
+      "sources": [
+        "https://music.bugs.co.kr/artist/20164405",
+        "https://namu.wiki/w/청요일"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/d59a0fc21d5db04633c8224bd881835d/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "숨비",
+      "name_en": "Soombee",
+      "type": "솔로",
+      "genre": "모던록 · 포크 · 블루스록",
+      "mood": [
+        "경쾌한",
+        "직선적인",
+        "거친",
+        "위로하는"
+      ],
+      "sound": "밴드셋 중심의 빠르고 밀도 높은 연주에 특유의 보컬을 얹은 직선적인 에너지",
+      "songs": [
+        {
+          "title": "사랑은 영원하다",
+          "note": "대표곡, 벅스 인기곡 1위"
+        },
+        {
+          "title": "슬픔을 구름으로 만들어줘",
+          "note": "싱글 (2024)"
+        },
+        {
+          "title": "긴긴밤",
+          "note": "싱글 (2025)"
+        },
+        {
+          "title": "다이아몬드",
+          "note": "대표곡으로 소개됨 (음원 발매 확인 필요)"
+        },
+        {
+          "title": "코코아",
+          "note": "대표곡으로 소개됨 (음원 발매 확인 필요)"
+        }
+      ],
+      "sources": [
+        "https://www.cjazit.org/support/tune-up/entry/82/30891?p=0",
+        "https://music.bugs.co.kr/artist/20121322"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/c4b7cfbcbb19bb69855d57f125e25e25/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "다브다",
+      "name_en": "Dabda",
+      "type": "밴드",
+      "genre": "매스록 · 포스트록",
+      "mood": [
+        "몽환적인",
+        "서정적인",
+        "역동적인",
+        "절박한"
+      ],
+      "sound": "매스록의 복잡한 리듬에 드림팝·포스트록 질감과 펑크의 긴박감. 강한 기타 리프와 매우 빠른 드럼 (자칭 'Pastel Psychedelic')",
+      "songs": [
+        {
+          "title": "DDDD!",
+          "note": "싱글 (2025), 정규 2집 수록"
+        },
+        {
+          "title": "온",
+          "note": "정규 2집 『온(百)』(2026) 타이틀곡"
+        },
+        {
+          "title": "Searching for Kevin",
+          "note": "정규 2집 타이틀곡"
+        },
+        {
+          "title": "Choo-Choo",
+          "note": "싱글 (2026)"
+        },
+        {
+          "title": "Dear Hope",
+          "note": "싱글 (2026)"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/다브다",
+        "https://banddabda.bandcamp.com/"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/c615d07c8f7dd59361d1cac13403dbc3/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Tongue",
+        "Circle",
+        "Light Comes Back",
+        "Playing Alone",
+        "Stars,",
+        "Dull",
+        "Flower Tail",
+        "One, World, Wound",
+        "청춘",
+        "Calluna (Original Mix)"
+      ]
+    },
+    {
+      "name": "코토바",
+      "name_en": "cotoba",
+      "type": "밴드",
+      "genre": "매스록 · 포스트록",
+      "mood": [
+        "서정적인",
+        "해방감",
+        "치유",
+        "변칙적인"
+      ],
+      "sound": "예측하기 어렵게 바뀌는 박자, 변칙적인 드럼·베이스 리듬 위에 클린 기타 아르페지오와 뜨거운 리드 기타",
+      "songs": [
+        {
+          "title": "reyn",
+          "note": "한국대중음악상 최우수 록 노래 후보"
+        },
+        {
+          "title": "계산된 자유",
+          "note": "정규 1집 『4pricøt』(2022)"
+        },
+        {
+          "title": "살아남은",
+          "note": "EP 『세상은 곧 끝나니까』(2021)"
+        },
+        {
+          "title": "Luminous overflows",
+          "note": "싱글 (2026), 벅스 인기곡 1위"
+        },
+        {
+          "title": "coii (single ver.)",
+          "note": "벅스 인기곡"
+        }
+      ],
+      "sources": [
+        "https://music.bugs.co.kr/artist/20090228"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/8130cbbcd6f18d66c46df9ffc51700ce/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Love&Art",
+        "sin",
+        "melon",
+        "Warm Salad",
+        "oatmeal",
+        "소멸의 소실 (2022 ver.)",
+        "나홀로 뜰 앞에서",
+        "쪽빛물색"
+      ]
+    },
+    {
+      "name": "녹이녹",
+      "name_en": "NokeNok",
+      "type": "밴드",
+      "genre": "포스트록 · 슈게이즈",
+      "mood": [
+        "섬세한",
+        "감각적인",
+        "격정적인",
+        "몰입감"
+      ],
+      "sound": "감각적인 사운드와 섬세한 정서 위에 격정적인 연주가 더해지는 밴드 사운드",
+      "songs": [
+        {
+          "title": "여름방학",
+          "note": "정규 1집(2026), 벅스 인기곡 1위"
+        },
+        {
+          "title": "찰나",
+          "note": "데뷔 싱글 (2025)"
+        },
+        {
+          "title": "내 옷은 냄새가 없다.",
+          "note": "정규 1집 타이틀명과 같은 곡"
+        },
+        {
+          "title": "See You Tomorrow",
+          "note": "정규 1집 (2026)"
+        },
+        {
+          "title": "무서운 세상",
+          "note": "정규 1집 (2026)"
+        }
+      ],
+      "sources": [
+        "https://music.bugs.co.kr/artist/20229593",
+        "https://namu.wiki/w/녹이녹"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/4910935ca487cfb7570c01f9cf1d20b6/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Summer Break",
+        "Zankyo",
+        "Cruel World",
+        "OAK",
+        "Moment",
+        "My Clothes Have No Smell",
+        "Second Step",
+        "Waiting For The Sun",
+        "Dream Train"
+      ]
+    },
+    {
+      "name": "카디",
+      "name_en": "KARDI",
+      "type": "밴드",
+      "genre": "인디록 (거문고 편성)",
+      "mood": [
+        "강렬한",
+        "개성 있는",
+        "독특한",
+        "에너지"
+      ],
+      "sound": "거문고를 베이스처럼 쓰고 엇박 변주를 섞은 브로큰 비트 드럼을 얹은 록",
+      "songs": [
+        {
+          "title": "WatchOut",
+          "note": "EP 『칠(Chil)』(2022), 벅스 인기곡 1위"
+        },
+        {
+          "title": "Skybound",
+          "note": "정규 『Inside Out』(2023)"
+        },
+        {
+          "title": "PARTY",
+          "note": "정규 『Inside Out』(2023)"
+        },
+        {
+          "title": "Player 1",
+          "note": "싱글 (2025)"
+        },
+        {
+          "title": "Not But Disco",
+          "note": "싱글"
+        }
+      ],
+      "sources": [
+        "https://music.bugs.co.kr/artist/20144431",
+        "https://www.khan.co.kr/article/202110201745001"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/e02c1636af51dec67c2df6c2a92d5bd7/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Inside Out",
+        "Out of Sight",
+        "Pearl",
+        "Jump Off",
+        "Back!",
+        "No Need",
+        "Knockdown",
+        "Chill",
+        "Embers (ARC WORLD TOUR 2025-2026 FINALS Official Anthem)",
+        "City of Wonder"
+      ]
+    },
+    {
+      "name": "유인원",
+      "name_en": "UINONE",
+      "type": "밴드",
+      "genre": "록 · 사이키델릭 · 얼터너티브",
+      "mood": [
+        "불안",
+        "저항",
+        "날것",
+        "서사적인"
+      ],
+      "sound": "중독적인 후렴과 거친 사운드에 멸망 이후의 세계와 순환이라는 서사를 결합",
+      "songs": [
+        {
+          "title": "우리 사랑을 막지 말자",
+          "note": "정규 1집 『Herman』(2025), 벅스 인기곡 1위"
+        },
+        {
+          "title": "Apocalypse",
+          "note": "『Herman』 타이틀곡"
+        },
+        {
+          "title": "Mahaom",
+          "note": "『Herman』 선공개 싱글 (2024)"
+        },
+        {
+          "title": "서울",
+          "note": "싱글 (2024)"
+        },
+        {
+          "title": "Sara",
+          "note": "EP 『Samsara』(2026) 선공개 싱글"
+        }
+      ],
+      "sources": [
+        "https://music.bugs.co.kr/artist/20219672",
+        "https://www.cjazit.org/support/tune-up/entry/82/31196?p=0"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/df4f20997ca01b2c2d687bb7dcaadddd/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Outcast",
+        "Amazon",
+        "Confusion",
+        "Seoul",
+        "She will never stop loving us",
+        "Sand wave",
+        "SHP",
+        "Sam",
+        "Phases",
+        "Wheel Of The Sea"
+      ]
+    },
+    {
+      "name": "김뜻돌",
+      "name_en": "Meaningful Stone",
+      "type": "솔로",
+      "genre": "모던록 · 드림팝 · 슈게이즈",
+      "mood": [
+        "몽환적",
+        "로킹한",
+        "다채로운",
+        "내밀한"
+      ],
+      "sound": "포크, 슈게이즈, 드림팝, 사이키델릭을 오가는 싱어송라이터",
+      "songs": [
+        {
+          "title": "꿈에서 걸려온 전화",
+          "note": "정규 1집 타이틀곡, 한국대중음악상 올해의 신인"
+        },
+        {
+          "title": "사라져 (Feat. 사뮈)",
+          "note": "싱글 (2019)"
+        },
+        {
+          "title": "비 오는 거리에서 춤을 추자",
+          "note": "EP 『COBALT』(2021), 한국대중음악상 후보"
+        },
+        {
+          "title": "손님별",
+          "note": "정규 2집 『천사 인터뷰』(2024)"
+        },
+        {
+          "title": "속세탈출 (feat. 스월비)",
+          "note": "정규 2집 『천사 인터뷰』(2024)"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/김뜻돌",
+        "https://ktxmagazine.kr/%EA%B9%80%EB%9C%BB%EB%8F%8C%EA%B3%BC-%EB%96%A0%EB%82%98%EB%8A%94-%EC%9D%8C%EC%95%85-%EC%97%AC%ED%96%89/"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/3fc6d5f8e5f039cffde4f54222e69146/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "심아일랜드",
+      "name_en": "Simile Land",
+      "type": "밴드",
+      "genre": "인디록 · 얼터너티브록",
+      "mood": [
+        "신나는",
+        "펑키한",
+        "멜랑콜리한",
+        "몽환적"
+      ],
+      "sound": "펑키한 에너지로 여러 장르를 넘나드는 5인조. 신나는 곡 밑에 깔린 멜랑콜리함",
+      "songs": [
+        {
+          "title": "별과 당신",
+          "note": "싱글 (2023)"
+        },
+        {
+          "title": "밑 빠진 독",
+          "note": "EP 『Young-Hee』(2025) 타이틀곡"
+        },
+        {
+          "title": "Hoo! ha..",
+          "note": "EP 『Cheol-Su』(2024) 타이틀곡"
+        },
+        {
+          "title": "아이를 찾습니다",
+          "note": "데뷔곡 (2023)"
+        },
+        {
+          "title": "애도반응",
+          "note": "싱글 (2023)"
+        }
+      ],
+      "sources": [
+        "https://music.bugs.co.kr/artist/20191616",
+        "https://www.vogue.co.kr/2025/08/07/%ED%9B%84%ED%9A%8C-%EC%97%86%EB%8A%94-%EC%84%A0%ED%83%9D%EC%9D%B4-%EB%A7%8C%EB%93%A0-%EB%B0%B4%EB%93%9C-%EC%8B%AC%EC%95%84%EC%9D%BC%EB%9E%9C%EB%93%9C/"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/0e66c1088e6bfc20cb1f66f235fabefa/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "우리 엄마도 모르는 비밀",
+        "나락",
+        "정신과에 가볼까",
+        "Balloon",
+        "Plant Star",
+        "Do Re Mi Fa Sol",
+        "OhWah!",
+        "S.O.C",
+        "The Stars and you",
+        "quit smoking"
+      ]
+    },
+    {
+      "name": "음성녹음",
+      "name_en": "RecordTheVoiceMessage",
+      "type": "밴드",
+      "genre": "인디팝 · 인디록",
+      "mood": [
+        "산뜻한",
+        "찬란한",
+        "빈티지한"
+      ],
+      "sound": "보컬·기타와 건반(피아노·신스·오르간) 여성 2인조. 신스 브라스와 빈티지한 리듬",
+      "songs": [
+        {
+          "title": "Replay",
+          "note": "데뷔 싱글 (2022)"
+        },
+        {
+          "title": "우우우 나의 사랑",
+          "note": "싱글 (2023)"
+        },
+        {
+          "title": "마지막 곡",
+          "note": "싱글 (2022)"
+        },
+        {
+          "title": "오프코스",
+          "note": "싱글 (2025)"
+        },
+        {
+          "title": "Drifter",
+          "note": "싱글 (2025)"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/음성녹음(밴드)",
+        "https://www.dailian.co.kr/news/view/1190109/D%EC%9D%B8%EB%94%94%EA%B7%B8%EB%9D%BC%EC%9A%B4%EB%93%9C129-%EB%B0%B4%EB%93%9C-%E2%80%98%EC%9D%8C%EC%84%B1%EB%85%B9%EC%9D%8C%E2%80%99-2023"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/8679fb949f22d5c3ff1b9c44ecf00e18/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Give Me Back My Summer",
+        "OffCourse",
+        "Orange summer breeze",
+        "Happysad"
+      ]
+    },
+    {
+      "name": "언니네 이발관",
+      "name_en": "Sister's Barbershop",
+      "type": "밴드",
+      "genre": "모던록 · 인디록",
+      "mood": [
+        "쓸쓸한",
+        "달콤한",
+        "유연한",
+        "절실한"
+      ],
+      "sound": "폭발보다 흐름과 유연함을 앞세운 깔끔하고 세심한 사운드 (1996~2017 활동, 해체)",
+      "songs": [
+        {
+          "title": "가장 보통의 존재",
+          "note": "5집(2008) 타이틀곡, 한국대중음악상 올해의 음반"
+        },
+        {
+          "title": "아름다운 것",
+          "note": "5집(2008), 한국대중음악상 최우수 모던록 노래"
+        },
+        {
+          "title": "의외의 사실",
+          "note": "5집(2008)"
+        },
+        {
+          "title": "나를 잊었나요?",
+          "note": "3집 『꿈의 팝송』(2002)"
+        },
+        {
+          "title": "마음이란",
+          "note": "6집 『홀로 있는 사람들』(2017)"
+        }
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/Sister%27s_Barbershop",
+        "https://www.weiv.co.kr/archives/7839"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/e4ad2ac1cb1f179cf15ff3492075fe4e/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "새소년",
+      "name_en": "SE SO NEON",
+      "type": "밴드",
+      "genre": "인디록 · 사이키델릭 록",
+      "mood": [
+        "몽환적",
+        "청춘",
+        "강렬한",
+        "서정적인"
+      ],
+      "sound": "황소윤의 보컬과 기타를 중심으로 한 시원하고 쌉싸름한 사이키델릭 록 사운드.",
+      "songs": [
+        {
+          "title": "난춘(亂春)",
+          "note": "싱글, 2020 / 한국대중음악상 수상"
+        },
+        {
+          "title": "긴 꿈",
+          "note": "데뷔 싱글 2017, EP 여름깃 수록"
+        },
+        {
+          "title": "심야행",
+          "note": "EP 비적응 타이틀곡, 2020"
+        },
+        {
+          "title": "집에",
+          "note": "EP 비적응, 2020"
+        },
+        {
+          "title": "눈",
+          "note": "EP 비적응, 2020"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%EC%83%88%EC%86%8C%EB%85%84_(%EC%9D%8C%EC%95%85_%EA%B7%B8%EB%A3%B9)",
+        "https://music.bugs.co.kr/track/31835870"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/d4f757f337391b16a0834a220fd4e0c8/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "실리카겔",
+      "name_en": "Silica Gel",
+      "type": "밴드",
+      "genre": "모던록 · 인디록",
+      "mood": [
+        "강렬한",
+        "몽환적",
+        "신나는"
+      ],
+      "sound": "실험적인 밴드 사운드에 세련된 멜로디를 더한 모던록.",
+      "songs": [
+        {
+          "title": "NO PAIN",
+          "note": "정규 2집 POWER ANDRE 99, 2022 / 한대음 올해의 노래"
+        },
+        {
+          "title": "Tik Tak Tok (feat. So!YoON!)",
+          "note": "POWER ANDRE 99, 2023"
+        },
+        {
+          "title": "Desert Eagle",
+          "note": "싱글, 2021"
+        },
+        {
+          "title": "낮잠",
+          "note": "EP SiO2.nH2O 타이틀곡, 2017"
+        },
+        {
+          "title": "Realize",
+          "note": "EP Machine Boy, 2023"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/%EC%8B%A4%EB%A6%AC%EC%B9%B4%EA%B2%94(%EB%B0%B4%EB%93%9C)",
+        "https://music.bugs.co.kr/artist/80244161"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/dde437e53a69acd24551c0d9745006c1/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Dr. BOB",
+        "You Just Wanna Have Fun",
+        "BIG VOID",
+        "Gosan",
+        "Budland",
+        "PH-1004",
+        "NEO SOUL",
+        "Creek",
+        "Sister",
+        "S G T A P E - 02"
+      ]
+    },
+    {
+      "name": "혁오",
+      "name_en": "HYUKOH",
+      "type": "밴드",
+      "genre": "인디록 · 모던록",
+      "mood": [
+        "청춘",
+        "우울한",
+        "서정적인"
+      ],
+      "sound": "오혁의 독특한 음색과 청춘의 불안을 담은 가사가 돋보이는 밴드 사운드.",
+      "songs": [
+        {
+          "title": "위잉위잉",
+          "note": "EP 20, 2014"
+        },
+        {
+          "title": "와리가리",
+          "note": "EP 22, 2015"
+        },
+        {
+          "title": "TOMBOY",
+          "note": "정규 1집 23, 2017 / 한대음 올해의 노래"
+        },
+        {
+          "title": "LOVE YA!",
+          "note": "EP 24 : How to find true love and happiness, 2018"
+        },
+        {
+          "title": "공드리",
+          "note": "EP 22, 2015"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%ED%98%81%EC%98%A4%EC%9D%98_%EC%9D%8C%EB%B0%98_%EB%AA%A9%EB%A1%9D",
+        "https://music.bugs.co.kr/artist/80204766"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/1b1d6aeaf80af67ea68034cf657e56aa/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Clair de Lune",
+        "Wanli万里",
+        "Little Balcony",
+        "Candlelight",
+        "Silverhair Express",
+        "가죽자켓",
+        "Surf boy",
+        "Settled Down",
+        "Feels Like Roller-Coaster Ride",
+        "KoK"
+      ]
+    },
+    {
+      "name": "잔나비",
+      "name_en": "JANNABI",
+      "type": "밴드",
+      "genre": "인디록 · 팝 록",
+      "mood": [
+        "서정적인",
+        "청춘",
+        "레트로",
+        "잔잔한"
+      ],
+      "sound": "복고풍 감성과 서정적인 멜로디가 어우러진 팝 록.",
+      "songs": [
+        {
+          "title": "주저하는 연인들을 위해",
+          "note": "정규 2집 전설 타이틀곡, 2019"
+        },
+        {
+          "title": "뜨거운 여름밤은 가고 남은 건 볼품없지만",
+          "note": "정규 1집 MONKEY HOTEL, 2016"
+        },
+        {
+          "title": "사랑하긴 했었나요 스쳐가는 인연이었나요 짧지않은 우리 함께했던 시간들이 자꾸 내 마음을 가둬두네",
+          "note": "싱글 봉춤을 추네, 2014"
+        },
+        {
+          "title": "꿈과 책과 힘과 벽",
+          "note": "정규 2집 전설, 2019"
+        },
+        {
+          "title": "나의 기쁨 나의 노래",
+          "note": "정규 2집 전설, 2019"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%EC%A0%84%EC%84%A4_(%EC%9D%8C%EB%B0%98)",
+        "https://music.bugs.co.kr/track/3650861"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/c9755aae346529c212f4bca817ac0532/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "검정치마",
+      "name_en": "The Black Skirts",
+      "type": "밴드",
+      "genre": "인디록 · 팝 록 · 신스팝",
+      "mood": [
+        "서정적인",
+        "몽환적",
+        "잔잔한"
+      ],
+      "sound": "조휴일이 이끄는 원맨 밴드로, 담백한 보컬과 로맨틱한 인디 팝 록 사운드.",
+      "songs": [
+        {
+          "title": "EVERYTHING",
+          "note": "싱글 2016, 정규 3집 TEAM BABY 2017 수록"
+        },
+        {
+          "title": "Antifreeze",
+          "note": "정규 1집 201, 2008"
+        },
+        {
+          "title": "기다린 만큼, 더",
+          "note": "또 오해영 OST Part 7, 2016"
+        },
+        {
+          "title": "Love Shine",
+          "note": "정규 2집 Don't You Worry Baby (I'm Only Swimming), 2011"
+        },
+        {
+          "title": "좋아해줘",
+          "note": "정규 1집 201, 2008"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%EA%B2%80%EC%A0%95%EC%B9%98%EB%A7%88",
+        "https://namu.wiki/w/Antifreeze"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/c943745d0525a9e3130985007d3d4ac9/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Flying Bobs",
+        "Garden State Dreamers",
+        "Jeff And Alana",
+        "Island (queen of diamonds)",
+        "Thinner than water",
+        "In My City of Seoul",
+        "Freeloader",
+        "Ariel",
+        "Tangled",
+        "Kleenex"
+      ]
+    },
+    {
+      "name": "쏜애플",
+      "name_en": "THORNAPPLE",
+      "type": "밴드",
+      "genre": "얼터너티브 록 · 인디록",
+      "mood": [
+        "강렬한",
+        "몽환적",
+        "우울한"
+      ],
+      "sound": "윤성현의 시적인 가사와 무게감 있는 기타 사운드의 얼터너티브 록.",
+      "songs": [
+        {
+          "title": "시퍼런 봄",
+          "note": "정규 2집 이상기후, 2014"
+        },
+        {
+          "title": "아지랑이",
+          "note": "정규 2집 이상기후, 2014"
+        },
+        {
+          "title": "살아있는 너의 밤",
+          "note": "정규 2집 이상기후, 2014"
+        },
+        {
+          "title": "멸종",
+          "note": "EP 동물 타이틀곡, 2023"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/%EC%8B%9C%ED%8D%BC%EB%9F%B0%20%EB%B4%84",
+        "https://music.apple.com/us/artist/%EC%8F%9C%EC%95%A0%ED%94%8C/963680681?l=ko"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/4fb393b4dc5cfb2e7037c4a867562569/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "터치드",
+      "name_en": "TOUCHED",
+      "type": "밴드",
+      "genre": "팝 록 · 록",
+      "mood": [
+        "신나는",
+        "청량한",
+        "청춘",
+        "강렬한"
+      ],
+      "sound": "윤민의 시원하고 강렬한 보컬과 에너지 넘치는 록 사운드.",
+      "songs": [
+        {
+          "title": "Highlight",
+          "note": "그레이트 서울 인베이전 Section 2, 2022"
+        },
+        {
+          "title": "야경",
+          "note": "EP Yellow Supernova Remnant 타이틀곡, 2023"
+        },
+        {
+          "title": "Hi Bully",
+          "note": "EP Purple 타이틀곡, 2021"
+        },
+        {
+          "title": "Alive",
+          "note": "그레이트 서울 인베이전 Final, 2022 / 우승곡"
+        },
+        {
+          "title": "Last Day",
+          "note": "싱글, 2024"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/%ED%84%B0%EC%B9%98%EB%93%9C",
+        "https://music.bugs.co.kr/artist/20121321"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/4ca8aa71cd44eae777e75df2fede1fad/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Tunnel",
+        "Alone",
+        "I Forgot",
+        "Straight from the Heart",
+        "Through the Night",
+        "Slowly Moving Scenery",
+        "Beg Your Pardon",
+        "Shut Down",
+        "True Love",
+        "Moondance"
+      ]
+    },
+    {
+      "name": "유다빈밴드",
+      "name_en": "YUDABINBAND",
+      "type": "밴드",
+      "genre": "포크 · 블루스 · 록",
+      "mood": [
+        "청량한",
+        "청춘",
+        "위로"
+      ],
+      "sound": "어쿠스틱 기타로 쓴 곡을 밴드 사운드로 풀어낸 깨끗하고 청량한 록.",
+      "songs": [
+        {
+          "title": "좋지 아니한가",
+          "note": "크라잉넛 커버, 그레이트 서울 인베이전 Semi Final, 2022"
+        },
+        {
+          "title": "항해",
+          "note": "싱글, 2023"
+        },
+        {
+          "title": "LETTER",
+          "note": "데뷔곡, 유다빈밴드 1집 2021 수록"
+        },
+        {
+          "title": "고열",
+          "note": "싱글 2021, 유다빈밴드 1집 수록"
+        },
+        {
+          "title": "곁에 (NEXT to)",
+          "note": "그레이트 서울 인베이전 Section 4, 2022"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/%EC%9C%A0%EB%8B%A4%EB%B9%88%EB%B0%B4%EB%93%9C",
+        "https://music.bugs.co.kr/artist/20119889"
+      ],
+      "checked": false,
+      "image": null,
+      "deep_songs": []
+    },
+    {
+      "name": "설",
+      "name_en": "SURL",
+      "type": "밴드",
+      "genre": "브리티시 록 · 블루스",
+      "mood": [
+        "청춘",
+        "서정적인",
+        "청량한"
+      ],
+      "sound": "브리티시 록과 블루스를 바탕으로 여러 장르를 섞은 4인조 밴드 사운드.",
+      "songs": [
+        {
+          "title": "열기구",
+          "note": "EP I Know, 2019"
+        },
+        {
+          "title": "눈",
+          "note": "EP Aren't You?, 2018"
+        },
+        {
+          "title": "Dry Flower",
+          "note": "EP I Know 타이틀곡, 2019"
+        },
+        {
+          "title": "The Lights Behind You",
+          "note": "EP Aren't You?, 2018"
+        },
+        {
+          "title": "Aloha My Love",
+          "note": "EP I Know, 2019"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/SURL",
+        "https://music.bugs.co.kr/artist/20065235"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/baf7a1e96ef73081b0cf757d49d58e8d/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Rope",
+        "Firework",
+        "Dongsan",
+        "SIX SEVEN",
+        "ringringring",
+        "Not OK",
+        "Please Stay",
+        "Accidental Collision",
+        "Colors",
+        "Ferris Wheel"
+      ]
+    },
+    {
+      "name": "너드커넥션",
+      "name_en": "Nerd Connection",
+      "type": "밴드",
+      "genre": "브릿팝 · 록",
+      "mood": [
+        "서정적인",
+        "잔잔한",
+        "위로"
+      ],
+      "sound": "대중적이고 서정적인 멜로디의 브릿팝 계열 밴드 사운드.",
+      "songs": [
+        {
+          "title": "좋은 밤 좋은 꿈",
+          "note": "싱글, 2020"
+        },
+        {
+          "title": "우린 노래가 될까",
+          "note": "정규 1집 New Century Masterpiece Cinema, 2021"
+        },
+        {
+          "title": "조용히 완전히 영원히",
+          "note": "정규 1집 New Century Masterpiece Cinema, 2021"
+        },
+        {
+          "title": "그대만 있다면 (여름날 우리 X 너드커넥션 (Nerd Connection))",
+          "note": "영화 여름날 우리 OST, 2023 (러브홀릭 리메이크)"
+        },
+        {
+          "title": "Back in Time",
+          "note": "싱글, 2020"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/%EB%84%88%EB%93%9C%EC%BB%A4%EB%84%A5%EC%85%98",
+        "https://music.bugs.co.kr/artist/20063172"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/7b4a9d2900ca833322dc4495945e8c1f/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Fly Away",
+        "Hollywood Movie Star",
+        "SUPERNOVA!",
+        "Snowman in a Bathtub",
+        "Life Dancing",
+        "Marion",
+        "Where are we",
+        "That′s also our love",
+        "Beodeul-Gil",
+        "Time Falling"
+      ]
+    },
+    {
+      "name": "웨이브 투 어스",
+      "name_en": "wave to earth",
+      "type": "밴드",
+      "genre": "인디록 · 재즈 · 로파이",
+      "mood": [
+        "잔잔한",
+        "몽환적",
+        "청춘",
+        "서정적인"
+      ],
+      "sound": "재즈와 로파이 기반의 나른한 기타와 부드러운 보컬.",
+      "songs": [
+        {
+          "title": "seasons",
+          "note": "EP summer flows 0.02 (2020)"
+        },
+        {
+          "title": "bad",
+          "note": "정규 1집 0.1 flaws and all. (2023)"
+        },
+        {
+          "title": "love.",
+          "note": "정규 1집 0.1 flaws and all. (2023)"
+        },
+        {
+          "title": "annie.",
+          "note": "EP play with earth! 0.03 (2024)"
+        },
+        {
+          "title": "sunny days",
+          "note": "정규 1집 0.1 flaws and all. (2023)"
+        }
+      ],
+      "sources": [
+        "https://music.bugs.co.kr/artist/20089715",
+        "https://namu.wiki/w/wave%20to%20earth"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/d27a4c2c28addd9d63bc141683839fdf/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "talking 'bout u",
+        "sing it all again",
+        "hyang",
+        "are you bored?",
+        "slow dive",
+        "pink horizon",
+        "dried flower",
+        "so real",
+        "surf.",
+        "light"
+      ]
+    },
+    {
+      "name": "데이먼스 이어",
+      "name_en": "Damons year",
+      "type": "솔로",
+      "genre": "인디 포크 · 인디록 · R&B",
+      "mood": [
+        "서정적인",
+        "잔잔한",
+        "우울한",
+        "위로"
+      ],
+      "sound": "기타·피아노 중심의 미니멀한 편성에서 밴드 사운드까지 오가는 감성적인 싱어송라이터 음악.",
+      "songs": [
+        {
+          "title": "yours",
+          "note": "싱글 yours (2019)"
+        },
+        {
+          "title": "salty",
+          "note": "EP \" sin ! \" (2019)"
+        },
+        {
+          "title": "Gertha Loew",
+          "note": "CORPUS 0 (연도 확인 필요)"
+        },
+        {
+          "title": "태엽감기",
+          "note": "싱글 (2025)"
+        },
+        {
+          "title": "죽지 않은 연인에게",
+          "note": "싱글 (2024)"
+        }
+      ],
+      "sources": [
+        "https://music.bugs.co.kr/artist/20038690",
+        "https://www.ichart.kr/artist/186"
+      ],
+      "checked": false,
+      "image": null,
+      "deep_songs": []
+    },
+    {
+      "name": "오월오일",
+      "name_en": "OWALLOIL (五月五日)",
+      "type": "밴드",
+      "genre": "록 · 인디록",
+      "mood": [
+        "청춘",
+        "몽환적",
+        "신나는",
+        "서정적인"
+      ],
+      "sound": "3인조 편성의 기타 중심 록 사운드에 동화 같은 서사를 담은 음악.",
+      "songs": [
+        {
+          "title": "Echo",
+          "note": "EP Nightmare"
+        },
+        {
+          "title": "Wish",
+          "note": "싱글 (2023)"
+        },
+        {
+          "title": "Magic Train",
+          "note": "정규 1집 Campo (2023)"
+        },
+        {
+          "title": "Look My Moon",
+          "note": "정규 2집 FRUTO (2025)"
+        },
+        {
+          "title": "Cherry Roman Candle",
+          "note": "정규 2집 FRUTO (2025)"
+        }
+      ],
+      "sources": [
+        "https://music.bugs.co.kr/artist/20089979",
+        "https://www.harpersbazaar.co.kr/article/1893783"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/fd3ab89e960562e970f2ffaa8db0cc00/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "라쿠나",
+      "name_en": "Lacuna",
+      "type": "밴드",
+      "genre": "인디록 · 인디팝",
+      "mood": [
+        "청춘",
+        "청량한",
+        "서정적인",
+        "잔잔한"
+      ],
+      "sound": "청춘과 여름을 노래하는 멜로디 중심의 4인조 밴드 사운드.",
+      "songs": [
+        {
+          "title": "춤을 춰요",
+          "note": "EP Hello, Wonderland (2021)"
+        },
+        {
+          "title": "Montauk",
+          "note": "데뷔곡 (2018)"
+        },
+        {
+          "title": "YOU",
+          "note": "Summer Tales"
+        },
+        {
+          "title": "유령",
+          "note": "싱글"
+        },
+        {
+          "title": "John",
+          "note": "싱글"
+        }
+      ],
+      "sources": [
+        "https://www.melon.com/artist/song.htm?artistId=2558908",
+        "https://www.koreanindie.com/2021/03/29/lacuna-hello-wonderland/"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/958ecc1e8cb823c883f1974f442d000c/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Stardrift Mix",
+        "Anteface",
+        "Isosolost",
+        "Wowge",
+        "Helicopter",
+        "Communication",
+        "Post Scriptum",
+        "Proto Nucleya",
+        "Bitter Sharkey",
+        "Puppy's Love"
+      ]
+    },
+    {
+      "name": "리도어",
+      "name_en": "Redoor",
+      "type": "밴드",
+      "genre": "인디록 · 록",
+      "mood": [
+        "서정적인",
+        "몽환적",
+        "청춘",
+        "우울한"
+      ],
+      "sound": "감성적인 보컬과 기타 중심의 서정적인 밴드 사운드.",
+      "songs": [
+        {
+          "title": "영원은 그렇듯",
+          "note": "데뷔 싱글 (2021)"
+        },
+        {
+          "title": "아게하",
+          "note": "EP Memory 타이틀곡"
+        },
+        {
+          "title": "버릇",
+          "note": "EP Memory"
+        },
+        {
+          "title": "욕망주사기",
+          "note": "EP Hospital 타이틀곡"
+        },
+        {
+          "title": "Feathers",
+          "note": "싱글"
+        }
+      ],
+      "sources": [
+        "https://www.melon.com/artist/song.htm?artistId=2912742",
+        "https://news.tf.co.kr/read/entertain/2369585.htm"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/fa5c6555dc34d62c065fdbdaebb79ea5/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Habit",
+        "Ageha",
+        "Logout",
+        "Syringe",
+        "Shadow of You",
+        "Baby Cactus",
+        "Still in Love with You",
+        "Fairy tale",
+        "My blue wavy room",
+        "World:Noise"
+      ]
+    },
+    {
+      "name": "나상현씨밴드",
+      "name_en": "Band Nah",
+      "type": "밴드",
+      "genre": "인디록 · 포크 · 팝",
+      "mood": [
+        "청춘",
+        "신나는",
+        "위로",
+        "청량한"
+      ],
+      "sound": "평범한 일상을 대중적인 멜로디와 기분 좋은 록 사운드로 풀어낸다.",
+      "songs": [
+        {
+          "title": "찬란",
+          "note": "EP 축제 (2023)"
+        },
+        {
+          "title": "축제",
+          "note": "EP 축제 (2023)"
+        },
+        {
+          "title": "Love Love Love",
+          "note": "EP 축제 (2023)"
+        },
+        {
+          "title": "각자의 밤",
+          "note": "싱글 (연도 확인 필요)"
+        },
+        {
+          "title": "주인공",
+          "note": "유미의 세포들 OST Part 5"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%EB%82%98%EC%83%81%ED%98%84%EC%94%A8%EB%B0%B4%EB%93%9C",
+        "https://music.bugs.co.kr/artist/80212283"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/330ddcf0dc65df865e40de2d693d77fd/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "발자국",
+        "What′s Going On",
+        "Colours",
+        "Hug",
+        "You",
+        "Ending",
+        "Life",
+        "pathetic!",
+        "Bad Dream",
+        "Go Straight"
+      ]
+    },
+    {
+      "name": "까치산",
+      "name_en": "KACHISAN",
+      "type": "밴드",
+      "genre": "록 · 애니메이션 록",
+      "mood": [
+        "신나는",
+        "청춘",
+        "강렬한",
+        "청량한"
+      ],
+      "sound": "만화 주제가에서 영향받은 또렷한 선율과 환한 에너지의 '애니메이션 록'.",
+      "songs": [
+        {
+          "title": "주제는 사랑",
+          "note": "데뷔 싱글 (2023), 정규 1집 수록"
+        },
+        {
+          "title": "거짓말 자판기",
+          "note": "정규 1집 안녕하세요, 까치산입니다. (2023)"
+        },
+        {
+          "title": "RESCUE!",
+          "note": "싱글 (2024)"
+        },
+        {
+          "title": "표정이나 가면 따위",
+          "note": "EP 죄악극성 (2025)"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%EA%B9%8C%EC%B9%98%EC%82%B0_(%EB%B0%B4%EB%93%9C)",
+        "https://music.bugs.co.kr/artist/20178975"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/41091b4f4fdfb0183d1665d2a633e6bc/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "The Last Monster",
+        "Ideale",
+        "More than Noise",
+        "Incomplete & Repetition",
+        "Lie Machine",
+        "Theme of Love",
+        "Humanoid Monster",
+        "The Mom of Moms",
+        "Faces or Masks",
+        "TEATIME"
+      ]
+    },
+    {
+      "name": "봉제인간",
+      "name_en": "Bongjeingan",
+      "type": "밴드",
+      "genre": "록 · 인디록",
+      "mood": [
+        "강렬한",
+        "신나는",
+        "독특한"
+      ],
+      "sound": "지윤해·임현제·전일준의 3인조가 들려주는 예측불허의 강렬한 록 연주.",
+      "songs": [
+        {
+          "title": "너의 뒤",
+          "note": "싱글 너의 뒤 / 응이라고 말을 해줘 (2024)"
+        },
+        {
+          "title": "GAEKKUM",
+          "note": "데뷔 싱글 GAEKKUM / GOOD (2022)"
+        },
+        {
+          "title": "Guitar Hero: Dreams Come True",
+          "note": "정규 1집 12가지 말들 (2023)"
+        },
+        {
+          "title": "KISS",
+          "note": "정규 1집 12가지 말들 (2023)"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/%EB%B4%89%EC%A0%9C%EC%9D%B8%EA%B0%84",
+        "https://www.marieclairekorea.com/hot-news/2025/03/bongjeingan-interview/"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/8c69cadbdfb119e40af66c6c6a18b49e/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "12 Languages",
+        "BABY",
+        "BAT",
+        "Previous Story",
+        "Good Night",
+        "You Are My Shackle",
+        "Twist it",
+        "Adeung-badeung",
+        "Know You Did",
+        "Say Yes"
+      ]
+    },
+    {
+      "name": "아도이",
+      "name_en": "ADOY",
+      "type": "밴드",
+      "genre": "신스팝 · 인디팝",
+      "mood": [
+        "청량한",
+        "몽환적",
+        "청춘",
+        "신나는"
+      ],
+      "sound": "시티팝 영향을 받은 반짝이는 신시사이저와 영어 가사의 신스팝.",
+      "songs": [
+        {
+          "title": "Wonder",
+          "note": "EP LOVE (2018)"
+        },
+        {
+          "title": "Grace",
+          "note": "EP CATNIP (2017)"
+        },
+        {
+          "title": "Swim",
+          "note": "VIVID (연도 확인 필요)"
+        },
+        {
+          "title": "Young",
+          "note": "EP LOVE (2018)"
+        }
+      ],
+      "sources": [
+        "https://koreanmusicawards.com/project/adoy-wonder/",
+        "https://www.khan.co.kr/article/201808081613001"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/f85adf1c219c2e8e0d81990fdb00b82f/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Gooood",
+        "Time's a Thief",
+        "Zebra",
+        "Romantic",
+        "Someday",
+        "Ugly",
+        "Antihero",
+        "NY",
+        "Balloon",
+        "Runner's High"
+      ]
+    },
+    {
+      "name": "솔루션스",
+      "name_en": "THE SOLUTIONS",
+      "type": "밴드",
+      "genre": "록 · 인디록",
+      "mood": [
+        "신나는",
+        "청량한",
+        "청춘"
+      ],
+      "sound": "4인조 편성의 경쾌하고 밝은 록 사운드.",
+      "songs": [
+        {
+          "title": "Ticket to the Moon",
+          "note": "싱글 (2016)"
+        },
+        {
+          "title": "Love Again",
+          "note": "싱글 (2017), Thumbs Up 수록"
+        },
+        {
+          "title": "Otherside",
+          "note": "정규 1집 THE SOLUTIONS (2012)"
+        },
+        {
+          "title": "Mood For Love",
+          "note": "싱글 (2018)"
+        },
+        {
+          "title": "들꽃",
+          "note": "김성근의 겨울방학 협업 싱글 (2025)"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%EC%86%94%EB%A3%A8%EC%85%98%EC%8A%A4",
+        "https://music.bugs.co.kr/artist/80128657"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/4b9274899ff0642255be4d0a1613bf16/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Toxic",
+        "N/A",
+        "Envy the leaves",
+        "Jungle In Your Mind",
+        "Talk, Dance, Party For Love",
+        "Crack",
+        "TIME",
+        "Night Swim",
+        "Savior",
+        "Forever Young"
+      ]
+    },
+    {
+      "name": "글렌체크",
+      "name_en": "Glen Check",
+      "type": "밴드",
+      "genre": "신스팝 · 일렉트로닉 · 일렉트로닉 록",
+      "mood": [
+        "신나는",
+        "세련된",
+        "청춘",
+        "청량한"
+      ],
+      "sound": "춤추기 좋은 리듬과 세련된 프로덕션의 일렉트로닉 록·신스팝.",
+      "songs": [
+        {
+          "title": "Vogue Boys And Girls",
+          "note": "정규 1집 Haute Couture (2012), 타이틀"
+        },
+        {
+          "title": "60's Cardin",
+          "note": "정규 1집 Haute Couture (2012)"
+        },
+        {
+          "title": "Velvet Goldmine",
+          "note": "디지털 싱글 (2018)"
+        },
+        {
+          "title": "Dive Baby, Dive",
+          "note": "디지털 싱글 (2021)"
+        },
+        {
+          "title": "Runaway",
+          "note": "정규 3집 Bleach (2022)"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/글렌체크",
+        "https://music.bugs.co.kr/album/322456"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/5dc6283224f9ef1854484b00ac80d1f0/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Acid Test",
+        "Sins",
+        "Bliss",
+        "I Feel Like Ridin' Slow",
+        "Good Times",
+        "Odd Girl",
+        "Candy Pink",
+        "Dreaming Kills",
+        "Rude & Confused",
+        "Nevada"
+      ]
+    },
+    {
+      "name": "파란노을",
+      "name_en": "Parannoul",
+      "type": "솔로",
+      "genre": "슈게이즈 · 이모 · 인디록",
+      "mood": [
+        "몽환적",
+        "우울한",
+        "청춘",
+        "강렬한"
+      ],
+      "sound": "가상악기 기반 1인 프로젝트로, 로파이하고 거친 노이즈 기타와 두드러진 드럼 위에 우울한 가사를 얹는다.",
+      "songs": [
+        {
+          "title": "아름다운 세상 (Beautiful World)",
+          "note": "2집 To See the Next Part of the Dream (2021), 타이틀"
+        },
+        {
+          "title": "변명 (Excuse)",
+          "note": "2집 To See the Next Part of the Dream (2021)"
+        },
+        {
+          "title": "흰천장 (White Ceiling)",
+          "note": "2집 To See the Next Part of the Dream (2021)"
+        },
+        {
+          "title": "불면증 (Insomnia)",
+          "note": "3집 After the Magic (2023)"
+        },
+        {
+          "title": "북극성 (Polaris)",
+          "note": "3집 After the Magic (2023)"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/파란노을",
+        "https://www.melon.com/album/detail.htm?albumId=10594445"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/a47abbc73a5db7a2b3df94c5fc721c7b/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "구남과여라이딩스텔라",
+      "name_en": "Gonamgwayeo Riding Stellar",
+      "type": "밴드",
+      "genre": "사이키델릭 록 · 인디록 · 일렉트로닉",
+      "mood": [
+        "신나는",
+        "몽환적",
+        "독특한",
+        "그루비한"
+      ],
+      "sound": "한국적 정서에 트로트·개러지·덥·전자음을 섞은 끈적한 그루브와 조웅의 독특한 보컬. (2005~2025)",
+      "songs": [
+        {
+          "title": "한국말",
+          "note": "1집 우리는 깨끗하다 (2007) 추정"
+        },
+        {
+          "title": "남쪽으로 간다",
+          "note": "2집 우정모텔 (2011)"
+        },
+        {
+          "title": "아침의 빛",
+          "note": "2집 우정모텔 (2011)"
+        },
+        {
+          "title": "젊은이",
+          "note": "3집 썬파워 (2015), 타이틀"
+        },
+        {
+          "title": "망한나라",
+          "note": "4집 모래내 판타지 (2019)"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/구남과여라이딩스텔라",
+        "https://music.bugs.co.kr/album/516071"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/b46ff805e3ce8fd2cb9ee60508172273/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "3호선 버터플라이",
+      "name_en": "3rd Line Butterfly",
+      "type": "밴드",
+      "genre": "얼터너티브 록 · 사이키델릭 록 · 노이즈 록",
+      "mood": [
+        "몽환적",
+        "서정적인",
+        "강렬한",
+        "우울한"
+      ],
+      "sound": "몽환적인 사이키델릭과 노이즈 기타 이펙트 위에 남상아의 허스키한 보컬이 얹힌다.",
+      "songs": [
+        {
+          "title": "꿈꾸는 나비",
+          "note": "1집 재발매·드라마 네 멋대로 해라 OST (2002)"
+        },
+        {
+          "title": "식민지",
+          "note": "2집 Oh! Silence (2002)"
+        },
+        {
+          "title": "삐뚤 빼뚤 원래 그래",
+          "note": "3집 Time Table (2004), 타이틀"
+        },
+        {
+          "title": "깊은 밤 안개 속",
+          "note": "EP Nine Days or a Million (2009)"
+        },
+        {
+          "title": "헤어지는 날 바로 오늘",
+          "note": "4집 Dreamtalk (2012)"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/3호선_버터플라이",
+        "https://namu.wiki/w/3호선%20버터플라이"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/e28365c6667a7de7b8b6b09687619b57/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "나를 깨우네",
+        "내 곁에 있어줘",
+        "너와나 You and Me",
+        "끝말잇기 Alpha-bits",
+        "Where Is Love",
+        "할머니가 피었어요 Grandmather Has Blossomed",
+        "광합성 Photosynthesis",
+        "오리엔탈 걸 Oriental Girl",
+        "거울아 거울아 Mirror Mirror",
+        "표선 무지개 Pyoseon Rainbow"
+      ]
+    },
+    {
+      "name": "델리스파이스",
+      "name_en": "Deli Spice",
+      "type": "밴드",
+      "genre": "모던록 · 인디록",
+      "mood": [
+        "청춘",
+        "서정적인",
+        "청량한",
+        "신나는"
+      ],
+      "sound": "한국 인디 1세대 모던록으로, 브릿팝·시부야계·개러지를 오간 경쾌한 기타 팝. (1995~, 2015년 이후 사실상 활동 정지)",
+      "songs": [
+        {
+          "title": "챠우챠우",
+          "note": "1집 Deli Spice (1997)"
+        },
+        {
+          "title": "항상 엔진을 켜둘께",
+          "note": "4집 D (2001), 타이틀"
+        },
+        {
+          "title": "고백",
+          "note": "5집 Espresso (2003), 타이틀"
+        },
+        {
+          "title": "Missing You",
+          "note": "6집 Bombom (2006), 타이틀"
+        },
+        {
+          "title": "슬픔이여 안녕",
+          "note": "7집 Open Your Eyes (2011), 타이틀"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/델리스파이스",
+        "https://music.bugs.co.kr/track/91846"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/d5ce625d4eb875603940d415097b10bb/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Open Your Eyes",
+        "Run For Your Life",
+        "Sihanoukville",
+        "Red future",
+        "노인 구국결사대",
+        "숨겨진 보석",
+        "뚜빠뚜빠띠",
+        "악몽",
+        "천사의 자장가",
+        "Black Night"
+      ]
+    },
+    {
+      "name": "브로콜리너마저",
+      "name_en": "Broccoli, you too?",
+      "type": "밴드",
+      "genre": "모던록 · 인디팝 · 포크",
+      "mood": [
+        "잔잔한",
+        "위로",
+        "서정적인",
+        "청춘"
+      ],
+      "sound": "멤버 전원이 노래하는 담백한 모던록으로, 일상의 이야기를 따뜻하게 풀어낸다.",
+      "songs": [
+        {
+          "title": "앵콜요청금지",
+          "note": "EP 앵콜요청금지 (2007)"
+        },
+        {
+          "title": "보편적인 노래",
+          "note": "1집 보편적인 노래 (2008)"
+        },
+        {
+          "title": "유자차",
+          "note": "1집 보편적인 노래 (2008)"
+        },
+        {
+          "title": "사랑한다는 말로도 위로가 되지 않는",
+          "note": "2집 졸업 (2010), 타이틀"
+        },
+        {
+          "title": "졸업",
+          "note": "2집 졸업 (2010)"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/브로콜리너마저",
+        "https://music.bugs.co.kr/track/2111256"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/a55cfe376647534c68d2ed838196d65d/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "장기하와 얼굴들",
+      "name_en": "Kiha & The Faces",
+      "type": "밴드",
+      "genre": "인디록 · 포크록",
+      "mood": [
+        "유쾌한",
+        "신나는",
+        "독특한",
+        "청춘"
+      ],
+      "sound": "말하듯 읊조리는 장기하의 보컬과 복고풍 록 그루브가 어우러진다. (2008~2018)",
+      "songs": [
+        {
+          "title": "싸구려 커피",
+          "note": "싱글 (2008), 1집 별일 없이 산다 (2009)"
+        },
+        {
+          "title": "달이 차오른다, 가자",
+          "note": "1집 별일 없이 산다 (2009)"
+        },
+        {
+          "title": "별일 없이 산다",
+          "note": "1집 별일 없이 산다 (2009)"
+        },
+        {
+          "title": "그렇고 그런 사이",
+          "note": "2집 장기하와 얼굴들 (2011), 더블 타이틀"
+        },
+        {
+          "title": "그건 니 생각이고",
+          "note": "5집 mono (2018), 타이틀"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/장기하와_얼굴들"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/da589e4efa357e8bc67c0b0106996177/250x250-000000-80-0-0.jpg",
+      "deep_songs": []
+    },
+    {
+      "name": "갤럭시 익스프레스",
+      "name_en": "Galaxy Express",
+      "type": "밴드",
+      "genre": "펑크록 · 개러지록 · 로큰롤",
+      "mood": [
+        "강렬한",
+        "신나는",
+        "거친",
+        "에너지"
+      ],
+      "sound": "날것의 질감을 살린 펑크·개러지 로큰롤과 격렬한 라이브 에너지.",
+      "songs": [
+        {
+          "title": "홀로 이렇게",
+          "note": "EP Come On And Get Up (2009), 타이틀"
+        },
+        {
+          "title": "Break It Down",
+          "note": "EP Come On And Get Up (2009)"
+        },
+        {
+          "title": "진짜 너를 원해",
+          "note": "2집 Wild Days (2010)"
+        },
+        {
+          "title": "너와 나",
+          "note": "3집 Galaxy Express (2012), 트리플 타이틀"
+        },
+        {
+          "title": "호롱불",
+          "note": "3집 Galaxy Express (2012), 트리플 타이틀"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/갤럭시_익스프레스_(밴드)",
+        "https://namu.wiki/w/갤럭시%20익스프레스"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/022fd05fd82f7ee92b3711e5b9631c82/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Electric Jungle",
+        "Do You Wanna Shout",
+        "Don’t Care Anymore",
+        "허공 속으로 Into the Void",
+        "Lost Days",
+        "여명의 설원 Daybreak Snowfield",
+        "하우스 오브 폐인 House of F*ckups",
+        "떠나는 날 Departure",
+        "另一个我 (Your Name)",
+        "My Fault"
+      ]
+    },
+    {
+      "name": "국카스텐",
+      "name_en": "Guckkasten",
+      "type": "밴드",
+      "genre": "사이키델릭 록 · 하드록 · 프로그레시브 록",
+      "mood": [
+        "강렬한",
+        "몽환적",
+        "독특한",
+        "어두운"
+      ],
+      "sound": "기괴한 이펙터 기타와 하현우의 날카로운 초고음이 폭발하는 사이키델릭 하드록.",
+      "songs": [
+        {
+          "title": "거울",
+          "note": "1집 Guckkasten (2009/재녹음 2010), 타이틀"
+        },
+        {
+          "title": "꼬리",
+          "note": "1집 Guckkasten (2010)"
+        },
+        {
+          "title": "감염",
+          "note": "2집 선공개 싱글 (2014)"
+        },
+        {
+          "title": "변신",
+          "note": "2집 FRAME (2014)"
+        },
+        {
+          "title": "도둑",
+          "note": "싱글 (2015)"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/국카스텐",
+        "https://ko.wikipedia.org/wiki/Guckkasten_(음반)"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/c742b5683cbc0110e8364f429706209b/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "DREAM",
+        "ROLLER",
+        "PRETA",
+        "PUPPET (2025 Remastered)",
+        "BACK DOOR",
+        "Compass",
+        "FRAME",
+        "푸에고",
+        "스크래치",
+        "YOUR NAME"
+      ]
+    },
+    {
+      "name": "로맨틱펀치",
+      "name_en": "Romantic Punch",
+      "type": "밴드",
+      "genre": "록 · 팝 펑크",
+      "mood": [
+        "신나는",
+        "강렬한",
+        "청량한",
+        "에너지"
+      ],
+      "sound": "배인혁의 넓은 음역과 80년대풍 팝 록을 재해석한 흥겨운 사운드.",
+      "songs": [
+        {
+          "title": "내일로 Jump",
+          "note": "EP Romantic Punch (2009)"
+        },
+        {
+          "title": "토요일 밤이 좋아",
+          "note": "1집 Midnight Cinderella (2010), 타이틀"
+        },
+        {
+          "title": "메이데이 메이데이",
+          "note": "EP Silent Night (2012), 타이틀"
+        },
+        {
+          "title": "TGIF (Thank Girl, It's Friday!)",
+          "note": "2집 Glam Slam (2013)"
+        },
+        {
+          "title": "파이트 클럽",
+          "note": "EP Fight Club (2015)"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/로맨틱펀치",
+        "https://namu.wiki/w/로맨틱펀치"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/ae7edb7ee5ce666cd25f4cc297d19be6/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Plug Hole",
+        "Raspberry Beat",
+        "Glam Slam (feat. Kim Seheon)",
+        "It's Amazing",
+        "Turn my face away",
+        "Life On",
+        "Stardust",
+        "치명적 치료",
+        "Seoulmates",
+        "The Time Is On My Side"
+      ]
+    },
+    {
+      "name": "크라잉넛",
+      "name_en": "CRYING NUT",
+      "type": "밴드",
+      "genre": "펑크록 · 인디록",
+      "mood": [
+        "신나는",
+        "강렬한",
+        "청춘",
+        "유쾌한"
+      ],
+      "sound": "질주하는 펑크 리듬에 떼창을 부르는 직선적인 멜로디와 아코디언 등 흥겨운 편곡.",
+      "songs": [
+        {
+          "title": "말달리자",
+          "note": "1집 말달리자 (1998), 인디 대표 히트곡"
+        },
+        {
+          "title": "밤이 깊었네",
+          "note": "3집 하수연가 타이틀 (2001)"
+        },
+        {
+          "title": "명동콜링",
+          "note": "OK 목장의 젖소 수록"
+        },
+        {
+          "title": "좋지 아니한가",
+          "note": "영화 '좋지 아니한가' 주제곡"
+        },
+        {
+          "title": "룩셈부르크",
+          "note": "OK 목장의 젖소 수록"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/%ED%81%AC%EB%9D%BC%EC%9E%89%EB%84%9B",
+        "https://music.bugs.co.kr/artist/3918"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/0a7c4442d616771d5193d3a17f8f0b4c/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "구닥다리 멜로디 Old School Melody",
+        "해적의 항로 The Pirate’s Path",
+        "Wake Up",
+        "새 Bird",
+        "서커스 매직 유랑단 Circus Magic Clowns",
+        "빨대맨 Straw Man",
+        "불꽃놀이 Fireworks",
+        "신기한 노래 Funny Song",
+        "검은새 Black Bird",
+        "White star"
+      ]
+    },
+    {
+      "name": "노브레인",
+      "name_en": "No Brain",
+      "type": "밴드",
+      "genre": "펑크록 · 팝펑크",
+      "mood": [
+        "신나는",
+        "청춘",
+        "강렬한",
+        "유쾌한"
+      ],
+      "sound": "1세대 조선 펑크에서 출발해 따라 부르기 쉬운 팝펑크로 넓힌 에너지 넘치는 밴드 사운드.",
+      "songs": [
+        {
+          "title": "넌 내게 반했어",
+          "note": "3.5집 Stand Up Again! 타이틀 (2004)"
+        },
+        {
+          "title": "비와 당신",
+          "note": "영화 라디오 스타 OST (2006)"
+        },
+        {
+          "title": "해변으로 가요",
+          "note": "Viva No Brain 수록"
+        },
+        {
+          "title": "그것이 젊음",
+          "note": "싱글 그것이 젊음"
+        },
+        {
+          "title": "바다사나이",
+          "note": "인디 최초 가요톱텐 진입곡"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%EB%85%B8%EB%B8%8C%EB%A0%88%EC%9D%B8",
+        "https://music.bugs.co.kr/artist/4419"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/569b99dad0347c3ebe8f16bfd66c5dec/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "No Way",
+        "Midnight Music",
+        "Roll It",
+        "위스키 블루스",
+        "Come on! Masan Street!",
+        "Boys, Be Ambitious",
+        "어둠 속을 걷다",
+        "I Will Fight",
+        "Cheers",
+        "Let′s go to the Moon"
+      ]
+    },
+    {
+      "name": "체리필터",
+      "name_en": "Cherry Filter",
+      "type": "밴드",
+      "genre": "모던록 · 하드록",
+      "mood": [
+        "신나는",
+        "청량한",
+        "강렬한",
+        "청춘"
+      ],
+      "sound": "조유진의 시원하게 내지르는 보컬과 경쾌한 기타 리프가 중심인 대중적인 록 사운드.",
+      "songs": [
+        {
+          "title": "낭만 고양이",
+          "note": "2집 Made In Korea? (2002)"
+        },
+        {
+          "title": "오리 날다",
+          "note": "3집 Third Eye 타이틀 (2003)"
+        },
+        {
+          "title": "달빛소년",
+          "note": "3집 Third Eye (2003)"
+        },
+        {
+          "title": "Happy Day",
+          "note": "4집 Peace N' Rock N' Roll (2006)"
+        },
+        {
+          "title": "피아니시모",
+          "note": "5집 Rocksteric (2009)"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/%EC%B2%B4%EB%A6%AC%ED%95%84%ED%84%B0",
+        "https://music.bugs.co.kr/artist/9560"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/c693d29acca3d7568da6a16031603acb/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "MIA (Bonus Track)",
+        "Orange Road",
+        "Rolling Heart"
+      ]
+    },
+    {
+      "name": "자우림",
+      "name_en": "Jaurim",
+      "type": "밴드",
+      "genre": "모던록 · 얼터너티브록",
+      "mood": [
+        "서정적인",
+        "몽환적",
+        "강렬한",
+        "청춘"
+      ],
+      "sound": "김윤아의 독보적인 보컬을 중심으로 발랄한 팝록부터 어둡고 극적인 록까지 오가는 사운드.",
+      "songs": [
+        {
+          "title": "스물다섯, 스물하나",
+          "note": "9집 Goodbye, grief. (2013)"
+        },
+        {
+          "title": "매직 카펫 라이드",
+          "note": "3집 Jaurim, The Wonder Land (2000)"
+        },
+        {
+          "title": "샤이닝",
+          "note": "Ashes To Ashes (2006)"
+        },
+        {
+          "title": "17171771",
+          "note": "All You Need Is Love 수록"
+        },
+        {
+          "title": "일탈",
+          "note": "1집 Purple Heart (1997)"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%EC%9E%90%EC%9A%B0%EB%A6%BC",
+        "https://music.bugs.co.kr/artist/1443"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/f07e6596a5c8e018d14b39d8f07056a5/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "LIFE!",
+        "COALTAR HEART",
+        "our song",
+        "SANDY BEACH",
+        "있지",
+        "님아",
+        "Idol",
+        "Oh, Honey!",
+        "옛날",
+        "Night Wishes"
+      ]
+    },
+    {
+      "name": "넬",
+      "name_en": "NELL",
+      "type": "밴드",
+      "genre": "모던록 · 얼터너티브록 · 신스팝",
+      "mood": [
+        "우울한",
+        "서정적인",
+        "몽환적",
+        "새벽"
+      ],
+      "sound": "김종완의 섬세한 보컬과 공간감 있는 기타·신스로 쌓은 감성적이고 어두운 모던록.",
+      "songs": [
+        {
+          "title": "기억을 걷는 시간",
+          "note": "4집 Separation Anxiety 타이틀 (2008)"
+        },
+        {
+          "title": "Stay",
+          "note": "1집 Let It Rain 타이틀"
+        },
+        {
+          "title": "지구가 태양을 네 번",
+          "note": "Newton's Apple 수록"
+        },
+        {
+          "title": "멀어지다",
+          "note": "4집 Separation Anxiety (2008)"
+        },
+        {
+          "title": "그리고, 남겨진 것들",
+          "note": "Slip Away 수록"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%EB%84%AC_(%EB%B0%B4%EB%93%9C)",
+        "https://music.bugs.co.kr/artist/7536"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/b3d9a2ee48fffd1f09d731c8cddb6481/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "BLOW",
+        "456 Freestyle",
+        "Keep On Goin",
+        "MY BURNER",
+        "400 Degreez",
+        "Kash n Doja",
+        "Locked in da Game",
+        "Made In Dade",
+        "Back in the Dayz (feat. Denzel Curry, Twelve'len & Rell)",
+        "Time"
+      ]
+    },
+    {
+      "name": "몽니",
+      "name_en": "Monni",
+      "type": "밴드",
+      "genre": "모던록 · 록발라드",
+      "mood": [
+        "서정적인",
+        "위로",
+        "청춘",
+        "잔잔한"
+      ],
+      "sound": "부드러운 밴드 연주 위에 감성적인 보컬이 얹힌 서정적인 모던록·록발라드.",
+      "songs": [
+        {
+          "title": "소년이 어른이 되어",
+          "note": "EP 소년이 어른이 되어 (2012)"
+        },
+        {
+          "title": "그대와 함께",
+          "note": "This Moment (2010)"
+        },
+        {
+          "title": "나를 떠나가던",
+          "note": "This Moment (2010)"
+        },
+        {
+          "title": "소나기",
+          "note": "첫째 날, 빛 (One Day, Light) 수록"
+        },
+        {
+          "title": "망설이지 마요",
+          "note": "단 한번의 여행 [Special Edition] 수록"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%EB%AA%BD%EB%8B%88",
+        "https://music.bugs.co.kr/artist/80013938"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/c08390c832d5331857127c1014cd9006/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Viimeinen Juna Mönnivaaraan",
+        "Kymmenen Kaljaa Ja Uunilenkki",
+        "너 떠나버린 그 집 앞",
+        "하얀 어깨",
+        "Until When In My Heart",
+        "When Tears Dry Up",
+        "Kovan Kiven Talo (feat. Antti Karsee & Kakezi Usum)",
+        "Matkalla Malmööseen",
+        "I Can't Write a Love Song Again",
+        "Industrial Rave"
+      ]
+    },
+    {
+      "name": "피아",
+      "name_en": "PIA",
+      "type": "밴드",
+      "genre": "얼터너티브 메탈 · 뉴메탈",
+      "mood": [
+        "강렬한",
+        "격렬한",
+        "어두운"
+      ],
+      "sound": "묵직한 기타와 신디사이저·FX를 결합한 강렬한 얼터너티브 메탈 (1998~2019 활동, 해체).",
+      "songs": [
+        {
+          "title": "소용돌이",
+          "note": "3rd Phase (2003)"
+        },
+        {
+          "title": "오아시스",
+          "note": "MBC 골든타임 OST Part.9"
+        },
+        {
+          "title": "My Bed",
+          "note": "Become Clear (2005)"
+        },
+        {
+          "title": "Yes You Are",
+          "note": "펜타그램 (PENTAGRAM) 수록"
+        },
+        {
+          "title": "Black Fish Swim",
+          "note": "4집 Waterfalls 타이틀 (2007)"
+        }
+      ],
+      "sources": [
+        "https://ko.wikipedia.org/wiki/%EC%96%91%ED%98%9C%EC%8A%B9_(%EB%93%9C%EB%9F%AC%EB%A8%B8)",
+        "https://music.bugs.co.kr/artist/8748"
+      ],
+      "checked": false,
+      "image": null,
+      "deep_songs": [
+        "Night Drive",
+        "백색의 샤 (with. TABLO & LEE JAE KYUNG)",
+        "Awakening Dawn",
+        "Amber",
+        "잔해",
+        "Stay Calm",
+        "12+13=617",
+        "Love Myself More",
+        "Sentadito viendo",
+        "I've been crying myself to sleep"
+      ]
+    },
+    {
+      "name": "칵스",
+      "name_en": "THE KOXX",
+      "type": "밴드",
+      "genre": "일렉트로닉 록 · 개러지 록",
+      "mood": [
+        "신나는",
+        "강렬한",
+        "청춘",
+        "몽환적"
+      ],
+      "sound": "신스와 댄서블한 비트를 거친 개러지 록에 섞은 '일렉트로 개러지' 사운드 (2008~2020 활동, 해체).",
+      "songs": [
+        {
+          "title": "12:00",
+          "note": "1집 Access OK 타이틀 (2011)"
+        },
+        {
+          "title": "echo",
+          "note": "the new normal 타이틀 (2015)"
+        },
+        {
+          "title": "campfire!",
+          "note": "the new normal (2015)"
+        },
+        {
+          "title": "zeitgeist",
+          "note": "the new normal (2015)"
+        },
+        {
+          "title": "부르튼",
+          "note": "미니앨범 RED"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/%EC%B9%B5%EC%8A%A4",
+        "https://music.bugs.co.kr/artist/80070806"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/5f6671c45362f71e7019b5348aec47f8/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "man go",
+        "heart and mind",
+        "XXOK",
+        "Jump To The Light",
+        "Fire Fox",
+        "#lol",
+        "grey",
+        "Truth or dare",
+        "Over and Over",
+        "Trouble Maker"
+      ]
+    },
+    {
+      "name": "라이프 앤 타임",
+      "name_en": "Life and Time",
+      "type": "밴드",
+      "genre": "인디록 · 사이키델릭 록",
+      "mood": [
+        "몽환적",
+        "서정적인",
+        "강렬한"
+      ],
+      "sound": "사이키델릭하지만 뚜렷한 그루브와 심미적인 멜로디의 3인조 실험적 록 (2013~2019 활동, 활동 중단).",
+      "songs": [
+        {
+          "title": "My loving city",
+          "note": "1집 LAND 타이틀 (2015)"
+        },
+        {
+          "title": "빛 (Light)",
+          "note": "1집 LAND (2015)"
+        },
+        {
+          "title": "호랑이",
+          "note": "EP The Great Deep (2014)"
+        },
+        {
+          "title": "Love Virus",
+          "note": "CHART 수록 (조원선 작사·작곡)"
+        },
+        {
+          "title": "내 마음에 주단을 깔고",
+          "note": "CHART 수록"
+        }
+      ],
+      "sources": [
+        "https://namu.wiki/w/%EB%9D%BC%EC%9D%B4%ED%94%84%20%EC%95%A4%20%ED%83%80%EC%9E%84",
+        "https://music.bugs.co.kr/artist/80187946"
+      ],
+      "checked": false,
+      "image": "https://cdn-images.dzcdn.net/images/artist/525291c6d5759aa8a530803111b6e687/250x250-000000-80-0-0.jpg",
+      "deep_songs": [
+        "Picnic",
+        "Jet cloud",
+        "Dark room",
+        "TV drama",
+        "Flower",
+        "Come",
+        "Life",
+        "Horse Run",
+        "Returning Home",
+        "Tiger"
+      ]
+    }
+  ]
+}

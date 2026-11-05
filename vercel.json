@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "api/gemini.py": {
+      "includeFiles": "data/**",
+      "maxDuration": 60
+    }
+  }
+}
