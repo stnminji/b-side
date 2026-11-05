@@ -41,17 +41,18 @@
     <!-- 홈: 디깅 순환 (검색 → 나의 음악 저장소 → 취향으로 연결 → 다시 검색) -->
     <section id="step-home" class="cycle-wrap">
       <div class="cycle">
-        <!-- 원 위의 화살표 (세 단계를 시계 방향으로 잇는다) -->
+        <!-- 원 위의 화살표: 1 → 2 → 3 → 4 → 다시 1 (시계 방향) -->
         <svg class="cycle-ring" viewBox="0 0 300 300" aria-hidden="true">
           <defs>
             <marker id="cycle-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto">
               <path d="M1 1 L9 5 L1 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
             </marker>
           </defs>
-          <circle cx="150" cy="150" r="110" class="cycle-track" />
-          <path d="M196.5 50.3 A110 110 0 0 1 259.6 159.6" class="cycle-arc" marker-end="url(#cycle-arrow)" />
-          <path d="M213.1 240.1 A110 110 0 0 1 86.9 240.1" class="cycle-arc" marker-end="url(#cycle-arrow)" />
-          <path d="M40.4 159.6 A110 110 0 0 1 103.5 50.3" class="cycle-arc" marker-end="url(#cycle-arrow)" />
+          <circle cx="150" cy="150" r="100" class="cycle-track" />
+          <path d="M203 65.2 A100 100 0 0 1 234.8 97" class="cycle-arc" marker-end="url(#cycle-arrow)" />
+          <path d="M234.8 203 A100 100 0 0 1 203 234.8" class="cycle-arc" marker-end="url(#cycle-arrow)" />
+          <path d="M97 234.8 A100 100 0 0 1 65.2 203" class="cycle-arc" marker-end="url(#cycle-arrow)" />
+          <path d="M65.2 97 A100 100 0 0 1 97 65.2" class="cycle-arc" marker-end="url(#cycle-arrow)" />
         </svg>
 
         <button id="hub-search" class="cycle-node n1" type="button">
@@ -64,18 +65,25 @@
           <span class="cycle-step">2</span>
           <i data-ic="box"></i>
           <b>나의 음악 저장소</b>
-          <span>저장 · 나만의 감상</span>
+          <span>나만의 감상 노트</span>
         </button>
         <button id="hub-social" class="cycle-node n3" type="button">
           <span class="cycle-step">3</span>
           <i data-ic="link"></i>
           <b>취향으로 연결</b>
-          <span>같은 노래 · 같은 이유</span>
+          <span>같은 노래 · 이유</span>
+        </button>
+        <button id="hub-discover" class="cycle-node n4" type="button">
+          <span class="cycle-step">4</span>
+          <i data-ic="sparkle"></i>
+          <b>새로운 발견</b>
+          <span>다른 결의 인디</span>
         </button>
 
+        <!-- 가운데: B-SIDE 로고 -->
         <div class="cycle-center">
-          <b>디깅 순환</b>
-          <span>연결된 사람에게서<br />발견한 음악은<br />다시 검색으로</span>
+          <img src="assets/favicon.svg" alt="" width="64" height="64" class="cycle-logo" />
+          <span class="logo-word"><b>B</b><i></i>SIDE</span>
         </div>
       </div>
     </section>
@@ -345,6 +353,22 @@
       <button id="btn-match" class="btn-small" type="button"><i data-ic="link"></i>취향이 닮은 사람 찾기</button>
       <div id="match-list" class="records-list"></div>
 
+
+      <div class="row center">
+        <button class="btn-ghost go-home">처음으로</button>
+      </div>
+    </section>
+
+    <!-- ④ 새로운 발견: 취향은 다르지만 공통점 하나로 이어 주는 인디 추천 -->
+    <section id="step-discover" class="card" hidden>
+      <h2 class="result-title">새로운 발견</h2>
+      <!-- 취향은 다르지만 공통점 하나로 이어 주는 추천 (취향 넓히기) -->
+      <div class="contrast first">
+        <h3 class="memo-title"><i data-ic="sparkle"></i>취향은 다르지만, 이것도 들어보면 어때요?</h3>
+        <p class="hint small">비슷한 음악만 들으면 취향이 좁아져요. AI가 평소와 <b>다른 결</b>의 인디 음악을 고르고, 그래도 통하는 <b>공통점 하나</b>를 알려 드려요.</p>
+        <button id="btn-contrast" class="btn-small" type="button"><i data-ic="sparkle"></i>다른 결의 인디 추천받기</button>
+        <div id="contrast-list" class="result-list"></div>
+      </div>
       <div class="row center">
         <button class="btn-ghost go-home">처음으로</button>
       </div>

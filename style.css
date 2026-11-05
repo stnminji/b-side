@@ -455,3 +455,21 @@ body.searching #search-form { animation: search-in 0.25s ease; }
 .match-guide { margin: 4px 0 12px; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .match-guide li { font-size: 13px; color: var(--muted); line-height: 1.5; }
 .match-guide b { display: inline-block; min-width: 92px; margin-right: 4px; color: var(--accent); font-weight: 800; }
+
+/* ===== 취향은 다르지만 (공통점 다리) ===== */
+.contrast { margin-top: 26px; padding-top: 18px; border-top: 1px dashed var(--line); }
+#btn-contrast { margin: 4px 0 12px; }
+.bridge { display: flex; align-items: center; gap: 4px; margin: 6px 0 4px; padding: 7px 10px; border-radius: 10px; background: #e7ecdf; color: var(--accent2); font-size: 13px; font-weight: 700; }
+.bridge .ic { width: 15px; height: 15px; margin: 0 2px 0 0; }
+
+/* ===== 디깅 순환: 4단계 (12·3·6·9시) + 가운데 로고 ===== */
+.cycle-node { width: 120px; }
+.n1 { left: 50%; top: 16.7%; }
+.n2 { left: 83.3%; top: 50%; }
+.n3 { left: 50%; top: 83.3%; }
+.n4 { left: 16.7%; top: 50%; }
+.cycle-center { transform: translate(-50%, -50%); gap: 6px; }
+.cycle-logo { width: 64px; height: 64px; filter: drop-shadow(0 4px 10px rgba(46, 38, 32, 0.25)); }
+.cycle-center .logo-word { font-size: 15px; }
+.contrast.first { margin-top: 0; padding-top: 0; border-top: none; }
+@media (max-width: 420px) { .cycle-node { width: 104px; padding: 12px 6px 10px; } .cycle-node b { font-size: 13px; } .cycle-logo { width: 52px; height: 52px; } }

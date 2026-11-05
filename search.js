@@ -6,7 +6,7 @@
 // =====================================================
 (function () {
   const $ = (sel) => document.querySelector(sel);
-  const PAGES = ["step-search", "step-song", "step-artist", "step-records", "step-feed", "step-profile", "step-connect"];
+  const PAGES = ["step-search", "step-song", "step-artist", "step-records", "step-feed", "step-profile", "step-connect", "step-discover"];
   const history = []; // 지나온 페이지 (검색 결과·노래·아티스트만)
 
   function el(tag, cls, text) {

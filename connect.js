@@ -227,6 +227,40 @@
     list.appendChild(group);
   }
 
+  // ----- 취향은 다르지만, 이것도 들어보면 어때요? (AI) -----
+  // 내 취향 분석과 '다른 결'의 인디를 고르되, 공통점(다리) 하나를 함께 보여 준다
+  $("#btn-contrast").addEventListener("click", async () => {
+    const s = await session();
+    if (!s) return alert("로그인 후에 쓸 수 있어요.");
+    const btn = $("#btn-contrast");
+    const list = $("#contrast-list");
+    btn.disabled = true;
+    list.innerHTML = "";
+    list.appendChild(el("p", "hint", "AI가 평소와 다른 결의 음악을 고르고 있어요… (10~20초)"));
+    try {
+      const r = await callAI({ action: "contrast", token: s.access_token });
+      list.innerHTML = "";
+      // 추천 카드는 기존 모양을 그대로 쓰고, 카드마다 '다른 점'과 '공통점'을 붙인다
+      appendBands(r.bands, list, false);
+      [...list.querySelectorAll(".band")].forEach((card, i) => {
+        const b = r.bands[i];
+        if (!b) return;
+        const reason = card.querySelector(".band-reason");
+        if (reason) reason.textContent = "다른 점 · " + b.reason;
+        if (b.bridge) {
+          const bridge = el("p", "bridge");
+          bridge.innerHTML = ic("link");
+          bridge.append("공통점 · " + b.bridge);
+          (reason || card).after(bridge);
+        }
+      });
+    } catch (e) {
+      list.innerHTML = "";
+      list.appendChild(el("p", "hint", e.message || "추천을 불러오지 못했어요. 잠시 후 다시 해 주세요."));
+    }
+    btn.disabled = false;
+  });
+
   // ----- ④ 그 사람에게서 새 음악 발견 (AI) -----
   function discoverButton(userId, target) {
     const wrap = el("div");
