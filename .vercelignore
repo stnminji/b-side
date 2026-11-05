@@ -9,3 +9,4 @@ _shot/
 __pycache__/
 *.pyc
 supabase/
+_shot*
