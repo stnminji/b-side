@@ -151,18 +151,18 @@
   };
 
   // ----- 사람 목록 (같은 아티스트/곡을 공개 서재에 담은 사람) -----
-  window.renderPeople = async (container, column, value, label) => {
+  window.renderPeople = async (container, column, value, label, table = "library") => {
     container.textContent = "불러오는 중…";
     const client = sb();
     if (!client) return (container.textContent = "");
     const my = await me();
     // RLS: 남의 서재는 '공개'만 읽힌다 → 비공개로 담은 사람은 여기 나올 수 없음
-    const { data: rows } = await client.from("library")
+    const { data: rows } = await client.from(table)
       .select("user_id, profiles(nickname)").eq(column, value).eq("is_public", true).limit(200);
     container.textContent = "";
     const seen = new Map();
     (rows || []).forEach((r) => r.user_id !== my && seen.set(r.user_id, r.profiles && r.profiles.nickname));
-    if (!seen.size) return container.appendChild(el("p", "hint small", `아직 ${label} 공개 서재에 담은 사람이 없어요.`));
+    if (!seen.size) return container.appendChild(el("p", "hint small", label));
     seen.forEach((nick, uid) => container.appendChild(window.nickButton(nick, uid)));
   };
 

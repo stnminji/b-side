@@ -35,7 +35,7 @@
     loadMemo();
     loadLibraryState();
     loadOthers();
-    window.renderPeople($("#song-people"), "track_id", song.track_id, "이 곡을");
+    window.renderPeople($("#song-people"), "track_id", song.track_id, "아직 이 곡을 공개 서재에 담은 사람이 없어요.");
   }
 
   function renderSong() {
@@ -283,6 +283,7 @@
       return window.goBack ? window.goBack() : showStep("step-home");
     }
     stopLoadingSteps();
+    artist.bsideFans = await countFans(artist.artist_id);
     renderArtist();
     showStep("step-artist");
   };
@@ -292,12 +293,8 @@
     pic.hidden = !artist.picture;
     if (artist.picture) pic.src = artist.picture;
     $("#artist-name").textContent = artist.name;
-    $("#artist-meta").textContent = [
-      artist.name_db !== artist.name ? artist.name_db : "",
-      artist.albums_count ? `앨범 ${artist.albums_count}장` : "",
-      // 팬 수는 B-SIDE에서 이 아티스트를 '좋아요'한 사람 수만 보여준다. 아직 없으면 '-' (외부 숫자를 B-SIDE 팬처럼 보이게 하지 않음)
-      `B-SIDE 팬 ${artist.bsideFans ? artist.bsideFans.toLocaleString() + "명" : "-"}`,
-    ].filter(Boolean).join(" · ");
+    // 팬 수는 B-SIDE에서 '공개'로 ♡한 사람 수만. 아직 없으면 '-' (외부 숫자를 B-SIDE 팬처럼 보이게 하지 않음)
+    renderArtistMeta();
     $("#artist-source").href = artist.source_link;
     // 우리가 직접 정리한 아티스트라면 설명 표시
     $("#artist-curated").hidden = !artist.curated;
@@ -345,7 +342,9 @@
     });
     $("#artist-ai-list").innerHTML = "";
     $("#artist-ai").disabled = false;
-    window.renderPeople($("#artist-people"), "artist_id", artist.artist_id, "이 아티스트의 노래를");
+    window.renderPeople($("#artist-people"), "artist_id", artist.artist_id, "아직 이 아티스트의 노래를 공개 서재에 담은 사람이 없어요.");
+    window.renderPeople($("#artist-fans"), "artist_id", artist.artist_id, "아직 공개로 ♡ 누른 사람이 없어요.", "favorite_artists");
+    loadFavorite();
   }
 
   // AI로 비슷한 인디 아티스트 찾기 (기존 추천 기능 재사용, 실존 검증 포함)
@@ -379,6 +378,8 @@
     $("#memos-panel").hidden = tab !== "memos";
     $("#records-panel").hidden = tab !== "records";
     $("#notes-panel").hidden = tab !== "notes";
+    $("#artists-panel").hidden = tab !== "artists";
+    if (tab === "artists") loadFavList();
     if (tab === "library") loadLibraryList();
     if (tab === "notes") loadNoteList();
     if (tab === "memos") loadMemoList();
@@ -514,6 +515,123 @@
       item.append(el("p", "hint small", new Date(r.created_at).toLocaleString("ko-KR")), el("p", "record-summary", r.body), actions);
       if (r.is_public) item.appendChild(window.socialBar("note", r.id, counts[r.id]));
       list.appendChild(item);
+    });
+  }
+
+  // ----- 좋아하는 아티스트 (♡) -----
+  // B-SIDE 팬 수 = 이 아티스트에 '공개'로 ♡ 누른 사람 수 (비공개 ♡는 세지 않음, DB 규칙상 남의 비공개는 읽히지도 않음)
+  async function countFans(artistId) {
+    const client = sb();
+    if (!client) return 0;
+    const { count, error } = await client.from("favorite_artists")
+      .select("id", { count: "exact", head: true }).eq("artist_id", artistId).eq("is_public", true);
+    return error ? 0 : count || 0;
+  }
+  let favRow = null;
+  function paintFav() {
+    const heart = $("#btn-fav");
+    heart.textContent = favRow ? "♥ 좋아함" : "♡ 좋아요";
+    heart.classList.toggle("ghost", !favRow);
+    heart.classList.toggle("fav-on", !!favRow);
+    const pub = $("#btn-fav-public");
+    pub.hidden = !favRow;
+    if (favRow) {
+      pub.textContent = favRow.is_public ? "🌐 공개" : "🔒 나만 보기";
+      pub.classList.toggle("ghost", !favRow.is_public);
+      pub.title = favRow.is_public ? "B-SIDE 팬으로 표시돼요" : "나만 알아요. 누르면 공개";
+    }
+  }
+  async function loadFavorite() {
+    favRow = null;
+    paintFav();
+    const client = sb();
+    const { data: s } = await client.auth.getSession();
+    if (!s.session) return;
+    const { data: rows } = await client.from("favorite_artists").select("id, is_public")
+      .eq("user_id", s.session.user.id).eq("artist_id", artist.artist_id).limit(1);
+    favRow = rows && rows.length ? rows[0] : null;
+    paintFav();
+  }
+  async function refreshFans() {
+    artist.bsideFans = await countFans(artist.artist_id);
+    renderArtistMeta();
+    window.renderPeople($("#artist-fans"), "artist_id", artist.artist_id, "아직 공개로 ♡ 누른 사람이 없어요.", "favorite_artists");
+  }
+  $("#btn-fav").addEventListener("click", async () => {
+    const client = sb();
+    const { data: s } = await client.auth.getSession();
+    if (!s.session) {
+      alert("♡는 로그인 후에 누를 수 있어요.");
+      return $("#btn-open-login").click();
+    }
+    if (window.bsideEnsureProfile && !(await window.bsideEnsureProfile(s.session.user.id))) return;
+    const btn = $("#btn-fav");
+    btn.disabled = true;
+    if (favRow) {
+      const { error } = await client.from("favorite_artists").delete().eq("id", favRow.id);
+      if (!error) favRow = null;
+    } else {
+      // 기본 비공개로 저장 (같은 아티스트는 DB가 한 번만 허용)
+      const { data, error } = await client.from("favorite_artists")
+        .insert({ artist_id: artist.artist_id, name: artist.name.slice(0, 100), picture: artist.picture || null })
+        .select("id, is_public");
+      if (!error && data) favRow = data[0];
+      else if (error && /duplicate|unique/i.test(error.message)) await loadFavorite();
+      else if (error) alert("♡를 저장하지 못했어요.");
+    }
+    btn.disabled = false;
+    paintFav();
+    refreshFans();
+  });
+  $("#btn-fav-public").addEventListener("click", async () => {
+    if (!favRow) return;
+    const next = !favRow.is_public;
+    if (next && !confirm("이 아티스트를 좋아한다고 공개할까요? 아티스트 페이지에 닉네임이 표시돼요.")) return;
+    const { error } = await sb().from("favorite_artists").update({ is_public: next }).eq("id", favRow.id);
+    if (error) return alert("바꾸지 못했어요.");
+    favRow.is_public = next;
+    paintFav();
+    refreshFans();
+  });
+
+  // 아티스트 정보 줄 다시 그리기 (팬 수가 바뀌었을 때)
+  function renderArtistMeta() {
+    $("#artist-meta").textContent = [
+      artist.name_db !== artist.name ? artist.name_db : "",
+      artist.albums_count ? `앨범 ${artist.albums_count}장` : "",
+      `B-SIDE 팬 ${artist.bsideFans ? artist.bsideFans.toLocaleString() + "명" : "-"}`,
+    ].filter(Boolean).join(" · ");
+  }
+
+  // ----- 기록 → 좋아하는 아티스트 목록 -----
+  async function loadFavList() {
+    const list = $("#fav-list");
+    list.textContent = "불러오는 중…";
+    const client = sb();
+    const { data: s } = await client.auth.getSession();
+    if (!s.session) return (list.textContent = "로그인이 필요해요.");
+    // 남의 '공개' ♡도 읽히므로 반드시 '내 것'만
+    const { data: rows, error } = await client.from("favorite_artists").select("id, artist_id, name, picture, is_public")
+      .eq("user_id", s.session.user.id).order("created_at", { ascending: false }).limit(200);
+    list.textContent = "";
+    if (error) return (list.textContent = "불러오지 못했어요.");
+    if (!rows.length) return (list.textContent = "아직 ♡ 누른 아티스트가 없어요. 아티스트 페이지에서 ♡를 눌러 보세요.");
+    rows.forEach((r) => {
+      const row = el("div", "fav-item");
+      const b = el("button", "track-row");
+      if (r.picture) {
+        const img = el("img", "track-cover round");
+        img.src = r.picture;
+        img.alt = "";
+        img.loading = "lazy";
+        b.appendChild(img);
+      }
+      const text = el("span", "track-text");
+      text.append(el("span", "track-title", r.name), el("span", "hint small", r.is_public ? "🌐 공개" : "🔒 나만 보기"));
+      b.appendChild(text);
+      b.addEventListener("click", () => go(() => window.openArtist(r.artist_id)));
+      row.appendChild(b);
+      list.appendChild(row);
     });
   }
 })();

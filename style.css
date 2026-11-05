@@ -358,3 +358,7 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 .comment-form .field { flex: 1; margin: 0; padding: 8px 10px; }
 .common { margin: 8px 0 12px; padding: 10px 12px; border-radius: 12px; background: #e7ecdf; color: var(--accent2); font-weight: 700; font-size: 14px; }
 .neighbor-head { display: flex; align-items: center; gap: 8px; }
+
+/* ===== 좋아하는 아티스트 ♡ ===== */
+.fav-row { display: flex; gap: 6px; margin-top: 6px; }
+.btn-small.fav-on { background: var(--accent); border-color: var(--accent); color: #fff; }
