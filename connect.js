@@ -216,6 +216,7 @@
       const head = el("div", "neighbor-head");
       head.append(window.nickButton(p.nickname, p.user_id), el("span", "tag", p.badge));
       item.append(head, el("p", "record-summary", p.detail));
+      if (p.tip) item.appendChild(tipLine(p.tip));
       if (p.tags && p.tags.length) {
         const tags = el("div", "tags");
         p.tags.forEach((t) => tags.appendChild(el("span", "tag", t)));
@@ -253,6 +254,7 @@
           bridge.append("공통점 · " + b.bridge);
           (reason || card).after(bridge);
         }
+        if (b.listen) (card.querySelector(".bridge") || reason || card).after(tipLine(b.listen));
       });
     } catch (e) {
       list.innerHTML = "";
@@ -260,6 +262,14 @@
     }
     btn.disabled = false;
   });
+
+  // "이렇게 들어보면 어때요?" 한 줄 (헤드폰 아이콘 + 제안)
+  function tipLine(text, tag = "p") {
+    const t = el(tag, "listen-tip");
+    t.innerHTML = ic("headphones");
+    t.append(text);
+    return t;
+  }
 
   // ----- ④ 그 사람에게서 새 음악 발견 (AI) -----
   function discoverButton(userId, target) {
@@ -283,6 +293,7 @@
       r.picks.forEach((p) => {
         const row = window.trackRow(p);
         row.querySelector(".track-text").appendChild(el("span", "pick-reason", p.reason));
+        if (p.tip) row.querySelector(".track-text").appendChild(tipLine(p.tip, "span"));
         out.appendChild(row);
       });
     } catch (e) {

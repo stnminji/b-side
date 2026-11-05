@@ -484,3 +484,8 @@ body.searching #search-form { animation: search-in 0.25s ease; }
 .logo-disc, .cycle-logo { border-radius: 0; }
 .logo:hover .logo-disc { transform: rotate(360deg); }
 .cycle-logo { width: 88px; height: 88px; }
+
+/* "이렇게 들어보면 어때요?" 제안 줄 */
+.listen-tip { display: flex; align-items: flex-start; gap: 4px; margin: 6px 0 4px; padding: 7px 10px; border-radius: 10px; background: #fbeee6; color: var(--accent); font-size: 13px; font-weight: 700; line-height: 1.5; white-space: normal; }
+.listen-tip .ic { width: 15px; height: 15px; margin: 2px 2px 0 0; flex-shrink: 0; }
+span.listen-tip { margin-top: 6px; }
