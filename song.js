@@ -442,32 +442,96 @@
     const client = sb();
     const { data: s } = await client.auth.getSession();
     if (!s.session) return (list.textContent = "로그인이 필요해요.");
-    // DB 규칙상 남의 '공개' 메모도 읽을 수 있으므로 반드시 '내 것'만
+    // DB 규칙상 남의 '공개' 감상도 읽을 수 있으므로 반드시 '내 것'만
     const { data: rows, error } = await client.from("song_memos")
-      .select("track_id, artist, title, cover, memo, is_public, updated_at")
+      .select("id, track_id, artist, title, cover, memo, is_public, updated_at")
       .eq("user_id", s.session.user.id).order("updated_at", { ascending: false }).limit(200);
     list.textContent = "";
-    if (error) return (list.textContent = "메모를 불러오지 못했어요.");
-    if (!rows.length) return (list.textContent = "아직 남긴 메모가 없어요. 노래를 검색해서 내 메모를 남겨 보세요.");
+    if (error) return (list.textContent = "감상을 불러오지 못했어요.");
+    const empty = () => (list.textContent = "아직 남긴 감상이 없어요. 노래를 검색해서 '내 감상 노트'를 남겨 보세요.");
+    if (!rows.length) return empty();
     rows.forEach((r) => {
-      const b = el("button", "track-row memo-row-item");
-      if (r.cover) {
-        const img = el("img", "track-cover");
-        img.src = r.cover;
-        img.alt = "";
-        img.loading = "lazy";
-        b.appendChild(img);
-      }
-      const text = el("span", "track-text");
-      text.append(
-        el("span", "track-title", r.title),
-        el("span", "hint small", r.artist + " · " + (r.is_public ? "공개" : "나만 보기") + " · " + new Date(r.updated_at).toLocaleDateString("ko-KR")),
-        el("span", "memo-snippet", r.memo)
-      );
-      b.appendChild(text);
-      b.addEventListener("click", () => go(() => window.openSongById(r.track_id)));
-      list.appendChild(b);
+      const head = window.trackRow(r); // 누르면 노래 페이지
+      list.appendChild(memoCard("song_memos", r, head, () => !list.children.length && empty()));
     });
+  }
+
+  // ----- 저장소 감상 카드: 수정 · 공개 전환 · 삭제 -----
+  // table: song_memos 또는 artist_memos. DB 규칙상 '내 것'만 고치고 지울 수 있다
+  function memoCard(table, r, headerRow, onDeleted) {
+    const card = el("article", "record note-card");
+    const body = el("p", "record-summary", r.memo || "");
+    const meta = el("p", "hint small");
+    const paintMeta = () => (meta.textContent = (r.is_public ? "공개" : "나만 보기") + " · " + new Date(r.updated_at).toLocaleString("ko-KR"));
+    paintMeta();
+    const actions = el("div", "record-actions");
+    const edit = el("button", "btn-small ghost");
+    edit.innerHTML = ic("pen") + "수정";
+    const vis = el("button", "btn-small ghost");
+    const paintVis = () => (vis.innerHTML = r.is_public ? ic("lock") + "나만 보기로" : ic("globe") + "공개로");
+    paintVis();
+    const del = el("button", "btn-small ghost danger", "삭제");
+    actions.append(edit, vis, del);
+    card.append(headerRow, body, meta, actions);
+
+    // 수정: 그 자리에서 글쓰기 칸을 열고 저장/취소
+    edit.addEventListener("click", () => {
+      if (card.querySelector("textarea")) return;
+      const box = el("div", "edit-box");
+      const ta = el("textarea");
+      ta.maxLength = 1000;
+      ta.rows = 4;
+      ta.value = r.memo;
+      const row = el("div", "record-actions");
+      const save = el("button", "btn-small", "저장");
+      const cancel = el("button", "btn-small ghost", "취소");
+      const count = el("span", "hint small", `${ta.value.length} / 1000`);
+      ta.addEventListener("input", () => (count.textContent = `${ta.value.length} / 1000`));
+      row.append(save, cancel, count);
+      box.append(ta, row);
+      body.hidden = true;
+      actions.hidden = true;
+      card.insertBefore(box, meta);
+      ta.focus();
+      const close = () => {
+        box.remove();
+        body.hidden = false;
+        actions.hidden = false;
+      };
+      cancel.addEventListener("click", close);
+      save.addEventListener("click", async () => {
+        const text = ta.value.trim();
+        if (!text) return alert("내용을 적어 주세요. 지우려면 '삭제'를 눌러 주세요.");
+        save.disabled = true;
+        const { data, error } = await sb().from(table).update({ memo: text.slice(0, 1000) }).eq("id", r.id).select("memo, updated_at");
+        save.disabled = false;
+        if (error || !data || !data.length) return alert("저장하지 못했어요.");
+        Object.assign(r, data[0]);
+        body.textContent = r.memo;
+        paintMeta();
+        close();
+      });
+    });
+
+    // 공개 / 나만 보기 전환
+    vis.addEventListener("click", async () => {
+      if (!r.is_public && !confirm("이 감상을 공개할까요? 다른 사람이 닉네임과 함께 볼 수 있어요. (이메일은 보이지 않아요)")) return;
+      const { data, error } = await sb().from(table).update({ is_public: !r.is_public }).eq("id", r.id).select("is_public, updated_at");
+      if (error || !data || !data.length) return alert("바꾸지 못했어요.");
+      Object.assign(r, data[0]);
+      paintMeta();
+      paintVis();
+    });
+
+    // 삭제 (공개였다면 달린 좋아요·댓글도 DB가 함께 지움)
+    del.addEventListener("click", async () => {
+      if (!confirm("이 감상을 삭제할까요? 되돌릴 수 없어요.")) return;
+      const { error } = await sb().from(table).delete().eq("id", r.id);
+      if (error) return alert("삭제하지 못했어요.");
+      card.remove();
+      if (onDeleted) onDeleted();
+    });
+    return card;
   }
 
   // ----- 내 기록 화면의 '자유 메모' 탭 (쓰기 + 목록) -----
@@ -612,7 +676,7 @@
     // 남의 '공개' 글도 읽히므로 반드시 '내 것'만
     const [favs, memos] = await Promise.all([
       client.from("favorite_artists").select("artist_id, name, picture, created_at").eq("user_id", s.session.user.id).limit(300),
-      client.from("artist_memos").select("artist_id, name, picture, memo, is_public, updated_at").eq("user_id", s.session.user.id).limit(300),
+      client.from("artist_memos").select("id, artist_id, name, picture, memo, is_public, updated_at").eq("user_id", s.session.user.id).limit(300),
     ]);
     // 같은 아티스트는 한 줄로 (♡ + 감상)
     const byId = new Map();
@@ -622,21 +686,28 @@
     list.textContent = "";
     if (!rows.length) return (list.textContent = "아직 아티스트 감상이 없어요. 아티스트 페이지에서 감상을 남기거나 하트를 눌러 보세요.");
     rows.forEach((r) => {
-      const b = el("button", "track-row");
-      if (r.picture) {
-        const img = el("img", "track-cover round");
-        img.src = r.picture;
-        img.alt = "";
-        img.loading = "lazy";
-        b.appendChild(img);
+      const head = window.artistRow(r); // 누르면 아티스트 페이지
+      let card;
+      if (r.memo) {
+        card = memoCard("artist_memos", r, head, () => (r.liked ? loadFavList() : null));
+      } else {
+        // 감상 없이 ♡만 한 아티스트
+        card = el("article", "record note-card");
+        card.append(head, el("p", "hint small", "감상 아직 없음 · 아티스트 페이지에서 남길 수 있어요"));
       }
-      const text = el("span", "track-text");
-      const meta = [r.liked ? "좋아요" : "", r.memo ? (r.is_public ? "공개 감상" : "나만 보는 감상") : "감상 아직 없음"].filter(Boolean).join(" · ");
-      text.append(el("span", "track-title", r.name), el("span", "hint small", meta));
-      if (r.memo) text.appendChild(el("span", "memo-snippet", r.memo));
-      b.appendChild(text);
-      b.addEventListener("click", () => go(() => window.openArtist(r.artist_id)));
-      list.appendChild(b);
+      if (r.liked) {
+        const unlike = el("button", "btn-small ghost");
+        unlike.innerHTML = ic("heart", true) + "좋아요 취소";
+        unlike.addEventListener("click", async () => {
+          if (!confirm(`${r.name} 좋아요를 취소할까요?`)) return;
+          const { error } = await sb().from("favorite_artists").delete().eq("user_id", s.session.user.id).eq("artist_id", r.artist_id);
+          if (error) return alert("취소하지 못했어요.");
+          loadFavList();
+        });
+        const row = card.querySelector(".record-actions") || card.appendChild(el("div", "record-actions"));
+        row.appendChild(unlike);
+      }
+      list.appendChild(card);
     });
   }
 

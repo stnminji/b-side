@@ -432,3 +432,11 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 body[data-step="step-home"]:not(.searching) #search-form { display: none; }
 body.searching #search-form { animation: search-in 0.25s ease; }
 @keyframes search-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+/* ===== 저장소 감상 카드: 수정 · 공개 전환 · 삭제 ===== */
+.note-card .track-row { background: var(--card); }
+.note-card .record-summary { margin: 10px 2px 2px; white-space: pre-wrap; }
+.note-card .record-actions { margin-top: 8px; flex-wrap: wrap; }
+.btn-small.danger { color: #b5462a; border-color: #e3b9a8; }
+.edit-box { margin-top: 10px; }
+.edit-box textarea { width: 100%; resize: vertical; }
