@@ -21,6 +21,9 @@
     console.warn("로그인 설정을 불러오지 못했어요:", e.message);
   }
   if (!sb) return; // 로그인 기능 없이 서비스는 그대로
+  // 피드(feed.js)에서도 같은 연결을 쓰도록 알려준다
+  window.bsideSb = sb;
+  window.dispatchEvent(new Event("bside-ready"));
 
   // 2) 로그인 상태에 따라 상단 버튼 바꾸기
   function updateButtons(session) {

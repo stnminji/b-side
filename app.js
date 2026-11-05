@@ -101,7 +101,7 @@ function localRecommend(query) {
 }
 
 // ----- 화면 단계 전환 -----
-const STEPS = ["step-input", "step-confirm", "step-loading", "step-result", "step-records"];
+const STEPS = ["step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed"];
 function showStep(id) {
   STEPS.forEach((s) => ($("#" + s).hidden = s !== id));
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -330,6 +330,8 @@ async function recommend(mode, query) {
 }
 
 function renderResult(result) {
+  $("#compare-box").hidden = true; // 취향 비교 결과 상자는 feed.js가 필요할 때만 켠다
+  $("#btn-more").hidden = false;
   $("#taste-summary").textContent = result.summary;
   $("#taste-tags").innerHTML = result.tags.map((t) => `<span class="tag">${t}</span>`).join("");
 

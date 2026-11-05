@@ -258,3 +258,13 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 .record-summary { margin: 0 0 4px; font-size: 14px; }
 .record-artists { margin: 0 0 8px; font-size: 13px; color: var(--accent2); font-weight: 700; }
 .record-actions { display: flex; gap: 6px; }
+
+/* ===== 피드 · 취향 비교 ===== */
+.record-who { margin: 0; font-size: 13px; font-weight: 800; color: var(--accent); }
+.compare-box { padding: 18px; margin-bottom: 18px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); }
+.compare-who { margin: 0 0 10px; font-weight: 800; font-size: 17px; }
+.compare-meter { height: 10px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+.compare-meter span { display: block; height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 0.8s ease; }
+.compare-score { margin: 8px 0 12px; font-weight: 800; color: var(--accent); }
+.compare-line { margin: 4px 0; font-size: 14px; }
+.compare-line b { display: inline-block; min-width: 92px; color: var(--muted); font-size: 13px; }

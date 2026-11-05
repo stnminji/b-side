@@ -17,6 +17,7 @@
     </button>
     <!-- 로그인 영역: 로그인 전에는 '로그인' 버튼, 후에는 '내 기록'·'로그아웃' -->
     <div class="account">
+      <button id="btn-feed" class="btn-small ghost" hidden>피드</button>
       <button id="btn-open-login" class="btn-small" hidden>로그인</button>
       <button id="btn-my-records" class="btn-small" hidden>내 기록</button>
       <button id="btn-logout" class="btn-small ghost" hidden>로그아웃</button>
@@ -135,6 +136,16 @@
     </section>
 
     <!-- 3단계: 결과 -->
+    <!-- 공개 피드: 사람들이 공개한 음악 기록 (로그인 없이도 보기 가능) -->
+    <section id="step-feed" class="card" hidden>
+      <h2 class="result-title">디깅 피드</h2>
+      <p class="hint">다른 사람들이 공개한 음악 기록이에요. <b>나와 비교</b>를 누르면 AI가 두 사람의 취향 교집합을 찾아줘요.</p>
+      <div id="feed-list" class="records-list"></div>
+      <div class="row center">
+        <button class="btn-ghost go-home">처음으로</button>
+      </div>
+    </section>
+
     <!-- 내 기록 (로그인한 사용자만) -->
     <section id="step-records" class="card" hidden>
       <h2 class="result-title">내 기록</h2>
@@ -152,6 +163,14 @@
         <div id="taste-tags" class="tags"></div>
       </div>
 
+      <!-- 취향 비교 결과 (피드에서 '나와 비교'를 눌렀을 때만 보임) -->
+      <div id="compare-box" class="compare-box" hidden>
+        <p class="compare-who"></p>
+        <div class="compare-meter"><span></span></div>
+        <p class="compare-score"></p>
+        <p class="compare-line"><b>함께 좋아하는 결</b> <span class="compare-common"></span></p>
+        <p class="compare-line"><b>서로 다른 점</b> <span class="compare-diff"></span></p>
+      </div>
       <h2 class="result-title">이런 아티스트는 어때요?</h2>
       <div id="result-list" class="result-list"></div>
 
@@ -201,5 +220,6 @@
           crossorigin="anonymous"></script>
   <script src="app.js"></script>
   <script src="auth.js"></script>
+  <script src="feed.js"></script>
 </body>
 </html>
