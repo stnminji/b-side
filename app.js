@@ -101,7 +101,7 @@ function localRecommend(query) {
 }
 
 // ----- 화면 단계 전환 -----
-const STEPS = ["step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed", "step-song"];
+const STEPS = ["step-input", "step-confirm", "step-loading", "step-result", "step-records", "step-feed", "step-song", "step-artist"];
 function showStep(id) {
   STEPS.forEach((s) => ($("#" + s).hidden = s !== id));
   // 상단 버튼 중 지금 보고 있는 화면의 버튼을 검정으로 채워서 표시

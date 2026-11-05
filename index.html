@@ -133,8 +133,9 @@
         <img id="song-cover" class="song-cover" alt="" width="96" height="96" />
         <div>
           <h2 id="song-name" class="song-name"></h2>
-          <p id="song-by" class="song-by"></p>
+          <button id="song-by" class="song-by link-btn" title="아티스트 페이지로"></button>
           <p id="song-album" class="hint small"></p>
+          <button id="btn-library" class="btn-small ghost" type="button">＋ 서재에 담기</button>
         </div>
       </div>
       <p id="song-matched" class="hint small warn" hidden></p>
@@ -163,11 +164,51 @@
           </div>
           <p id="memo-status" class="hint small" role="status"></p>
         </div>
+
+        <!-- 같은 곡에 대해 다른 사람들이 '공개'한 메모 -->
+        <div class="others">
+          <h3 class="memo-title">💬 다른 사람들의 감상</h3>
+          <div id="others-list" class="records-list"></div>
+        </div>
       </div>
       <div class="song-panel" data-tab="band" hidden><div class="result-list"></div></div>
       <div class="song-panel" data-tab="song" hidden><div class="result-list"></div></div>
 
+      <p class="source">음악 정보 제공: <a id="song-source" target="_blank" rel="noopener">Deezer</a> · 소개말은 AI가 작성</p>
       <div class="row center">
+        <button class="btn-ghost go-home">처음으로</button>
+      </div>
+    </section>
+
+    <!-- 아티스트 페이지 (정보는 전부 음악 DB에서) -->
+    <section id="step-artist" class="card" hidden>
+      <div class="song-head">
+        <img id="artist-picture" class="song-cover round" alt="" width="96" height="96" />
+        <div>
+          <h2 id="artist-name" class="song-name"></h2>
+          <p id="artist-meta" class="hint small"></p>
+        </div>
+      </div>
+      <div id="artist-curated" class="curated" hidden>
+        <p><span id="artist-genre" class="tag"></span></p>
+        <p id="artist-sound" class="song-intro"></p>
+        <div id="artist-moods" class="tags"></div>
+      </div>
+
+      <h3 class="memo-title">🎵 노래</h3>
+      <div id="artist-tracks" class="track-list"></div>
+
+      <h3 class="memo-title">💿 앨범</h3>
+      <div id="artist-albums" class="album-grid"></div>
+
+      <h3 class="memo-title">🔗 비슷한 아티스트</h3>
+      <div id="artist-related" class="related-list"></div>
+      <button id="artist-ai" class="btn-small" type="button">✨ AI로 비슷한 인디 아티스트 찾기</button>
+      <div id="artist-ai-list" class="result-list"></div>
+
+      <p class="source">음악 정보 제공: <a id="artist-source" target="_blank" rel="noopener">Deezer</a></p>
+      <div class="row center">
+        <button id="artist-back" class="btn-ghost" type="button">← 곡으로</button>
         <button class="btn-ghost go-home">처음으로</button>
       </div>
     </section>
@@ -185,8 +226,18 @@
     <!-- 내 기록 (로그인한 사용자만) -->
     <section id="step-records" class="card" hidden>
       <h2 class="result-title">내 기록</h2>
+      <div class="song-tabs">
+        <button class="btn-small records-tab" data-rtab="library">📚 내 서재</button>
+        <button class="btn-small ghost records-tab" data-rtab="records">🎧 추천 기록</button>
+      </div>
+      <div id="library-panel">
+        <p class="hint">담아 둔 노래예요. 누르면 곡 페이지로 가요.</p>
+        <div id="library-list" class="track-list"></div>
+      </div>
+      <div id="records-panel" hidden>
       <p class="hint">추천받은 결과가 저장돼요. 처음엔 🔒 나만 보기이고, 🌐 공개로 바꾸면 다른 사람도 닉네임과 함께 볼 수 있어요.</p>
       <div id="records-list" class="records-list"></div>
+      </div>
       <div class="row center">
         <button class="btn-ghost go-home">처음으로</button>
       </div>

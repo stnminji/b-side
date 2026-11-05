@@ -13,24 +13,29 @@
   const loaded = {};    // 탭별 추천을 이미 불러왔는지
 
   // ----- 노래 열기 -----
-  window.openSong = async (artist, title) => {
-    if (!artist || !title) return;
+  window.openSong = (artist, title) => artist && title && loadSong({ action: "song_info", artist, title }, { artist, title });
+  // 아티스트 페이지·서재에서 누른 곡은 곡 번호로 바로 연다
+  window.openSongById = (trackId) => loadSong({ action: "song_info", track_id: trackId }, null);
+
+  async function loadSong(request, typed) {
     showStep("step-loading");
     startLoadingSteps("음악 데이터베이스에서 노래를 찾고 있어요…");
     try {
-      song = await callAI({ action: "song_info", artist, title });
+      song = await callAI(request);
     } catch (e) {
       stopLoadingSteps();
       alert(e.message || "노래를 찾지 못했어요.");
       return showStep("step-input");
     }
     stopLoadingSteps();
-    song.query = { artist, title };
+    song.query = typed || { artist: song.artist, title: song.title };
     renderSong();
     selectTab("info");
     showStep("step-song");
     loadMemo();
-  };
+    loadLibraryState();
+    loadOthers();
+  }
 
   function renderSong() {
     // AI·외부 데이터는 textContent로만 넣는다 (스크립트 삽입 방지)
@@ -38,7 +43,8 @@
     cover.hidden = !song.cover;
     if (song.cover) cover.src = song.cover;
     $("#song-name").textContent = song.title;
-    $("#song-by").textContent = song.artist;
+    $("#song-by").textContent = song.artist + " ›";
+    $("#song-source").href = song.source_link; // 출처 표시 (Deezer 이용 조건)
     $("#song-album").textContent = [song.album, song.release_date].filter(Boolean).join(" · ");
     // 입력한 제목과 DB 제목이 다르면 알려준다 (예: '입춘' → 영어 제목으로 등록된 경우)
     const typed = song.query.title.replace(/\s/g, "").toLowerCase();
@@ -168,12 +174,236 @@
     } else {
       res = await client.from("song_memos").insert({
         track_id: song.track_id, artist: song.artist.slice(0, 100), title: song.title.slice(0, 200),
-        cover: song.cover || null, memo: text, is_public: memoPublic,
+        cover: song.cover || null, isrc: song.isrc || null, memo: text, is_public: memoPublic,
       }).select("id, memo, is_public, updated_at");
     }
     $("#memo-save").disabled = false;
     if (res.error || !res.data || !res.data.length) return setStatus("저장하지 못했어요. 잠시 후 다시 해 주세요.");
     memo = res.data[0];
+    loadOthers();
     setStatus("✓ 저장했어요 · " + new Date(memo.updated_at).toLocaleString("ko-KR") + (memo.is_public ? " · 🌐 공개" : " · 🔒 나만 보기"));
   });
+
+  // ----- 내 음악 서재: 담기 / 빼기 -----
+  let libraryRow = null;
+  function paintLibrary() {
+    const btn = $("#btn-library");
+    btn.textContent = libraryRow ? "✓ 서재에 담김" : "＋ 서재에 담기";
+    btn.classList.toggle("ghost", !libraryRow);
+  }
+  async function loadLibraryState() {
+    libraryRow = null;
+    paintLibrary();
+    const client = sb();
+    if (!client) return;
+    const { data: s } = await client.auth.getSession();
+    if (!s.session) return;
+    const { data: rows } = await client.from("library").select("id")
+      .eq("user_id", s.session.user.id).eq("track_id", song.track_id).limit(1);
+    libraryRow = rows && rows.length ? rows[0] : null;
+    paintLibrary();
+  }
+  $("#btn-library").addEventListener("click", async () => {
+    const client = sb();
+    const { data: s } = await client.auth.getSession();
+    if (!s.session) {
+      alert("서재는 로그인 후에 쓸 수 있어요.");
+      return $("#btn-open-login").click();
+    }
+    if (window.bsideEnsureProfile && !(await window.bsideEnsureProfile(s.session.user.id))) return;
+    const btn = $("#btn-library");
+    btn.disabled = true;
+    if (libraryRow) {
+      const { error } = await client.from("library").delete().eq("id", libraryRow.id);
+      if (!error) libraryRow = null;
+    } else {
+      // 같은 곡은 DB가 (사용자, 곡 번호) 한 번만 허용 → 중복 등록 불가
+      const date = /^\d{4}(-\d{2}){0,2}$/.test(song.release_date || "") ? song.release_date : null;
+      const { data, error } = await client.from("library").insert({
+        track_id: song.track_id, isrc: song.isrc || null, artist_id: song.artist_id || null,
+        artist: song.artist.slice(0, 100), title: song.title.slice(0, 200),
+        album: (song.album || "").slice(0, 200) || null, release_date: date, cover: song.cover || null,
+      }).select("id");
+      if (!error && data) libraryRow = data[0];
+      else if (error && /duplicate|unique/i.test(error.message)) await loadLibraryState();
+    }
+    btn.disabled = false;
+    paintLibrary();
+  });
+
+  // ----- 다른 사람들의 감상 (같은 곡의 '공개' 메모) -----
+  async function loadOthers() {
+    const list = $("#others-list");
+    list.textContent = "불러오는 중…";
+    const client = sb();
+    if (!client) return (list.textContent = "");
+    const { data: s } = await client.auth.getSession();
+    const myId = s.session ? s.session.user.id : null;
+    const { data: rows, error } = await client.from("song_memos")
+      .select("user_id, memo, updated_at, profiles(nickname)")
+      .eq("track_id", song.track_id).eq("is_public", true)
+      .order("updated_at", { ascending: false }).limit(20);
+    list.textContent = "";
+    const others = (rows || []).filter((r) => r.user_id !== myId);
+    if (error || !others.length) return (list.textContent = "아직 공개된 감상이 없어요. 내 메모를 🌐 공개로 저장하면 첫 감상이 돼요.");
+    others.forEach((r) => {
+      const item = el("article", "record");
+      const nick = (r.profiles && r.profiles.nickname) || "익명";
+      item.append(
+        el("p", "record-who", "@" + nick + " · " + new Date(r.updated_at).toLocaleDateString("ko-KR")),
+        el("p", "record-summary", r.memo) // 남이 쓴 글 → textContent로만
+      );
+      list.appendChild(item);
+    });
+  }
+
+  // ----- 아티스트 페이지 -----
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+  let artist = null;
+  $("#song-by").addEventListener("click", () => song && window.openArtist(song.artist_id));
+  $("#artist-back").addEventListener("click", () => (song ? showStep("step-song") : showStep("step-input")));
+
+  window.openArtist = async (artistId) => {
+    if (!artistId) return;
+    showStep("step-loading");
+    startLoadingSteps("아티스트 정보를 불러오고 있어요…");
+    try {
+      artist = await callAI({ action: "artist_info", artist_id: artistId });
+    } catch (e) {
+      stopLoadingSteps();
+      alert(e.message || "아티스트 정보를 불러오지 못했어요.");
+      return song ? showStep("step-song") : showStep("step-input");
+    }
+    stopLoadingSteps();
+    renderArtist();
+    showStep("step-artist");
+  };
+
+  function renderArtist() {
+    const pic = $("#artist-picture");
+    pic.hidden = !artist.picture;
+    if (artist.picture) pic.src = artist.picture;
+    $("#artist-name").textContent = artist.name;
+    $("#artist-meta").textContent = [
+      artist.name_db !== artist.name ? artist.name_db : "",
+      artist.albums_count ? `앨범 ${artist.albums_count}장` : "",
+      artist.fans ? `Deezer 팬 ${artist.fans.toLocaleString()}명` : "",
+    ].filter(Boolean).join(" · ");
+    $("#artist-source").href = artist.source_link;
+    // 우리가 직접 정리한 아티스트라면 설명 표시
+    $("#artist-curated").hidden = !artist.curated;
+    if (artist.curated) {
+      $("#artist-genre").textContent = artist.curated.genre;
+      $("#artist-sound").textContent = artist.curated.sound;
+      $("#artist-moods").innerHTML = "";
+      artist.curated.mood.forEach((m) => $("#artist-moods").appendChild(el("span", "tag", "#" + m)));
+    }
+    // 노래 (누르면 곡 페이지)
+    const tracks = $("#artist-tracks");
+    tracks.innerHTML = "";
+    if (!artist.top.length) tracks.appendChild(el("p", "hint", "노래 정보가 없어요."));
+    artist.top.forEach((t) => {
+      const b = el("button", "track-row");
+      const text = el("span", "track-text");
+      text.append(el("span", "track-title", t.title), el("span", "hint small", t.album));
+      b.appendChild(text);
+      b.addEventListener("click", () => window.openSongById(t.track_id));
+      tracks.appendChild(b);
+    });
+    // 앨범
+    const albums = $("#artist-albums");
+    albums.innerHTML = "";
+    artist.albums.forEach((a) => {
+      const card = el("div", "album");
+      if (a.cover) {
+        const img = el("img");
+        img.src = a.cover;
+        img.alt = a.title;
+        img.loading = "lazy";
+        card.appendChild(img);
+      }
+      card.append(el("span", "album-title", a.title), el("span", "hint small", (a.release_date || "").slice(0, 4)));
+      albums.appendChild(card);
+    });
+    // 비슷한 아티스트 (음악 DB 기준, 누르면 그 아티스트 페이지)
+    const rel = $("#artist-related");
+    rel.innerHTML = "";
+    if (!artist.related.length) rel.appendChild(el("p", "hint small", "음악 DB에 비슷한 아티스트 정보가 없어요. 아래 AI 찾기를 눌러 보세요."));
+    artist.related.forEach((r) => {
+      const b = el("button", "btn-small ghost", r.name);
+      b.addEventListener("click", () => window.openArtist(r.artist_id));
+      rel.appendChild(b);
+    });
+    $("#artist-ai-list").innerHTML = "";
+    $("#artist-ai").disabled = false;
+  }
+
+  // AI로 비슷한 인디 아티스트 찾기 (기존 추천 기능 재사용, 실존 검증 포함)
+  $("#artist-ai").addEventListener("click", async () => {
+    const btn = $("#artist-ai");
+    const list = $("#artist-ai-list");
+    btn.disabled = true;
+    list.innerHTML = "";
+    const wait = el("p", "hint", "AI가 찾고 있어요… (10초 안팎)");
+    list.appendChild(wait);
+    try {
+      const query = `좋아하는 아티스트: ${artist.name}`;
+      const result = await callAI({ action: "recommend", mode: "band", query });
+      wait.remove();
+      appendBands(result.bands, list, false);
+      if (window.saveRecord) window.saveRecord("band", query, result);
+    } catch (e) {
+      wait.textContent = "찾지 못했어요. 다시 눌러 주세요.";
+      btn.disabled = false;
+    }
+  });
+
+  // ----- 내 기록 화면의 '내 서재' 탭 -----
+  function selectRecordsTab(tab) {
+    document.querySelectorAll(".records-tab").forEach((b) => {
+      const on = b.dataset.rtab === tab;
+      b.classList.toggle("active", on);
+      b.classList.toggle("ghost", !on);
+    });
+    $("#library-panel").hidden = tab !== "library";
+    $("#records-panel").hidden = tab !== "records";
+    if (tab === "library") loadLibraryList();
+  }
+  document.querySelectorAll(".records-tab").forEach((b) => b.addEventListener("click", () => selectRecordsTab(b.dataset.rtab)));
+  $("#btn-my-records").addEventListener("click", () => selectRecordsTab("library"));
+
+  async function loadLibraryList() {
+    const list = $("#library-list");
+    list.textContent = "불러오는 중…";
+    const client = sb();
+    const { data: s } = await client.auth.getSession();
+    if (!s.session) return (list.textContent = "로그인이 필요해요.");
+    // DB 규칙상 남의 '공개' 서재도 읽을 수 있으므로 반드시 '내 것'만
+    const { data: rows, error } = await client.from("library")
+      .select("id, track_id, artist, title, album, cover, created_at")
+      .eq("user_id", s.session.user.id).order("created_at", { ascending: false }).limit(200);
+    list.textContent = "";
+    if (error) return (list.textContent = "서재를 불러오지 못했어요.");
+    if (!rows.length) return (list.textContent = "아직 담은 노래가 없어요. 노래 검색에서 ＋ 서재에 담기를 눌러 보세요.");
+    rows.forEach((r) => {
+      const b = el("button", "track-row");
+      if (r.cover) {
+        const img = el("img", "track-cover");
+        img.src = r.cover;
+        img.alt = "";
+        img.loading = "lazy";
+        b.appendChild(img);
+      }
+      const text = el("span", "track-text");
+      text.append(el("span", "track-title", r.title), el("span", "hint small", r.artist + (r.album ? " · " + r.album : "")));
+      b.appendChild(text);
+      b.addEventListener("click", () => window.openSongById(r.track_id));
+      list.appendChild(b);
+    });
+  }
 })();

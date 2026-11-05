@@ -438,13 +438,29 @@ def find_track(artist, title):
 
 
 def song_info(payload):
-    artist = str(payload.get("artist") or "").strip()[:100]
-    title = str(payload.get("title") or "").strip()[:200]
-    if not artist or not title:
-        raise ValueError("아티스트와 노래 제목을 모두 적어 주세요.")
-    track = find_track(artist, title)
-    if not track:
-        raise ValueError("음악 데이터베이스에서 이 노래를 찾지 못했어요. 아티스트와 제목을 확인해 주세요.")
+    track_id = payload.get("track_id")
+    if track_id is not None:
+        # 아티스트 페이지·서재에서 곡을 누르면 곡 번호로 바로 연다 (번호는 숫자만 허용)
+        if not str(track_id).isdigit() or len(str(track_id)) > 15:
+            raise ValueError("잘못된 요청이에요.")
+        track = _get_json(f"https://api.deezer.com/track/{int(track_id)}")
+        if not track.get("id"):
+            raise ValueError("음악 데이터베이스에서 이 노래를 찾지 못했어요.")
+        artist, title = track["artist"]["name"], track["title"]
+    else:
+        artist = str(payload.get("artist") or "").strip()[:100]
+        title = str(payload.get("title") or "").strip()[:200]
+        if not artist or not title:
+            raise ValueError("아티스트와 노래 제목을 모두 적어 주세요.")
+        track = find_track(artist, title)
+        if not track:
+            raise ValueError("음악 데이터베이스에서 이 노래를 찾지 못했어요. 아티스트와 제목을 확인해 주세요.")
+    # 곡 상세(국제 음원 코드 ISRC 등)는 곡 번호로 한 번 더 조회
+    try:
+        detail = _get_json(f"https://api.deezer.com/track/{int(track['id'])}")
+    except Exception:
+        detail = {}
+    isrc = str(detail.get("isrc") or "").upper()
     # 실제 곡 정보 (사실 정보는 전부 데이터베이스에서 가져온다)
     album, genres = {}, []
     try:
@@ -480,6 +496,65 @@ def song_info(payload):
         "tags": [str(t)[:20] for t in (ai.get("tags") or [])][:4],
         "based_on": "artist" if ai.get("based_on") == "artist" else "song",
         "in_data": bool(ours),
+        "artist_id": int(track["artist"]["id"]),
+        "isrc": isrc if re.match(r"^[A-Z]{2}[A-Z0-9]{3}[0-9]{7}$", isrc) else "",
+        "source_link": f"https://www.deezer.com/track/{int(track['id'])}",  # 출처 표시용 (Deezer 이용 조건)
+    }
+
+
+# ---------- 2-3) 아티스트 페이지 ----------
+def artist_info(payload):
+    """아티스트 정보는 전부 음악 DB(Deezer)에서 가져온다 (AI가 지어내지 않음).
+    우리가 직접 정리한 아티스트라면 장르·분위기·사운드 설명을 함께 보여준다."""
+    aid = str(payload.get("artist_id") or "")
+    if not aid.isdigit() or len(aid) > 15:
+        raise ValueError("잘못된 요청이에요.")
+    a = _get_json(f"https://api.deezer.com/artist/{int(aid)}")
+    if not a.get("id"):
+        raise ValueError("아티스트를 찾지 못했어요.")
+    def safe(url):
+        return url if isinstance(url, str) and url.startswith("https://") and "/artist//" not in url else ""
+    jobs = {
+        "top": f"https://api.deezer.com/artist/{a['id']}/top?limit=8",
+        "albums": f"https://api.deezer.com/artist/{a['id']}/albums?limit=12",
+        "related": f"https://api.deezer.com/artist/{a['id']}/related?limit=8",
+    }
+    with ThreadPoolExecutor(max_workers=3) as pool:  # 세 가지를 동시에 조회
+        got = dict(zip(jobs, pool.map(lambda u: (_get_json(u) or {}).get("data", []), jobs.values())))
+    # 듣는 사람이 적은 인디 아티스트는 Deezer에 '인기곡' 통계가 없다 → 최근 앨범 수록곡으로 대신
+    if not got["top"] and got["albums"]:
+        for al in got["albums"][:3]:
+            try:
+                for t in _get_json(f"https://api.deezer.com/album/{al['id']}/tracks?limit=20").get("data", []):
+                    if len(got["top"]) < 8 and t["artist"]["id"] == a["id"]:
+                        t.setdefault("album", {"title": al.get("title", "")})
+                        got["top"].append(t)
+            except Exception:
+                continue
+    ours = next((x for x in load_artists() if _norm(x["name"]) == _norm(a["name"])
+                 or _norm(x.get("name_en", "")) == _norm(a["name"])), None)
+    seen, albums = set(), []
+    for al in got["albums"]:
+        key = _norm(al.get("title", ""))
+        if key in seen:
+            continue  # 같은 앨범의 다른 판(리마스터 등)은 한 번만
+        seen.add(key)
+        albums.append({"title": al.get("title", "")[:120], "release_date": al.get("release_date", ""),
+                       "type": al.get("record_type", ""), "cover": safe(al.get("cover_medium"))})
+    return {
+        "artist_id": a["id"],
+        "name": ours["name"] if ours else a["name"][:100],
+        "name_db": a["name"][:100],
+        "picture": safe(a.get("picture_medium")),
+        "fans": int(a.get("nb_fan") or 0),
+        "albums_count": int(a.get("nb_album") or 0),
+        "curated": {"genre": ours["genre"], "mood": ours["mood"], "sound": ours["sound"]} if ours else None,
+        "top": [{"track_id": t["id"], "title": t["title"][:200], "album": t.get("album", {}).get("title", "")[:120]}
+                for t in got["top"]],
+        "albums": albums[:10],
+        "related": [{"artist_id": r["id"], "name": r["name"][:100], "picture": safe(r.get("picture_medium"))}
+                    for r in got["related"]],
+        "source_link": f"https://www.deezer.com/artist/{a['id']}",
     }
 
 
@@ -575,7 +650,8 @@ def compare(payload):
             "nickname": ((other.get("profiles") or {}).get("nickname") or "")[:16]}
 
 
-ACTIONS = {"extract": extract, "recommend": recommend, "compare": compare, "song_info": song_info}
+ACTIONS = {"extract": extract, "recommend": recommend, "compare": compare, "song_info": song_info,
+           "artist_info": artist_info}
 
 
 def server_error(e):
