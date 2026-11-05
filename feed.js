@@ -73,14 +73,16 @@
       return $("#btn-open-login").click();
     }
     showStep("step-loading");
-    $("#loading-text").textContent = "두 사람의 취향을 비교하고 있어요…";
+    startLoadingSteps("두 사람의 취향을 비교하고 있어요…");
     let result;
     try {
       result = await callAI({ action: "compare", target_id: record.id, token: s.session.access_token });
     } catch (e) {
+      stopLoadingSteps();
       alert(e.message || "비교하지 못했어요. 잠시 후 다시 해 주세요.");
       return showFeed(sb);
     }
+    stopLoadingSteps();
     // 결과 화면은 추천 결과 화면을 같이 쓰고, 위에 '취향 비교' 상자를 켠다
     lastSearch = null; // 비교 결과에는 '더 찾아보기'를 쓰지 않음
     renderResult({ summary: result.summary, tags: result.tags, bands: result.bands });

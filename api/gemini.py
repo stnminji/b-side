@@ -26,7 +26,8 @@ DATA_PATH = os.path.join(ROOT, "data", "bands.json")
 # 모델 이름은 환경변수로 바꿀 수 있다 (Google AI Studio에서 쓸 수 있는 모델 확인)
 DEFAULT_MODEL = "gemini-flash-lite-latest"  # 측정상 가장 빠름 (약 2초)
 # 기본 모델이 바쁠 때 차례로 시도하는 예비 모델들 (scripts/list_models.py로 확인한 이름)
-FALLBACK_MODELS = ["gemini-3.8-flash", "gemini-flash-lite-latest", "gemini-3.6-flash"]
+# (2026-11-06 측정) 붐빌 때도 응답이 빨랐던 가벼운 모델을 먼저, 큰 모델은 마지막에
+FALLBACK_MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.8-flash"]
 TIME_BUDGET = 50  # 초. 이 시간을 넘기면 더 시도하지 않는다 (배포 서버 제한 60초)
 
 
@@ -77,7 +78,7 @@ def call_gemini(parts, models=None, budget=TIME_BUDGET):
         if remaining < 5:
             break
         try:
-            data = _post(model, body, api_key, timeout=min(15, remaining))  # 한 모델당 최대 15초
+            data = _post(model, body, api_key, timeout=min(12, remaining))  # 한 모델당 최대 12초 (늦으면 빨리 다음 모델로)
             text = data["candidates"][0]["content"]["parts"][0]["text"]
             return json.loads(text)
         except GeminiError as e:
@@ -115,7 +116,7 @@ def extract(payload):
     result = call_gemini([
         {"text": EXTRACT_PROMPTS[kind]},
         {"inline_data": {"mime_type": payload.get("mime", "image/jpeg"), "data": image}},
-    ], models=["gemini-flash-lite-latest", "gemini-flash-lite-latest", "gemini-3.6-flash"])
+    ], models=["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"])
     items = []
     for it in result.get("items", []):
         artist, title = (it.get("artist") or "").strip(), (it.get("title") or "").strip()
@@ -166,14 +167,9 @@ JSON 형식으로만 답하라:
 
 # ---------- 2-1) 목록에 없는 아티스트는 공개 음악 데이터에서 찾아보기 ----------
 # Google 검색 연동은 무료 키로 쓸 수 없어서(429), 키 없이 쓰는 Deezer·MusicBrainz를 조회한다.
-NAMES_PROMPT = """아래 [사용자 입력]에서 음악 아티스트(밴드·가수) 이름만 뽑아라. 곡 제목이나 분위기 단어는 빼라.
-JSON 형식으로만 답하라: {"artists": ["이름"]}
-
-[사용자 입력]
-"""
 
 # 분위기·장면처럼 아티스트 이름이 나오지 않는 방식은 조회를 건너뛴다 (속도)
-SEARCH_MODES = {"band", "song", "free", "photo_artists", "photo_songs"}
+SEARCH_MODES = {"band", "song", "photo_artists", "photo_songs"}
 
 
 def _get_json(url):
@@ -219,16 +215,23 @@ def lookup_artist(name):
 
 
 def research(query, artists):
-    """입력 속 아티스트 중 데이터에 없는 팀만 조회한다. 실패해도 추천은 계속한다."""
+    """입력 속 아티스트 중 데이터에 없는 팀만 조회한다. 실패해도 추천은 계속한다.
+    (속도 개선) 이름 찾기에 AI를 부르지 않고, 화면이 만든 입력 형식에서 바로 뽑는다.
+      비슷한 밴드  → "좋아하는 아티스트: 잔나비"
+      비슷한 노래  → "좋아하는 노래: 잔나비 - 주저하는 연인들을 위해"
+      사진(캡처)   → "...: 아티스트1 - 곡1, 아티스트2 - 곡2" """
     known = {n.lower() for a in artists for n in (a["name"], a.get("name_en", "")) if n}
-    try:
-        names = call_gemini([{"text": NAMES_PROMPT + query}], budget=10,
-                            models=["gemini-flash-lite-latest", "gemini-3.6-flash"]).get("artists", [])
-    except Exception as e:
-        print(f"[아티스트 조회] 이름 찾기 실패: {e}", flush=True)
+    body = query.split(":", 1)[1] if ":" in query else query
+    names = []
+    for item in re.split(r"[,\n]", body):
+        name = item.split(" - ")[0].strip()
+        if name and len(name) <= 40 and name.lower() not in [n.lower() for n in names]:
+            names.append(name)
+    unknown = [n for n in names if n.lower() not in known][:3]
+    if not unknown:
         return ""
-    unknown = [n.strip() for n in names if n.strip() and n.strip().lower() not in known][:3]
-    lines = [lookup_artist(n) for n in unknown]
+    with ThreadPoolExecutor(max_workers=3) as pool:  # 여러 팀을 동시에 조회
+        lines = list(pool.map(lookup_artist, unknown))
     print(f"[아티스트 조회] {lines}", flush=True)
     return "\n".join(lines)  # 한 팀당 한 줄
 
@@ -270,10 +273,11 @@ def recommend(payload):
 
 
 def artist_brief(artists):
-    """AI에게 줄 아티스트 목록 (필요한 정보만 간단하게, 출처 등은 뺀다)"""
+    """AI에게 줄 아티스트 목록 (필요한 정보만 간단하게, 출처 등은 뺀다)
+    (속도 개선) 곡 목록을 대표곡 3 + 숨은 곡 5로 줄여서 AI가 읽을 글자 수를 줄인다"""
     return [
-        {"name": a["name"], "type": a["type"], "genre": a["genre"], "mood": a["mood"],
-         "sound": a["sound"], "popular": [s["title"] for s in a["songs"]], "hidden": a.get("deep_songs", [])}
+        {"name": a["name"], "genre": a["genre"], "mood": a["mood"], "sound": a["sound"],
+         "popular": [s["title"] for s in a["songs"]][:3], "hidden": a.get("deep_songs", [])[:5]}
         for a in artists
     ]
 

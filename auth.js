@@ -147,8 +147,8 @@
   // 4) 내 기록 저장 (app.js가 추천이 끝나면 부른다)
   window.saveRecord = async (mode, query, result) => {
     const { data: s } = await sb.auth.getSession();
-    if (!s.session) return; // 로그인 안 했으면 저장하지 않음
-    if (!(await ensureProfile(s.session.user.id))) return; // 닉네임이 있어야 저장 (기록은 프로필에 연결됨)
+    if (!s.session) return "guest"; // 로그인 안 했으면 저장하지 않음
+    if (!(await ensureProfile(s.session.user.id))) return "no-nickname"; // 닉네임이 있어야 저장 (기록은 프로필에 연결됨)
     // 필요한 정보만 골라서 저장 (사진 주소 등은 빼고 크기를 작게)
     const bands = (result.bands || []).slice(0, 6).map((b) => ({
       name: b.name, genre: b.genre, reason: b.reason, discovered: !!b.discovered,
@@ -158,7 +158,11 @@
       mode: String(mode).slice(0, 30), query: String(query).slice(0, 2000),
       summary: String(result.summary || "").slice(0, 500), tags: (result.tags || []).slice(0, 6), bands,
     });
-    if (error) console.warn("기록 저장 실패:", error.message);
+    if (error) {
+      console.warn("기록 저장 실패:", error.message);
+      return "error";
+    }
+    return "saved";
   };
 
   // 5) 내 기록 보기 · 삭제

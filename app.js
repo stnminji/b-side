@@ -310,10 +310,26 @@ const RESULT_TITLES = {
 // '더 찾아보기'에 쓰려고 마지막 검색 조건과 보여준 아티스트를 기억해 둔다
 let lastSearch = null;
 
+// 기다리는 동안 지금 무엇을 하는지 차례로 보여준다 (오래 걸려도 멈춘 것처럼 보이지 않게)
+let loadingTimers = [];
+function startLoadingSteps(first) {
+  stopLoadingSteps();
+  $("#loading-text").textContent = first;
+  [
+    [5000, "취향에 맞는 아티스트를 고르는 중…"],
+    [12000, "실제로 있는 아티스트·곡인지 확인하는 중…"],
+    [22000, "AI 서버가 붐벼서 조금 더 걸리고 있어요…"],
+  ].forEach(([ms, text]) => loadingTimers.push(setTimeout(() => ($("#loading-text").textContent = text), ms)));
+}
+function stopLoadingSteps() {
+  loadingTimers.forEach(clearTimeout);
+  loadingTimers = [];
+}
+
 async function recommend(mode, query) {
   lastSearch = { mode, query, shown: [] };
   showStep("step-loading");
-  $("#loading-text").textContent = "결을 분석하고 있어요…";
+  startLoadingSteps("결을 분석하고 있어요…");
   $(".result-title").textContent = RESULT_TITLES[mode] || "이런 아티스트는 어때요?";
   let result;
   try {
@@ -323,13 +339,23 @@ async function recommend(mode, query) {
     console.warn("AI 추천 실패, 임시 추천 사용:", e.message);
     result = { ...(await fakeAI(localRecommend(query), 300)), fallback: true };
   }
+  stopLoadingSteps();
   renderResult(result);
   showStep("step-result");
-  // 로그인한 사용자라면 '내 기록'에 저장 (auth.js가 정의, AI가 실패해 임시 추천을 쓴 경우는 저장 안 함)
-  if (!result.fallback && window.saveRecord) window.saveRecord(mode, query, result);
+  // 로그인한 사용자라면 '내 기록'에 저장하고, 저장됐는지 화면에 알려준다 (auth.js가 정의)
+  $("#save-status").textContent = "";
+  if (window.saveRecord) {
+    const status = await window.saveRecord(mode, query, result);
+    $("#save-status").textContent =
+      status === "saved" ? "✓ 내 기록에 저장했어요" :
+      status === "guest" ? "로그인하면 이 결과가 내 기록에 저장돼요" :
+      status === "no-nickname" ? "닉네임을 정하면 내 기록에 저장돼요" :
+      "내 기록에 저장하지 못했어요. 잠시 후 다시 해 주세요.";
+  }
 }
 
 function renderResult(result) {
+  $("#save-status").textContent = "";
   $("#compare-box").hidden = true; // 취향 비교 결과 상자는 feed.js가 필요할 때만 켠다
   $("#btn-more").hidden = false;
   $("#taste-summary").textContent = result.summary;
