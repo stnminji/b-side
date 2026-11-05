@@ -65,9 +65,9 @@
     const commentBtn = el("button", "social-btn");
     let state = { ...(count || { likes: 0, comments: 0, liked: false }) };
     const paint = () => {
-      likeBtn.textContent = (state.liked ? "❤️ " : "🤍 ") + state.likes;
+      likeBtn.innerHTML = ic("heart", state.liked) + state.likes;
       likeBtn.classList.toggle("on", state.liked);
-      commentBtn.textContent = "💬 " + state.comments;
+      commentBtn.innerHTML = ic("chat") + state.comments;
     };
     paint();
     row.append(likeBtn, commentBtn);
@@ -220,7 +220,8 @@
       const common = [...new Set((theirs.data || []).filter((x) => x.artist_id && mySet.has(x.artist_id)).map((x) => x.artist))];
       if (common.length) {
         $("#profile-common").hidden = false;
-        $("#profile-common").textContent = `🤝 나와 겹치는 아티스트: ${common.join(" · ")}`;
+        $("#profile-common").textContent = `나와 겹치는 아티스트: ${common.join(" · ")}`;
+        $("#profile-common").insertAdjacentHTML("afterbegin", ic("users"));
       }
     }
     selectProfileTab("library");

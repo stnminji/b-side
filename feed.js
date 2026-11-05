@@ -16,7 +16,7 @@
   window.addEventListener("bside-ready", start);
   start(); // auth.js가 먼저 준비됐을 수도 있음
 
-  // 피드 탭: 🎧 추천 기록 / 💬 노래 감상 / ✍️ 자유 메모 / 🤝 취향 이웃
+  // 피드 탭: 추천 기록 / 노래 감상 / 자유 메모 / 취향 이웃
   const FEED_TABS = { records: "#feed-list", memos: "#feed-memos", notes: "#feed-notes", neighbors: "#feed-neighbors" };
   function selectFeedTab(tab) {
     document.querySelectorAll(".feed-tab").forEach((b) => {
@@ -55,7 +55,7 @@
       .eq("is_public", true).order("updated_at", { ascending: false }).limit(30);
     list.textContent = "";
     if (error) return (list.textContent = "감상을 불러오지 못했어요.");
-    if (!rows.length) return (list.textContent = "아직 공개된 노래 감상이 없어요. 노래 페이지에서 메모를 🌐 공개로 저장해 보세요!");
+    if (!rows.length) return (list.textContent = "아직 공개된 노래 감상이 없어요. 노래 페이지에서 메모를 '공개'로 저장해 보세요!");
     const counts = await window.loadSocialCounts(rows.map((r) => r.id));
     rows.forEach((r) => {
       const item = document.createElement("article");
@@ -74,7 +74,7 @@
       .eq("is_public", true).order("created_at", { ascending: false }).limit(30);
     list.textContent = "";
     if (error) return (list.textContent = "자유 메모를 불러오지 못했어요.");
-    if (!rows.length) return (list.textContent = "아직 공개된 자유 메모가 없어요. 기록 → ✍️ 자유 메모에서 🌐 공개로 남겨 보세요!");
+    if (!rows.length) return (list.textContent = "아직 공개된 자유 메모가 없어요. 기록 → 자유 메모에서 '공개'로 남겨 보세요!");
     const counts = await window.loadSocialCounts(rows.map((r) => r.id));
     rows.forEach((r) => {
       const item = document.createElement("article");
@@ -103,7 +103,7 @@
       .limit(30);
     list.textContent = "";
     if (error) return (list.textContent = "피드를 불러오지 못했어요.");
-    if (!rows.length) return (list.textContent = "아직 공개된 기록이 없어요. 내 기록에서 🌐 공개로 바꿔 첫 번째가 되어 보세요!");
+    if (!rows.length) return (list.textContent = "아직 공개된 기록이 없어요. 내 기록에서 '공개'로 바꿔 첫 번째가 되어 보세요!");
     const counts = await window.loadSocialCounts(rows.map((r) => r.id));
     rows.forEach((r) => {
       const item = document.createElement("article");
@@ -117,7 +117,7 @@
       if (r.user_id !== myId) {
         const btn = document.createElement("button");
         btn.className = "btn-small";
-        btn.textContent = "🔗 나와 비교";
+        btn.innerHTML = ic("link") + "나와 비교";
         btn.addEventListener("click", () => compareWith(sb, r));
         item.appendChild(btn);
       }

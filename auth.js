@@ -207,7 +207,7 @@
       const vis = document.createElement("button");
       vis.className = "btn-small" + (r.is_public ? "" : " ghost");
       const paint = () => {
-        vis.textContent = r.is_public ? "🌐 공개" : "🔒 비공개";
+        vis.innerHTML = r.is_public ? ic("globe") + "공개" : ic("lock") + "비공개";
         vis.className = "btn-small" + (r.is_public ? "" : " ghost");
         vis.title = r.is_public ? "다른 사람도 닉네임과 함께 볼 수 있어요. 누르면 비공개로" : "나만 볼 수 있어요. 누르면 공개로";
       };

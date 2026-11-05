@@ -56,7 +56,8 @@
     $("#song-intro").textContent = song.intro
       ? song.intro + (song.based_on === "artist" ? " (아티스트 스타일 기준 AI 소개)" : " (AI 소개)")
       : "AI 소개를 불러오지 못했어요.";
-    $("#song-moment").textContent = song.moment ? "🎧 " + song.moment : "";
+    $("#song-moment").textContent = song.moment || "";
+    if (song.moment) $("#song-moment").insertAdjacentHTML("afterbegin", ic("headphones"));
     $("#song-tags").innerHTML = "";
     song.tags.forEach((t) => {
       const span = document.createElement("span");
@@ -108,7 +109,7 @@
 
   function paintVisibility() {
     const btn = $("#memo-visibility");
-    btn.textContent = memoPublic ? "🌐 공개" : "🔒 나만 보기";
+    btn.innerHTML = memoPublic ? ic("globe") + "공개" : ic("lock") + "나만 보기";
     btn.classList.toggle("ghost", !memoPublic);
     btn.title = memoPublic ? "다른 사람도 닉네임과 함께 볼 수 있어요" : "나만 볼 수 있어요";
   }
@@ -182,7 +183,7 @@
     if (res.error || !res.data || !res.data.length) return setStatus("저장하지 못했어요. 잠시 후 다시 해 주세요.");
     memo = res.data[0];
     loadOthers();
-    setStatus("✓ 저장했어요 · " + new Date(memo.updated_at).toLocaleString("ko-KR") + (memo.is_public ? " · 🌐 공개" : " · 🔒 나만 보기"));
+    setStatus("✓ 저장했어요 · " + new Date(memo.updated_at).toLocaleString("ko-KR") + (memo.is_public ? " · 공개" : " · 나만 보기"));
   });
 
   // ----- 내 음악 서재: 담기 / 빼기 -----
@@ -246,7 +247,7 @@
       .order("updated_at", { ascending: false }).limit(20);
     list.textContent = "";
     const others = (rows || []).filter((r) => r.user_id !== myId);
-    if (error || !others.length) return (list.textContent = "아직 공개된 감상이 없어요. 내 메모를 🌐 공개로 저장하면 첫 감상이 돼요.");
+    if (error || !others.length) return (list.textContent = "아직 공개된 감상이 없어요. 내 메모를 '공개'로 저장하면 첫 감상이 돼요.");
     const counts = await window.loadSocialCounts(others.map((r) => r.id));
     others.forEach((r) => {
       const item = el("article", "record");
@@ -429,7 +430,7 @@
       .eq("user_id", s.session.user.id).order("updated_at", { ascending: false }).limit(200);
     list.textContent = "";
     if (error) return (list.textContent = "메모를 불러오지 못했어요.");
-    if (!rows.length) return (list.textContent = "아직 남긴 메모가 없어요. 노래를 검색해서 📝 내 메모를 남겨 보세요.");
+    if (!rows.length) return (list.textContent = "아직 남긴 메모가 없어요. 노래를 검색해서 내 메모를 남겨 보세요.");
     rows.forEach((r) => {
       const b = el("button", "track-row memo-row-item");
       if (r.cover) {
@@ -442,7 +443,7 @@
       const text = el("span", "track-text");
       text.append(
         el("span", "track-title", r.title),
-        el("span", "hint small", r.artist + " · " + (r.is_public ? "🌐 공개" : "🔒 나만 보기") + " · " + new Date(r.updated_at).toLocaleDateString("ko-KR")),
+        el("span", "hint small", r.artist + " · " + (r.is_public ? "공개" : "나만 보기") + " · " + new Date(r.updated_at).toLocaleDateString("ko-KR")),
         el("span", "memo-snippet", r.memo)
       );
       b.appendChild(text);
@@ -455,7 +456,7 @@
   let notePublic = false;
   function paintNoteVisibility() {
     const btn = $("#note-visibility");
-    btn.textContent = notePublic ? "🌐 공개" : "🔒 나만 보기";
+    btn.innerHTML = notePublic ? ic("globe") + "공개" : ic("lock") + "나만 보기";
     btn.classList.toggle("ghost", !notePublic);
   }
   $("#note-text").addEventListener("input", () => ($("#note-count").textContent = `${$("#note-text").value.length} / 1000`));
@@ -497,7 +498,8 @@
     const counts = await window.loadSocialCounts(rows.map((r) => r.id));
     rows.forEach((r) => {
       const item = el("article", "record");
-      const vis = el("button", "btn-small" + (r.is_public ? "" : " ghost"), r.is_public ? "🌐 공개" : "🔒 비공개");
+      const vis = el("button", "btn-small" + (r.is_public ? "" : " ghost"));
+      vis.innerHTML = r.is_public ? ic("globe") + "공개" : ic("lock") + "비공개";
       vis.addEventListener("click", async () => {
         if (!r.is_public && !confirm("이 메모를 공개할까요?")) return;
         const { error: e } = await client.from("notes").update({ is_public: !r.is_public }).eq("id", r.id);
@@ -528,7 +530,7 @@
   let favRow = null;
   function paintFav() {
     const heart = $("#btn-fav");
-    heart.textContent = favRow ? "♥ 좋아함" : "♡ 좋아요";
+    heart.innerHTML = favRow ? ic("heart", true) + "좋아함" : ic("heart") + "좋아요";
     heart.classList.toggle("ghost", !favRow);
     heart.classList.toggle("fav-on", !!favRow);
   }
@@ -551,7 +553,7 @@
     const client = sb();
     const { data: s } = await client.auth.getSession();
     if (!s.session) {
-      alert("♡는 로그인 후에 누를 수 있어요.");
+      alert("좋아요는 로그인 후에 누를 수 있어요.");
       return $("#btn-open-login").click();
     }
     if (window.bsideEnsureProfile && !(await window.bsideEnsureProfile(s.session.user.id))) return;
@@ -567,7 +569,7 @@
         .select("id, is_public");
       if (!error && data) favRow = data[0];
       else if (error && /duplicate|unique/i.test(error.message)) await loadFavorite();
-      else if (error) alert("♡를 저장하지 못했어요.");
+      else if (error) alert("좋아요를 저장하지 못했어요.");
     }
     btn.disabled = false;
     paintFav();
@@ -594,7 +596,7 @@
       .eq("user_id", s.session.user.id).order("created_at", { ascending: false }).limit(200);
     list.textContent = "";
     if (error) return (list.textContent = "불러오지 못했어요.");
-    if (!rows.length) return (list.textContent = "아직 ♡ 누른 아티스트가 없어요. 아티스트 페이지에서 ♡를 눌러 보세요.");
+    if (!rows.length) return (list.textContent = "아직 좋아요한 아티스트가 없어요. 아티스트 페이지에서 하트를 눌러 보세요.");
     rows.forEach((r) => {
       const row = el("div", "fav-item");
       const b = el("button", "track-row");
@@ -606,7 +608,7 @@
         b.appendChild(img);
       }
       const text = el("span", "track-text");
-      text.append(el("span", "track-title", r.name), el("span", "hint small", "♥ 좋아하는 아티스트"));
+      text.append(el("span", "track-title", r.name), el("span", "hint small", "좋아하는 아티스트"));
       b.appendChild(text);
       b.addEventListener("click", () => go(() => window.openArtist(r.artist_id)));
       row.appendChild(b);

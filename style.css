@@ -362,3 +362,14 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 /* ===== 좋아하는 아티스트 ♡ ===== */
 .fav-row { display: flex; gap: 6px; margin-top: 6px; }
 .btn-small.fav-on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ===== 단색 선 아이콘 공통 ===== */
+.ic-fill { fill: currentColor; }
+.hub-icon { color: var(--accent); }
+.hub-icon .ic { width: 30px; height: 30px; margin: 0; stroke-width: 1.6; }
+.tile b .ic { color: var(--accent); }
+.memo-title .ic, .result-title .ic { color: var(--accent); }
+.btn-small .ic, .social-btn .ic { width: 15px; height: 15px; margin-right: 4px; vertical-align: -3px; }
+.social-btn.on .ic { color: var(--accent); }
+.fav-on .ic { color: #fff; }
+.hint .ic, .common .ic { width: 15px; height: 15px; margin-right: 4px; vertical-align: -3px; }
