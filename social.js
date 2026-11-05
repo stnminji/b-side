@@ -224,7 +224,7 @@
         $("#profile-common").insertAdjacentHTML("afterbegin", ic("users"));
       }
     }
-    selectProfileTab("library");
+    selectProfileTab("memos"); // 서재 탭은 잠시 숨김
   };
 
   function selectProfileTab(tab) {

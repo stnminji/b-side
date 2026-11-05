@@ -373,3 +373,6 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px
 .social-btn.on .ic { color: var(--accent); }
 .fav-on .ic { color: #fff; }
 .hint .ic, .common .ic { width: 15px; height: 15px; margin-right: 4px; vertical-align: -3px; }
+
+/* 잠시 숨긴 기능 (서재). 데이터·DB는 그대로, HTML의 class="off"만 지우면 다시 보임 */
+.off { display: none !important; }
