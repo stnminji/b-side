@@ -38,17 +38,46 @@
 
   <main>
     <!-- 홈: 검색창(위) + 기록 · 소셜 -->
-    <section id="step-home" class="home-hub">
-      <button id="hub-archive" class="hub-btn" type="button">
-        <span class="hub-icon"><i data-ic="disc"></i></span>
-        <span class="hub-name">나의 음악 저장소</span>
-        <span class="hub-desc">저장한 곡 · 감상 메모 · 좋아하는 아티스트</span>
-      </button>
-      <button id="hub-social" class="hub-btn" type="button">
-        <span class="hub-icon"><i data-ic="chat"></i></span>
-        <span class="hub-name">취향으로 연결</span>
-        <span class="hub-desc">같은 노래 · 같은 이유로 사람과 새 음악 발견</span>
-      </button>
+    <!-- 홈: 디깅 순환 (검색 → 나의 음악 저장소 → 취향으로 연결 → 다시 검색) -->
+    <section id="step-home" class="cycle-wrap">
+      <div class="cycle">
+        <!-- 원 위의 화살표 (세 단계를 시계 방향으로 잇는다) -->
+        <svg class="cycle-ring" viewBox="0 0 300 300" aria-hidden="true">
+          <defs>
+            <marker id="cycle-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M1 1 L9 5 L1 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </marker>
+          </defs>
+          <circle cx="150" cy="150" r="110" class="cycle-track" />
+          <path d="M196.5 50.3 A110 110 0 0 1 259.6 159.6" class="cycle-arc" marker-end="url(#cycle-arrow)" />
+          <path d="M213.1 240.1 A110 110 0 0 1 86.9 240.1" class="cycle-arc" marker-end="url(#cycle-arrow)" />
+          <path d="M40.4 159.6 A110 110 0 0 1 103.5 50.3" class="cycle-arc" marker-end="url(#cycle-arrow)" />
+        </svg>
+
+        <button id="hub-search" class="cycle-node n1" type="button">
+          <span class="cycle-step">1</span>
+          <i data-ic="search"></i>
+          <b>검색</b>
+          <span>좋아하는 노래 찾기</span>
+        </button>
+        <button id="hub-archive" class="cycle-node n2" type="button">
+          <span class="cycle-step">2</span>
+          <i data-ic="box"></i>
+          <b>나의 음악 저장소</b>
+          <span>저장 · 나만의 감상</span>
+        </button>
+        <button id="hub-social" class="cycle-node n3" type="button">
+          <span class="cycle-step">3</span>
+          <i data-ic="link"></i>
+          <b>취향으로 연결</b>
+          <span>같은 노래 · 같은 이유</span>
+        </button>
+
+        <div class="cycle-center">
+          <b>디깅 순환</b>
+          <span>연결된 사람에게서<br />발견한 음악은<br />다시 검색으로</span>
+        </div>
+      </div>
     </section>
 
     <!-- 기록 모음 -->
@@ -59,7 +88,7 @@
         <button class="tile off" data-go="ai" type="button"><b><i data-ic="sparkle"></i>AI 디깅</b><span>플레이리스트 캡처나 분위기로 취향 분석 · 인디 추천</span></button>
         <button class="tile" data-go="library" type="button"><b><i data-ic="box"></i>내 음악 창고</b><span>담아 둔 노래</span></button>
         <button class="tile" data-go="memos" type="button"><b><i data-ic="pen"></i>감상 메모</b><span>노래마다 남긴 나만의 감상</span></button>
-        <button class="tile" data-go="taste" type="button"><b><i data-ic="sparkle"></i>나의 취향 분석</b><span>내 감상을 AI가 읽고 요약 · 연결의 시작</span></button>
+        <button class="tile off" data-go="taste" type="button"><b><i data-ic="sparkle"></i>나의 취향 분석</b><span>내 감상을 AI가 읽고 요약 · 연결의 시작</span></button>
         <button class="tile off" data-go="records" type="button"><b><i data-ic="headphones"></i>추천 기록</b><span>AI가 추천해 준 결과</span></button>
         <button class="tile" data-go="artists" type="button"><b><i data-ic="mic"></i>좋아하는 아티스트</b><span><i data-ic="heart"></i>누른 아티스트</span></button>
         <button class="tile off" data-go="notes" type="button"><b><i data-ic="note"></i>자유 메모</b><span>노래와 상관없는 음악 일기</span></button>

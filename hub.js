@@ -7,6 +7,11 @@
   const $ = (sel) => document.querySelector(sel);
 
   $("#hub-archive").addEventListener("click", () => showStep("step-archive"));
+  // 순환의 1단계 '검색': 위쪽 검색창으로 데려간다
+  $("#hub-search").addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    $("#search-q").focus();
+  });
   $("#hub-social").addEventListener("click", () => window.openConnect());
 
   // 로그인이 필요한 메뉴는 먼저 확인하고, 안 했으면 로그인 창을 연다
