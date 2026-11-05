@@ -101,7 +101,7 @@ function localRecommend(query) {
 }
 
 // ----- 화면 단계 전환 -----
-const STEPS = ["step-input", "step-confirm", "step-loading", "step-result"];
+const STEPS = ["step-input", "step-confirm", "step-loading", "step-result", "step-records"];
 function showStep(id) {
   STEPS.forEach((s) => ($("#" + s).hidden = s !== id));
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -321,10 +321,12 @@ async function recommend(mode, query) {
   } catch (e) {
     // AI가 안 될 때도 데모가 멈추지 않도록 임시 추천으로 대신한다
     console.warn("AI 추천 실패, 임시 추천 사용:", e.message);
-    result = await fakeAI(localRecommend(query), 300);
+    result = { ...(await fakeAI(localRecommend(query), 300)), fallback: true };
   }
   renderResult(result);
   showStep("step-result");
+  // 로그인한 사용자라면 '내 기록'에 저장 (auth.js가 정의, AI가 실패해 임시 추천을 쓴 경우는 저장 안 함)
+  if (!result.fallback && window.saveRecord) window.saveRecord(mode, query, result);
 }
 
 function renderResult(result) {

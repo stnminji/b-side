@@ -1,0 +1,18 @@
+# B-SIDE Supabase 설정 (비밀 정보 없음)
+# 여기 적은 항목만 `supabase config push`로 원격 프로젝트에 반영된다.
+project_id = "b-side"
+
+[auth]
+# 로그인 후 돌아올 주소 (배포 주소 + 로컬 테스트 주소만 허용)
+site_url = "https://b-side-rosy.vercel.app"
+additional_redirect_urls = ["http://localhost:8000"]
+# 비밀번호 규칙: 8자 이상, 영문+숫자 (화면 검사를 우회해도 서버가 거절)
+minimum_password_length = 8
+password_requirements = "letters_digits"
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+# 무료 메일은 시간당 발송 수가 아주 적어서, 대회 데모 동안은 인증 메일 없이 바로 가입되게 한다
+# (확장 시 자체 메일 서버를 연결하고 true로 바꿀 것)
+enable_confirmations = false

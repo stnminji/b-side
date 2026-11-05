@@ -8,3 +8,4 @@ docs/
 _shot/
 __pycache__/
 *.pyc
+supabase/

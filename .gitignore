@@ -16,3 +16,7 @@ __pycache__/
 _shot/
 
 .vercel
+
+# Supabase CLI 임시 파일 (DB 접속 주소 등 → 올리지 않음)
+supabase/.temp/
+supabase/.branches/

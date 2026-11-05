@@ -32,8 +32,8 @@ def load_env():
                 os.environ[key.strip()] = value.strip().strip('"').strip("'")
 
 
-def load_api():
-    spec = importlib.util.spec_from_file_location("gemini_api", os.path.join(ROOT, "api", "gemini.py"))
+def load_api(filename="gemini.py"):
+    spec = importlib.util.spec_from_file_location("api_" + filename[:-3], os.path.join(ROOT, "api", filename))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -41,6 +41,7 @@ def load_api():
 
 load_env()
 api = load_api()
+config_api = load_api("config.py")
 
 
 class DevHandler(SimpleHTTPRequestHandler):
@@ -48,6 +49,16 @@ class DevHandler(SimpleHTTPRequestHandler):
         super().__init__(*args, directory=ROOT, **kwargs)
 
     def do_GET(self):
+        # 공개 설정(Supabase 주소·공개용 키)은 배포 서버와 같은 함수로 돌려준다
+        if self.path.split("?")[0] == "/api/config":
+            data = json.dumps(config_api.public_config()).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return
         # 비밀 파일이나 서버 코드는 브라우저에 보여주지 않는다
         # (주소를 %2E 같은 식으로 바꿔 써도 막히도록, 실제 파일 경로로 바꾼 뒤 검사한다)
         rel = os.path.relpath(self.translate_path(self.path), ROOT).replace("\\", "/").lower()
