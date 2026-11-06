@@ -285,7 +285,9 @@
     const myId = s.session ? s.session.user.id : null;
     const { data: rows, error } = await client.from("song_memos")
       .select("id, user_id, memo, updated_at, profiles(nickname)")
-      .eq("track_id", song.track_id).eq("is_public", true)
+      // 같은 곡이라도 싱글·앨범마다 곡 번호가 달라서, 국제 음원 코드(ISRC)가 같으면 같은 곡으로 본다
+      .or(/^[A-Z0-9]{12}$/.test(song.isrc || "") ? `track_id.eq.${song.track_id},isrc.eq.${song.isrc}` : `track_id.eq.${song.track_id}`)
+      .eq("is_public", true)
       .order("updated_at", { ascending: false }).limit(20);
     list.textContent = "";
     const others = (rows || []).filter((r) => r.user_id !== myId);
