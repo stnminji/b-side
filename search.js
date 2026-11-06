@@ -36,6 +36,11 @@
   document.querySelectorAll(".go-home").forEach((b) => b.addEventListener("click", () => (history.length = 0)));
 
   // ----- 검색 -----
+  // 다른 곳에서도 검색 결과 화면을 열 수 있게 (예: 이름으로 노래를 못 찾았을 때)
+  window.runSearch = (q) => {
+    $("#search-q").value = q;
+    $("#search-form").requestSubmit();
+  };
   $("#search-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const q = $("#search-q").value.trim();

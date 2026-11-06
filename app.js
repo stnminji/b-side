@@ -464,6 +464,15 @@ function songRow(bandName, song, isFirst) {
   // 실제 영상 주소를 AI가 지어내지 않도록, "밴드명 + 곡명" 검색 결과로 연결한다
   li.querySelector(".song-play").href =
     "https://www.youtube.com/results?search_query=" + encodeURIComponent(`${bandName} ${song.title}`);
+  // 곡 제목을 누르면 그 노래 페이지로 (곡 번호를 알면 바로, 모르면 이름으로 찾아서)
+  const info = li.querySelector(".song-info");
+  info.classList.add("clickable");
+  info.title = "노래 페이지로";
+  info.addEventListener("click", () => {
+    if (window.rememberPage) window.rememberPage();
+    if (song.track_id) return window.openSongById(song.track_id, { title: song.title, artist: bandName });
+    window.openSong(bandName, song.title);
+  });
   return li;
 }
 

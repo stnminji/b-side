@@ -34,6 +34,8 @@
       song = await callAI(request);
     } catch (e) {
       stopLoadingSteps();
+      // 이름으로 찾다가 못 찾으면(음악 DB에 영어 제목으로만 있는 곡 등) 검색 결과에서 고를 수 있게
+      if (typed && window.runSearch) return window.runSearch(typed.artist);
       alert(e.message || "노래를 찾지 못했어요.");
       return window.goBack ? window.goBack() : showStep("step-home");
     }

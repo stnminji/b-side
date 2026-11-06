@@ -539,3 +539,6 @@ span.listen-tip { margin-top: 6px; }
 .section-block .match-guide { margin-top: 8px; }
 .recent-notes.section-block { border-top: 1px solid var(--line); }
 .why-tag { margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: #e7ecdf; color: var(--accent2); font-size: 11px; font-weight: 700; }
+/* 추천 카드의 곡 제목: 누르면 노래 페이지 */
+.song-info.clickable { cursor: pointer; }
+.song-info.clickable:hover .song-title { text-decoration: underline; }

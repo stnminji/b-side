@@ -367,7 +367,8 @@ def check_outside(b):
             a_name, b_name = _norm(t["artist"]["name"]), _norm(b["name"])
             artist_ok = t["artist"]["id"] == artist_id or (b_name and (b_name in a_name or a_name in b_name))
             if artist_ok and _norm(t["title"]).startswith(_norm(s.get("title"))):
-                songs.append({"title": t["title"], "point": s.get("point", ""), "hidden": False})
+                songs.append({"title": ko_title(t["id"], t["title"], t["artist"]["name"]), "point": s.get("point", ""), "hidden": False,
+                              "track_id": t["id"]})  # 곡 번호: 누르면 노래 페이지로
                 image = image or t["artist"].get("picture_medium")
                 break
     if not songs and artist_id:
@@ -379,7 +380,7 @@ def check_outside(b):
             hits = []
         own = [t for t in hits if t["artist"]["id"] == artist_id]
         if len(own) >= 2:
-            songs = [{"title": korean_title(t), "point": "", "hidden": False} for t in own[:2]]
+            songs = [{"title": ko_title(t["id"], korean_title(t), t["artist"]["name"]), "point": "", "hidden": False, "track_id": t["id"]} for t in own[:2]]
             image = own[0]["artist"].get("picture_medium")
     if not songs:
         print(f"[검증] 버림: {b.get('name')} (Deezer에서 곡을 확인하지 못함)", flush=True)
