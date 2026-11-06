@@ -295,35 +295,91 @@
     }
   }
 
-  // ----- 최근 공개된 감상 노트 (노래 + 아티스트, 최신순) -----
+  // ----- 공개된 감상 노트: '나에게 맞춘 순' 알고리즘 / 최신순 -----
+  // 점수 = 신선도(2일마다 절반) + 반응(좋아요·댓글) + 나와의 관련(내가 감상·좋아요한 아티스트·곡)
+  //  · 한 사람의 글은 최대 2개까지 (한 명이 목록을 다 채우지 않게) · 내 글은 빼고
   // DB 규칙(RLS)상 공개 글만 읽히고, is_public 조건도 함께 건다
+  let notesSort = "foryou";
+  document.querySelectorAll(".notes-sort").forEach((b) => b.addEventListener("click", () => {
+    notesSort = b.dataset.sort;
+    document.querySelectorAll(".notes-sort").forEach((x) => {
+      const on = x.dataset.sort === notesSort;
+      x.classList.toggle("ghost", !on);
+      x.classList.toggle("active", on);
+    });
+    loadRecentNotes();
+  }));
+
   async function loadRecentNotes() {
     const list = $("#recent-notes");
     list.textContent = "불러오는 중…";
     const client = sb();
     if (!client) return (list.textContent = "");
     const [songs, artists] = await Promise.all([
-      client.from("song_memos").select("id, user_id, track_id, artist, title, cover, memo, updated_at, profiles(nickname)")
-        .eq("is_public", true).order("updated_at", { ascending: false }).limit(15),
+      client.from("song_memos").select("id, user_id, track_id, isrc, artist, title, cover, memo, updated_at, profiles(nickname)")
+        .eq("is_public", true).order("updated_at", { ascending: false }).limit(60),
       client.from("artist_memos").select("id, user_id, artist_id, name, picture, memo, updated_at, profiles(nickname)")
-        .eq("is_public", true).order("updated_at", { ascending: false }).limit(10),
+        .eq("is_public", true).order("updated_at", { ascending: false }).limit(30),
     ]);
-    const rows = [
+    let rows = [
       ...(songs.data || []).map((r) => ({ ...r, kind: "song" })),
       ...(artists.data || []).map((r) => ({ ...r, kind: "artist" })),
-    ].sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at))).slice(0, 20);
+    ];
+    const s = await session();
+    const myId = s ? s.user.id : null;
+    rows = rows.filter((r) => r.user_id !== myId); // 내 글은 빼고
+    const counts = await window.loadSocialCounts((songs.data || []).map((r) => r.id));
+
+    if (notesSort === "foryou") {
+      const mine = myId ? await myTasteKeys(myId) : { artists: new Set(), tracks: new Set() };
+      const now = Date.now();
+      rows.forEach((r) => {
+        const hours = (now - new Date(r.updated_at).getTime()) / 36e5;
+        const fresh = Math.pow(0.5, hours / 48);                           // 신선도: 2일마다 절반
+        const c = counts[r.id] || { likes: 0, comments: 0 };
+        const react = Math.log1p(c.likes + 2 * c.comments) * 0.6;         // 반응: 댓글을 더 크게
+        const artistName = norm(r.kind === "song" ? r.artist : r.name);
+        let relate = 0;
+        if (mine.artists.has(artistName)) relate += 1.2;                   // 내가 좋아하는 아티스트
+        if (r.kind === "song" && (mine.tracks.has(r.track_id) || (r.isrc && mine.tracks.has(r.isrc)))) relate += 1.5; // 같은 곡
+        r._score = fresh + react + relate;
+        r._why = relate >= 1.5 ? "내가 감상한 곡" : relate > 0 ? "내가 좋아하는 아티스트" : c.likes + c.comments > 0 ? "반응이 많은 감상" : "";
+      });
+      rows.sort((a, b) => b._score - a._score);
+      // 한 사람당 최대 2개 (다양하게)
+      const per = {};
+      rows = rows.filter((r) => (per[r.user_id] = (per[r.user_id] || 0) + 1) <= 2);
+    } else {
+      rows.sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at)));
+    }
+    rows = rows.slice(0, 20);
     list.textContent = "";
     if (!rows.length) return list.appendChild(el("p", "hint", "아직 공개된 감상이 없어요. 내 감상 노트를 '공개'로 저장하면 여기에 보여요."));
-    const counts = await window.loadSocialCounts((songs.data || []).map((r) => r.id));
     rows.forEach((r) => {
       const item = el("article", "record note-card");
       const who = el("p", "record-who");
       who.append(window.nickButton(r.profiles && r.profiles.nickname, r.user_id), " · " + new Date(r.updated_at).toLocaleDateString("ko-KR"));
+      if (r._why) who.append(el("span", "why-tag", r._why));
       const head = r.kind === "song" ? window.trackRow(r) : window.artistRow(r);
       item.append(who, head, el("p", "record-summary", r.memo)); // 남이 쓴 글 → textContent로만
       if (r.kind === "song") item.appendChild(window.socialBar("song_memo", r.id, counts[r.id]));
       list.appendChild(item);
     });
+  }
+
+  // 나의 취향 키: 내가 감상·좋아요한 아티스트 이름, 감상한 곡 번호·ISRC (내 데이터만)
+  async function myTasteKeys(uid) {
+    const client = sb();
+    const [sm, am, fav] = await Promise.all([
+      client.from("song_memos").select("artist, track_id, isrc").eq("user_id", uid).limit(300),
+      client.from("artist_memos").select("name").eq("user_id", uid).limit(300),
+      client.from("favorite_artists").select("name").eq("user_id", uid).limit(300),
+    ]);
+    const artists = new Set();
+    const tracks = new Set();
+    (sm.data || []).forEach((x) => { artists.add(norm(x.artist)); tracks.add(x.track_id); if (x.isrc) tracks.add(x.isrc); });
+    [...(am.data || []), ...(fav.data || [])].forEach((x) => artists.add(norm(x.name)));
+    return { artists, tracks };
   }
 
   // "이렇게 들어보면 어때요?" 한 줄 (헤드폰 아이콘 + 제안)
