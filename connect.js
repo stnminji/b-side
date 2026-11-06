@@ -366,13 +366,31 @@
     rows.forEach((r) => {
       const item = el("article", "record note-card");
       const who = el("p", "record-who");
-      who.append(window.nickButton(r.profiles && r.profiles.nickname, r.user_id), " · " + new Date(r.updated_at).toLocaleDateString("ko-KR"));
+      const t = el("time", "note-time", " · " + timeAgo(r.updated_at));
+      t.dateTime = r.updated_at;
+      t.title = new Date(r.updated_at).toLocaleString("ko-KR"); // 마우스를 올리면 정확한 시각
+      who.append(window.nickButton(r.profiles && r.profiles.nickname, r.user_id), t);
       if (r._why) who.append(el("span", "why-tag", r._why));
       const head = r.kind === "song" ? window.trackRow(r) : window.artistRow(r);
       item.append(who, head, el("p", "record-summary", r.memo)); // 남이 쓴 글 → textContent로만
       if (r.kind === "song") item.appendChild(window.socialBar("song_memo", r.id, counts[r.id]));
       list.appendChild(item);
     });
+  }
+
+  // 올린 시간을 사람이 읽기 쉽게: 방금 · N분 전 · N시간 전 · 어제 오후 3:20 · 11월 3일 오후 3:20
+  function timeAgo(iso) {
+    const d = new Date(iso);
+    const min = Math.floor((Date.now() - d.getTime()) / 60000);
+    const hm = d.toLocaleTimeString("ko-KR", { hour: "numeric", minute: "2-digit" });
+    if (min < 1) return "방금";
+    if (min < 60) return `${min}분 전`;
+    if (min < 60 * 6) return `${Math.floor(min / 60)}시간 전`;
+    const today = new Date();
+    const yest = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    if (d.toDateString() === today.toDateString()) return `오늘 ${hm}`;
+    if (d.toDateString() === yest.toDateString()) return `어제 ${hm}`;
+    return d.toLocaleDateString("ko-KR", { month: "long", day: "numeric" }) + " " + hm;
   }
 
   // 나의 취향 키: 내가 감상·좋아요한 아티스트 이름, 감상한 곡 번호·ISRC (내 데이터만)

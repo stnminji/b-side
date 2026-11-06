@@ -542,3 +542,4 @@ span.listen-tip { margin-top: 6px; }
 /* 추천 카드의 곡 제목: 누르면 노래 페이지 */
 .song-info.clickable { cursor: pointer; }
 .song-info.clickable:hover .song-title { text-decoration: underline; }
+.note-time { font-weight: 600; color: var(--muted); }
