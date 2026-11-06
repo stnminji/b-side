@@ -547,7 +547,7 @@ def _song_facts(payload):
         "track_id": int(track["id"]),
         "title": ko_title(track["id"], track["title"], track["artist"]["name"]),
         "artist": ours["name"] if ours else track["artist"]["name"],
-        "album": track["album"].get("title", "")[:200],
+        "album": ko_title(0, track["album"].get("title", ""), track["artist"]["name"])[:200],
         "release_date": album.get("release_date", ""),
         "cover": cover if cover.startswith("https://") else "",
         "genre": (ours["genre"] if ours else " · ".join(genres))[:40],
@@ -650,7 +650,8 @@ def search(payload):
         seen.add(t["id"])
         track_list.append({"track_id": t["id"], "title": ko_title(t["id"], t["title"], t["artist"]["name"])[:200],
                            "artist": curated.get(_norm(t["artist"]["name"]), t["artist"]["name"])[:100],
-                           "album": t.get("album", {}).get("title", "")[:120],
+                           # 싱글은 앨범 이름이 곡 제목과 같아서, 앨범 이름도 같은 표로 한국어 원제로
+                           "album": ko_title(0, t.get("album", {}).get("title", ""), t["artist"]["name"])[:120],
                            "cover": safe(t.get("album", {}).get("cover_small"))})
     # 같은 B-SIDE 아티스트로 이어지는 Deezer 프로필이 여러 개면(예: OOHYO / 우효) 팬이 가장 많은 공식 프로필 하나만
     best = {}
