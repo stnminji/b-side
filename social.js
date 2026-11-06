@@ -286,7 +286,7 @@
     b.appendChild(text);
     b.addEventListener("click", () => {
       if (window.rememberPage) window.rememberPage();
-      window.openSongById(r.track_id);
+      window.openSongById(r.track_id, r); // 이미 아는 제목·커버로 바로 띄움
     });
     return b;
   }

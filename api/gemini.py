@@ -172,10 +172,21 @@ JSON 형식으로만 답하라:
 SEARCH_MODES = {"band", "song", "photo_artists", "photo_songs"}
 
 
+_CACHE = {}          # 공개 음악 DB(Deezer·MusicBrainz) 응답을 잠깐 기억 (개인 데이터는 넣지 않음)
+_CACHE_TTL = 300     # 5분
+
+
 def _get_json(url):
+    hit = _CACHE.get(url)
+    if hit and time.time() - hit[0] < _CACHE_TTL:
+        return hit[1]
     req = urllib.request.Request(url, headers={"User-Agent": "Gyeol/1.0 (hackathon demo)"})
     with urllib.request.urlopen(req, timeout=6) as res:
-        return json.loads(res.read().decode("utf-8"))
+        data = json.loads(res.read().decode("utf-8"))
+    if len(_CACHE) > 800:  # 너무 많이 쌓이면 비운다 (메모리 보호)
+        _CACHE.clear()
+    _CACHE[url] = (time.time(), data)
+    return data
 
 
 def lookup_artist(name):
@@ -614,28 +625,26 @@ def artist_info(payload):
     aid = str(payload.get("artist_id") or "")
     if not aid.isdigit() or len(aid) > 15:
         raise ValueError("잘못된 요청이에요.")
-    a = _get_json(f"https://api.deezer.com/artist/{int(aid)}")
-    if not a.get("id"):
-        raise ValueError("아티스트를 찾지 못했어요.")
     def safe(url):
         return url if isinstance(url, str) and url.startswith("https://") and "/artist//" not in url else ""
-    jobs = {
-        "top": f"https://api.deezer.com/artist/{a['id']}/top?limit=8",
-        "albums": f"https://api.deezer.com/artist/{a['id']}/albums?limit=12",
-        "related": f"https://api.deezer.com/artist/{a['id']}/related?limit=8",
-    }
-    with ThreadPoolExecutor(max_workers=3) as pool:  # 세 가지를 동시에 조회
-        got = dict(zip(jobs, pool.map(lambda u: (_get_json(u) or {}).get("data", []), jobs.values())))
+    base = f"https://api.deezer.com/artist/{int(aid)}"
+    jobs = {"artist": base, "top": base + "/top?limit=8", "albums": base + "/albums?limit=12", "related": base + "/related?limit=8"}
+    with ThreadPoolExecutor(max_workers=4) as pool:  # 네 가지를 동시에 조회 (하나씩 하면 4배 느림)
+        got = dict(zip(jobs, pool.map(_safe_get, jobs.values())))
+    a = got.pop("artist")
+    if not a.get("id"):
+        raise ValueError("아티스트를 찾지 못했어요.")
+    got = {k: v.get("data", []) for k, v in got.items()}
     # 듣는 사람이 적은 인디 아티스트는 Deezer에 '인기곡' 통계가 없다 → 최근 앨범 수록곡으로 대신
     if not got["top"] and got["albums"]:
-        for al in got["albums"][:3]:
-            try:
-                for t in _get_json(f"https://api.deezer.com/album/{al['id']}/tracks?limit=20").get("data", []):
-                    if len(got["top"]) < 8 and t["artist"]["id"] == a["id"]:
-                        t.setdefault("album", {"title": al.get("title", "")})
-                        got["top"].append(t)
-            except Exception:
-                continue
+        albs = got["albums"][:3]
+        with ThreadPoolExecutor(max_workers=3) as pool:  # 앨범 3장의 수록곡도 동시에
+            lists = list(pool.map(lambda al: _safe_get(f"https://api.deezer.com/album/{al['id']}/tracks?limit=20").get("data", []), albs))
+        for al, tracks in zip(albs, lists):
+            for t in tracks:
+                if len(got["top"]) < 8 and t.get("artist", {}).get("id") == a["id"]:
+                    t.setdefault("album", {"title": al.get("title", "")})
+                    got["top"].append(t)
     ours = next((x for x in load_artists() if _norm(x["name"]) == _norm(a["name"])
                  or _norm(x.get("name_en", "")) == _norm(a["name"])), None)
     seen, albums = set(), []

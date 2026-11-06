@@ -100,7 +100,7 @@
       b.appendChild(text);
       b.addEventListener("click", () => {
         window.rememberPage();
-        window.openSongById(t.track_id);
+        window.openSongById(t.track_id, t); // 검색 결과의 제목·커버로 바로 띄움
       });
       tracks.appendChild(b);
     });

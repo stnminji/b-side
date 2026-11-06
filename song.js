@@ -15,11 +15,21 @@
   // ----- 노래 열기 -----
   window.openSong = (artist, title) => artist && title && loadSong({ action: "song_info", artist, title }, { artist, title });
   // 아티스트 페이지·서재에서 누른 곡은 곡 번호로 바로 연다
-  window.openSongById = (trackId) => loadSong({ action: "song_info", track_id: trackId }, null);
+  // preview: 목록에 이미 있던 정보(제목·아티스트·앨범·커버). 있으면 기다리지 않고 바로 페이지를 띄운다
+  window.openSongById = (trackId, preview) => loadSong({ action: "song_info", track_id: trackId }, null, preview);
 
-  async function loadSong(request, typed) {
-    showStep("step-loading");
-    startLoadingSteps("음악을 찾고 있어요…", []);
+  async function loadSong(request, typed, preview) {
+    if (preview && preview.title) {
+      song = { track_id: request.track_id, title: preview.title, artist: preview.artist || "", album: preview.album || "",
+               cover: preview.cover || "", release_date: "", genre: "", source_link: "#", query: { artist: preview.artist || "", title: preview.title } };
+      renderSong();
+      $("#song-genre").textContent = "곡 정보를 불러오는 중…";
+      selectTab("info");
+      showStep("step-song");
+    } else {
+      showStep("step-loading");
+      startLoadingSteps("음악을 찾고 있어요…", []);
+    }
     try {
       song = await callAI(request);
     } catch (e) {
@@ -344,7 +354,7 @@
       const text = el("span", "track-text");
       text.append(el("span", "track-title", t.title), el("span", "hint small", t.album));
       b.appendChild(text);
-      b.addEventListener("click", () => go(() => window.openSongById(t.track_id)));
+      b.addEventListener("click", () => go(() => window.openSongById(t.track_id, { ...t, artist: artist.name })));
       tracks.appendChild(b);
     });
     // 앨범
