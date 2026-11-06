@@ -29,6 +29,8 @@
   function updateButtons(session) {
     $("#btn-open-login").hidden = !!session;
     $("#btn-logout").hidden = !session;
+    // 지금 로그인한 계정을 상단에 '@닉네임'으로 표시 (me.js, 콜백 안에서 DB를 바로 부르지 않도록 살짝 미룸)
+    setTimeout(() => window.paintMeButton && window.paintMeButton(session), 0);
   }
   const { data } = await sb.auth.getSession();
   updateButtons(data.session);

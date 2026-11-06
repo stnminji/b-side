@@ -18,6 +18,7 @@
     <!-- 로그인 영역: 로그인 전에는 '로그인' 버튼, 후에는 '내 기록'·'로그아웃' -->
     <div class="account">
       <button id="btn-open-login" class="btn-small" hidden>로그인</button>
+      <button id="btn-me" class="btn-small" hidden>내 계정</button>
       <button id="btn-logout" class="btn-small ghost" hidden>로그아웃</button>
     </div>
     <button class="home-btn go-home" title="처음으로" aria-label="처음으로">
@@ -393,6 +394,34 @@
       </div>
     </section>
 
+    <!-- 나의 페이지: 지금 로그인한 계정 -->
+    <section id="step-me" class="card" hidden>
+      <h2 class="result-title">나의 페이지</h2>
+      <div class="me-head">
+        <p id="me-nick" class="song-name"></p>
+        <p class="hint small"><span id="me-email"></span> · <span id="me-joined"></span></p>
+        <p class="hint small">이메일은 나에게만 보여요. 다른 사람에게는 닉네임만 보여요.</p>
+      </div>
+      <div id="me-stats" class="me-stats"></div>
+      <div class="taste-card">
+        <h3 class="memo-title"><i data-ic="sparkle"></i>나의 취향 분석</h3>
+        <p id="me-taste" class="song-intro"></p>
+        <p id="me-consent" class="hint small"></p>
+      </div>
+      <div class="memo">
+        <h3 class="memo-title"><i data-ic="pen"></i>닉네임 바꾸기</h3>
+        <div class="memo-row">
+          <input id="me-nick-input" class="field" type="text" maxlength="16" placeholder="한글·영문·숫자 2~16자" />
+          <button id="me-nick-save" class="btn-small" type="button">바꾸기</button>
+        </div>
+        <p id="me-nick-status" class="hint small" role="status"></p>
+      </div>
+      <div class="row">
+        <button id="me-public" class="btn-small ghost" type="button"><i data-ic="globe"></i>내 공개 프로필 보기</button>
+        <button id="me-logout" class="btn-small ghost" type="button">로그아웃</button>
+      </div>
+    </section>
+
     <!-- 공개 프로필: 그 사람이 '공개'한 것만 -->
     <section id="step-profile" class="card" hidden>
       <h2 id="profile-name" class="song-name"></h2>
@@ -548,5 +577,6 @@
   <script src="search.js"></script>
   <script src="connect.js"></script>
   <script src="hub.js"></script>
+  <script src="me.js"></script>
 </body>
 </html>
