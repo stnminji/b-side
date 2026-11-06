@@ -453,6 +453,34 @@ def find_track(artist, title):
 _KO_TITLES = None
 
 
+_KO_MANUAL = None
+
+
+def _title_key(title):
+    """비교용 제목: 괄호 속 버전 표기(full ver., Inst. 등)·공백·기호를 빼고 소문자로"""
+    return re.sub(r"[\s\W_]+", "", re.sub(r"\s*[\(\[].*?[\)\]]", "", title or "")).lower()
+
+
+def _manual_titles():
+    """직접 확인한 한국어 원제 → { '아티스트 이름(한글·영문 모두)|영어 제목': 한국어 제목 }"""
+    global _KO_MANUAL
+    if _KO_MANUAL is None:
+        _KO_MANUAL = {}
+        try:
+            with open(os.path.join(ROOT, "data", "korean_titles_manual.json"), encoding="utf-8") as f:
+                manual = json.load(f)
+        except Exception:
+            manual = {}
+        aliases = {a["name"]: [a["name"]] + re_split_names(a.get("name_en") or "") for a in load_artists()}
+        for artist, songs in manual.items():
+            if artist.startswith("_") or not isinstance(songs, dict):
+                continue
+            for name in aliases.get(artist, [artist]):
+                for en, ko in songs.items():
+                    _KO_MANUAL[_norm(name) + "|" + _title_key(en)] = ko
+    return _KO_MANUAL
+
+
 def ko_title(track_id, title, artist=""):
     """Deezer에 영어로 등록된 한국 곡이면 원래 한국어 제목으로 바꾼다 (표에 없으면 그대로)
     ① 곡 번호로 찾고 ② 없으면 '아티스트 + 영어 제목'으로 찾는다 (싱글·앨범 등 판마다 곡 번호가 달라서)"""
@@ -463,6 +491,12 @@ def ko_title(track_id, title, artist=""):
                 _KO_TITLES = json.load(f)
         except Exception:
             _KO_TITLES = {}
+    # ⓪ 사람이 직접 확인한 제목이 가장 먼저 (data/korean_titles_manual.json)
+    if artist:
+        hit = _manual_titles().get(_norm(artist) + "|" + _title_key(title))
+        if hit:
+            ver = re.search(r"\s*[\(\[](inst\.?|instrumental|live|remaster(ed)?)[^\)\]]*[\)\]]\s*$", title or "", re.I)
+            return hit + (ver.group(0) if ver else "")
     hit = _KO_TITLES.get("by_id", {}).get(str(track_id))
     if hit:
         return hit

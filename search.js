@@ -30,6 +30,8 @@
     if (prev === "step-connect" && window.openConnect) return window.openConnect(true);
     showStep(prev || "step-home");
   };
+  // 맨 위 '이전으로' 버튼 (지나온 페이지로, 없으면 처음으로)
+  $("#nav-back").addEventListener("click", () => window.goBack());
   // 처음 화면으로 가면 기록을 비운다
   document.querySelectorAll(".go-home").forEach((b) => b.addEventListener("click", () => (history.length = 0)));
 

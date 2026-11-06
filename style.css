@@ -503,3 +503,16 @@ span.listen-tip { margin-top: 6px; }
 .band-head.clickable:hover .band-name { text-decoration: underline; }
 .band-head.clickable:active { transform: scale(0.99); }
 .last-at { margin: 4px 0 2px; color: var(--muted); }
+
+/* ===== 맨 위 이전으로 · 처음으로 ===== */
+.page-nav { display: flex; justify-content: space-between; gap: 8px; margin: 0 0 12px; }
+.page-nav[hidden] { display: none; }
+/* 아래쪽에 있던 처음으로 · 뒤로 버튼은 맨 위로 옮겼으므로 숨김 (다른 버튼은 그대로) */
+.card .row.center > .go-home, #song-back, #artist-back, #profile-back { display: none; }
+.card .row.center:not(:has(> :not(.go-home):not(#song-back):not(#artist-back):not(#profile-back))) { display: none; }
+/* 스크롤해도 '이전으로 · 처음으로'가 상단 로고 줄 바로 아래에 붙어 있게 */
+.page-nav {
+  position: sticky; top: 68px; z-index: 9;
+  margin: 0 -20px 12px; padding: 8px 20px;
+  background: rgba(244, 237, 226, 0.92); backdrop-filter: blur(6px);
+}

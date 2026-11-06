@@ -108,6 +108,8 @@ function showStep(id) {
   STEPS.forEach((s) => ($("#" + s).hidden = s !== id));
   // 지금 화면 이름을 body에 표시 → 홈에서는 검색창을 숨기는 데 사용 (style.css)
   document.body.dataset.step = id;
+  // 맨 위 '이전으로 · 처음으로'는 홈·로딩 화면에서는 숨긴다
+  $("#page-nav").hidden = id === "step-home" || id === "step-loading";
   if (id === "step-home") document.body.classList.remove("searching");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }

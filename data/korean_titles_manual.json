@@ -1,0 +1,17 @@
+{
+  "_설명": "사람이 직접 확인한 한국어 원제. 자동 표(korean_titles.json)보다 먼저 적용된다. 형식: { 아티스트(결 목록 이름): { 음악 DB 영어 제목: 한국어 원제 } }",
+  "우효": {
+    "Butter chicken": "뻔한 치킨",
+    "Dandelion": "민들레",
+    "Honey Tea": "꿀차",
+    "Youth": "청춘"
+  },
+  "고고학": {
+    "RAINBOW": "무지개",
+    "Future Boy": "미래소년"
+  },
+  "리도어": {
+    "Forever Has Always Been": "영원은 그렇듯",
+    "Ageha": "아게하"
+  }
+}
