@@ -40,7 +40,7 @@
     if (!q) return $("#search-q").focus();
     history.length = 0;
     showStep("step-loading");
-    startLoadingSteps("음악 데이터베이스에서 찾고 있어요…");
+    startLoadingSteps("음악을 찾고 있어요…", []);
     let result;
     try {
       result = await callAI({ action: "search", q });

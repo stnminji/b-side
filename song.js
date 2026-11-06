@@ -19,7 +19,7 @@
 
   async function loadSong(request, typed) {
     showStep("step-loading");
-    startLoadingSteps("음악 데이터베이스에서 노래를 찾고 있어요…");
+    startLoadingSteps("음악을 찾고 있어요…", []);
     try {
       song = await callAI(request);
     } catch (e) {
@@ -36,6 +36,37 @@
     loadLibraryState();
     loadOthers();
     window.renderPeople($("#song-people"), "track_id", song.track_id, "아직 이 곡을 공개 음악 창고에 담은 사람이 없어요.");
+    loadIntro(song.track_id);
+  }
+
+  // AI 소개는 따로 불러온다 (가장 오래 걸리는 부분이라, 곡 정보 페이지를 먼저 띄우기 위해)
+  async function loadIntro(trackId) {
+    $("#song-intro").textContent = "AI가 이 노래를 소개하고 있어요…";
+    $("#song-moment").textContent = "";
+    $("#song-tags").innerHTML = "";
+    try {
+      const ai = await callAI({ action: "song_intro", track_id: trackId });
+      if (!song || song.track_id !== trackId) return; // 그새 다른 곡으로 넘어갔으면 무시
+      Object.assign(song, ai);
+      paintIntro();
+    } catch (e) {
+      if (song && song.track_id === trackId) $("#song-intro").textContent = "AI 소개를 불러오지 못했어요.";
+    }
+  }
+  function paintIntro() {
+    $("#song-genre").textContent = song.genre || "장르 정보 없음";
+    $("#song-intro").textContent = song.intro
+      ? song.intro + (song.based_on === "artist" ? " (아티스트 스타일 기준 AI 소개)" : " (AI 소개)")
+      : "AI 소개를 불러오지 못했어요.";
+    $("#song-moment").textContent = song.moment || "";
+    if (song.moment) $("#song-moment").insertAdjacentHTML("afterbegin", ic("headphones"));
+    $("#song-tags").innerHTML = "";
+    (song.tags || []).forEach((t) => {
+      const span = document.createElement("span");
+      span.className = "tag";
+      span.textContent = t;
+      $("#song-tags").appendChild(span);
+    });
   }
 
   function renderSong() {
@@ -53,18 +84,6 @@
     $("#song-matched").hidden = same;
     $("#song-matched").textContent = `'${song.query.title}'(으)로 검색해서 찾은 곡이에요. 음악 DB에는 '${song.title}'(으)로 등록돼 있어요.`;
     $("#song-genre").textContent = song.genre || "장르 정보 없음";
-    $("#song-intro").textContent = song.intro
-      ? song.intro + (song.based_on === "artist" ? " (아티스트 스타일 기준 AI 소개)" : " (AI 소개)")
-      : "AI 소개를 불러오지 못했어요.";
-    $("#song-moment").textContent = song.moment || "";
-    if (song.moment) $("#song-moment").insertAdjacentHTML("afterbegin", ic("headphones"));
-    $("#song-tags").innerHTML = "";
-    song.tags.forEach((t) => {
-      const span = document.createElement("span");
-      span.className = "tag";
-      span.textContent = t;
-      $("#song-tags").appendChild(span);
-    });
     $("#song-play").href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(`${song.artist} ${song.title}`);
     // 탭 추천은 곡이 바뀌면 다시 불러오게 비운다
     document.querySelectorAll('.song-panel[data-tab="band"] .result-list, .song-panel[data-tab="song"] .result-list')
@@ -275,7 +294,7 @@
   window.openArtist = async (artistId) => {
     if (!artistId) return;
     showStep("step-loading");
-    startLoadingSteps("아티스트 정보를 불러오고 있어요…");
+    startLoadingSteps("음악을 찾고 있어요…", []);
     try {
       artist = await callAI({ action: "artist_info", artist_id: artistId });
     } catch (e) {
@@ -305,6 +324,17 @@
       $("#artist-moods").innerHTML = "";
       artist.curated.mood.forEach((m) => $("#artist-moods").appendChild(el("span", "tag", "#" + m)));
     }
+    // 대표곡 (직접 정리한 아티스트는 한국어 원제 그대로, 누르면 노래 페이지)
+    const feat = $("#artist-featured");
+    feat.innerHTML = "";
+    (artist.featured || []).forEach((t, i) => {
+      const b = el("button", "track-row featured-row");
+      const text = el("span", "track-text");
+      text.append(el("span", "track-title", t.title), el("span", "hint small", t.note || ""));
+      b.append(el("span", "featured-no", String(i + 1)), text);
+      b.addEventListener("click", () => go(() => (t.track_id ? window.openSongById(t.track_id) : window.openSong(artist.name, t.title))));
+      feat.appendChild(b);
+    });
     // 노래 (누르면 곡 페이지)
     const tracks = $("#artist-tracks");
     tracks.innerHTML = "";

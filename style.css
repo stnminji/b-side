@@ -489,3 +489,7 @@ body.searching #search-form { animation: search-in 0.25s ease; }
 .listen-tip { display: flex; align-items: flex-start; gap: 4px; margin: 6px 0 4px; padding: 7px 10px; border-radius: 10px; background: #fbeee6; color: var(--accent); font-size: 13px; font-weight: 700; line-height: 1.5; white-space: normal; }
 .listen-tip .ic { width: 15px; height: 15px; margin: 2px 2px 0 0; flex-shrink: 0; }
 span.listen-tip { margin-top: 6px; }
+
+/* 아티스트 대표곡 */
+.featured-row { background: #fbeee6; }
+.featured-no { width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; }

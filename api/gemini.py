@@ -437,16 +437,34 @@ def find_track(artist, title):
     return None
 
 
-def song_info(payload):
+# 한국어 원제 표 (scripts/build_korean_titles.py로 미리 만든 'Deezer 곡 번호 → 한국어 제목')
+_KO_TITLES = None
+
+
+def ko_title(track_id, title):
+    """Deezer에 영어로 등록된 한국 곡이면 원래 한국어 제목으로 바꾼다 (표에 없으면 그대로)"""
+    global _KO_TITLES
+    if _KO_TITLES is None:
+        try:
+            with open(os.path.join(ROOT, "data", "korean_titles.json"), encoding="utf-8") as f:
+                _KO_TITLES = json.load(f)
+        except Exception:
+            _KO_TITLES = {}
+    return _KO_TITLES.get(str(track_id), title)
+
+
+def _song_facts(payload):
+    """곡의 '사실 정보'만 빠르게 모은다 (AI 없이, Deezer 조회는 동시에)"""
     track_id = payload.get("track_id")
     if track_id is not None:
-        # 아티스트 페이지·서재에서 곡을 누르면 곡 번호로 바로 연다 (번호는 숫자만 허용)
+        # 검색 결과·아티스트 페이지·저장소에서 누르면 곡 번호로 바로 연다 (번호는 숫자만 허용)
         if not str(track_id).isdigit() or len(str(track_id)) > 15:
             raise ValueError("잘못된 요청이에요.")
         track = _get_json(f"https://api.deezer.com/track/{int(track_id)}")
         if not track.get("id"):
             raise ValueError("음악 데이터베이스에서 이 노래를 찾지 못했어요.")
-        artist, title = track["artist"]["name"], track["title"]
+        detail = track  # 곡 번호로 조회한 결과에 ISRC 등 상세가 이미 들어 있음
+        artist = track["artist"]["name"]
     else:
         artist = str(payload.get("artist") or "").strip()[:100]
         title = str(payload.get("title") or "").strip()[:200]
@@ -455,50 +473,60 @@ def song_info(payload):
         track = find_track(artist, title)
         if not track:
             raise ValueError("음악 데이터베이스에서 이 노래를 찾지 못했어요. 아티스트와 제목을 확인해 주세요.")
-    # 곡 상세(국제 음원 코드 ISRC 등)는 곡 번호로 한 번 더 조회
-    try:
-        detail = _get_json(f"https://api.deezer.com/track/{int(track['id'])}")
-    except Exception:
-        detail = {}
-    isrc = str(detail.get("isrc") or "").upper()
-    # 실제 곡 정보 (사실 정보는 전부 데이터베이스에서 가져온다)
-    album, genres = {}, []
-    try:
-        album = _get_json(f"https://api.deezer.com/album/{track['album']['id']}")
-        genres = [g["name"] for g in album.get("genres", {}).get("data", [])]
-    except Exception:
-        pass
+        detail = None
+    jobs = {"album": f"https://api.deezer.com/album/{track['album']['id']}"}
+    if detail is None:
+        jobs["detail"] = f"https://api.deezer.com/track/{int(track['id'])}"
+    with ThreadPoolExecutor(max_workers=2) as pool:  # 앨범·곡 상세를 동시에
+        got = dict(zip(jobs, pool.map(lambda u: _safe_get(u), jobs.values())))
+    detail = detail or got.get("detail") or {}
+    album = got.get("album") or {}
+    genres = [g["name"] for g in album.get("genres", {}).get("data", [])]
     ours = next((a for a in load_artists() if _norm(a["name"]) in (_norm(artist), _norm(track["artist"]["name"]))
                  or _norm(a.get("name_en", "")) == _norm(track["artist"]["name"])), None)
-    info = {
-        "아티스트": ours["name"] if ours else track["artist"]["name"],
-        "곡 제목": korean_title(track),
-        "앨범": track["album"].get("title", ""),
-        "발매일": album.get("release_date", ""),
-        "음악 DB 장르": genres,
-    }
-    if ours:  # 우리가 직접 정리한 아티스트라면 그 정보도 같이 준다
-        info.update({"아티스트 장르": ours["genre"], "아티스트 분위기": ours["mood"], "아티스트 사운드": ours["sound"]})
-    try:
-        ai = call_gemini([{"text": SONG_PROMPT.replace("{info}", json.dumps(info, ensure_ascii=False))}])
-    except Exception as e:
-        print("서버 오류:", type(e).__name__, str(e)[:200], flush=True)
-        ai = {}  # AI가 안 돼도 곡 정보는 보여준다
+    isrc = str(detail.get("isrc") or "").upper()
     cover = track["album"].get("cover_medium") or ""
-    return {
+    return track, ours, genres, {
         "track_id": int(track["id"]),
-        "title": info["곡 제목"], "artist": info["아티스트"],
-        "album": info["앨범"][:200], "release_date": info["발매일"],
+        "title": ko_title(track["id"], track["title"]),
+        "artist": ours["name"] if ours else track["artist"]["name"],
+        "album": track["album"].get("title", "")[:200],
+        "release_date": album.get("release_date", ""),
         "cover": cover if cover.startswith("https://") else "",
-        "genre": str(ai.get("genre") or (ours["genre"] if ours else " · ".join(genres)))[:40],
-        "intro": str(ai.get("intro", ""))[:200],
-        "moment": str(ai.get("moment", ""))[:60],
-        "tags": [str(t)[:20] for t in (ai.get("tags") or [])][:4],
-        "based_on": "artist" if ai.get("based_on") == "artist" else "song",
+        "genre": (ours["genre"] if ours else " · ".join(genres))[:40],
         "in_data": bool(ours),
         "artist_id": int(track["artist"]["id"]),
         "isrc": isrc if re.match(r"^[A-Z]{2}[A-Z0-9]{3}[0-9]{7}$", isrc) else "",
         "source_link": f"https://www.deezer.com/track/{int(track['id'])}",  # 출처 표시용 (Deezer 이용 조건)
+    }
+
+
+def _safe_get(url):
+    try:
+        return _get_json(url)
+    except Exception:
+        return {}
+
+
+def song_info(payload):
+    """노래 페이지: 사실 정보만 바로 돌려준다 (AI 소개는 song_intro로 따로 → 페이지가 빨리 열림)"""
+    return _song_facts(payload)[3]
+
+
+def song_intro(payload):
+    """노래 페이지의 AI 소개 (사실은 음악 DB에서, AI는 사운드·분위기 소개만)"""
+    track, ours, genres, facts = _song_facts({"track_id": payload.get("track_id")})
+    info = {"아티스트": facts["artist"], "곡 제목": facts["title"], "앨범": facts["album"],
+            "발매일": facts["release_date"], "음악 DB 장르": genres}
+    if ours:  # 우리가 직접 정리한 아티스트라면 그 정보도 같이 준다
+        info.update({"아티스트 장르": ours["genre"], "아티스트 분위기": ours["mood"], "아티스트 사운드": ours["sound"]})
+    ai = call_gemini([{"text": SONG_PROMPT.replace("{info}", json.dumps(info, ensure_ascii=False))}])
+    return {
+        "genre": str(ai.get("genre") or facts["genre"])[:40],
+        "intro": str(ai.get("intro", ""))[:200],
+        "moment": str(ai.get("moment", ""))[:60],
+        "tags": [str(t)[:20] for t in (ai.get("tags") or [])][:4],
+        "based_on": "artist" if ai.get("based_on") == "artist" else "song",
     }
 
 
@@ -559,7 +587,7 @@ def search(payload):
         if t["id"] in seen:
             continue
         seen.add(t["id"])
-        track_list.append({"track_id": t["id"], "title": t["title"][:200],
+        track_list.append({"track_id": t["id"], "title": ko_title(t["id"], t["title"])[:200],
                            "artist": curated.get(_norm(t["artist"]["name"]), t["artist"]["name"])[:100],
                            "album": t.get("album", {}).get("title", "")[:120],
                            "cover": safe(t.get("album", {}).get("cover_small"))})
@@ -626,9 +654,12 @@ def artist_info(payload):
         "fans": int(a.get("nb_fan") or 0),
         "albums_count": int(a.get("nb_album") or 0),
         "curated": {"genre": ours["genre"], "mood": ours["mood"], "sound": ours["sound"]} if ours else None,
-        "top": [{"track_id": t["id"], "title": t["title"][:200], "album": t.get("album", {}).get("title", "")[:120]}
+        "top": [{"track_id": t["id"], "title": ko_title(t["id"], t["title"])[:200], "album": t.get("album", {}).get("title", "")[:120]}
                 for t in got["top"]],
         "albums": albums[:10],
+        # 대표곡: 직접 정리한 아티스트는 우리 데이터(한국어 원제) 그대로, 아니면 음악 DB 곡에서 최소 3곡
+        "featured": ([{"title": x["title"], "note": x.get("note", "")[:60]} for x in ours["songs"][:5]] if ours
+                     else [{"title": ko_title(t["id"], t["title"])[:200], "track_id": t["id"], "note": ""} for t in got["top"][:5]]),
         "related": [{"artist_id": r["id"], "name": curated_names()[_norm(r["name"])], "picture": safe(r.get("picture_medium"))}
                     for r in got["related"] if _norm(r["name"]) in curated_names()],  # 인디 목록 안에서만
         "source_link": f"https://www.deezer.com/artist/{a['id']}",
@@ -954,7 +985,7 @@ def contrast(payload):
 ACTIONS = {"extract": extract, "recommend": recommend, "compare": compare, "song_info": song_info,
            "artist_info": artist_info, "search": search,
            "analyze_taste": analyze_taste, "match_taste": match_taste, "discover": discover,
-           "contrast": contrast}
+           "contrast": contrast, "song_intro": song_intro}
 
 
 def server_error(e):

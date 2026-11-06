@@ -315,14 +315,16 @@ let lastSearch = null;
 
 // 기다리는 동안 지금 무엇을 하는지 차례로 보여준다 (오래 걸려도 멈춘 것처럼 보이지 않게)
 let loadingTimers = [];
-function startLoadingSteps(first) {
+// steps: 시간이 지나면 바꿔 보여 줄 문구들 (기본은 AI 추천용). 빈 배열이면 첫 문구만
+const AI_STEPS = [
+  [5000, "취향에 맞는 아티스트를 고르는 중…"],
+  [12000, "실제로 있는 아티스트·곡인지 확인하는 중…"],
+  [22000, "AI 서버가 붐벼서 조금 더 걸리고 있어요…"],
+];
+function startLoadingSteps(first, steps = AI_STEPS) {
   stopLoadingSteps();
   $("#loading-text").textContent = first;
-  [
-    [5000, "취향에 맞는 아티스트를 고르는 중…"],
-    [12000, "실제로 있는 아티스트·곡인지 확인하는 중…"],
-    [22000, "AI 서버가 붐벼서 조금 더 걸리고 있어요…"],
-  ].forEach(([ms, text]) => loadingTimers.push(setTimeout(() => ($("#loading-text").textContent = text), ms)));
+  steps.forEach(([ms, text]) => loadingTimers.push(setTimeout(() => ($("#loading-text").textContent = text), ms)));
 }
 function stopLoadingSteps() {
   loadingTimers.forEach(clearTimeout);
