@@ -1191,9 +1191,12 @@ def server_error(e):
 
 # ---------- 요청 제한 (공개 주소에서 AI를 무제한 호출해 무료 사용량을 다 써버리는 것 방지) ----------
 MAX_BODY = 6 * 1024 * 1024  # 요청 크기 상한 6MB (캡처 사진은 브라우저에서 줄여서 보내므로 보통 1MB 안팎)
+# 비용이 드는 AI 기능만 엄격하게, 검색·곡 정보처럼 AI를 안 쓰는 요청은 넉넉하게
+AI_ACTIONS = {"extract", "recommend", "compare", "song_intro", "analyze_taste", "match_taste", "discover", "contrast"}
 LIMITS = {
-    "ip":  [(60, 8), (86400, 60)],      # 한 사용자(IP): 1분에 8번, 하루 60번
-    "all": [(60, 40), (86400, 800)],    # 서버 전체: 1분에 40번, 하루 800번
+    "ip_ai":   [(60, 12), (86400, 300)],     # 한 사용자(IP)의 AI 요청: 1분 12번, 하루 300번
+    "ip_info": [(60, 60), (86400, 2000)],    # 한 사용자(IP)의 일반 요청(검색·곡/아티스트 정보): 1분 60번, 하루 2000번
+    "all_ai":  [(60, 40), (86400, 800)],     # 서버 전체 AI 요청: 1분 40번, 하루 800번 (무료 사용량 보호)
 }
 _hits = {}                 # 키별 요청 시각 기록 (메모리에만 저장, 개인정보는 남기지 않음)
 _lock = threading.Lock()   # 동시에 여러 요청이 와도 기록이 꼬이지 않게
@@ -1203,11 +1206,14 @@ class RateLimited(Exception):
     pass
 
 
-def check_rate_limit(ip):
+def check_rate_limit(ip, action=""):
     """한도를 넘으면 RateLimited를 일으킨다. 통과하면 이번 요청을 기록한다."""
     now = time.time()
     with _lock:
-        keys = [("ip", "ip:" + (ip or "unknown")), ("all", "all")]
+        if action in AI_ACTIONS:
+            keys = [("ip_ai", "ai:" + (ip or "unknown")), ("all_ai", "all_ai")]
+        else:
+            keys = [("ip_info", "info:" + (ip or "unknown"))]
         for kind, key in keys:
             q = _hits.setdefault(key, deque())
             while q and now - q[0] > 86400:  # 하루 지난 기록은 지운다
@@ -1218,7 +1224,7 @@ def check_rate_limit(ip):
         for _, key in keys:
             _hits[key].append(now)
         if len(_hits) > 5000:  # 기록이 너무 쌓이면 오래된 IP 기록 정리 (메모리 보호)
-            for k in [k for k, q in _hits.items() if k != "all" and (not q or now - q[-1] > 86400)]:
+            for k in [k for k, q in _hits.items() if k != "all_ai" and (not q or now - q[-1] > 86400)]:
                 del _hits[k]
 
 
@@ -1236,8 +1242,8 @@ def serve(headers, rfile, ip):
             return 400, {"error": "잘못된 요청이에요."}
         if length > MAX_BODY:
             return 413, {"error": "사진 용량이 너무 커요."}
-        check_rate_limit(ip)
         payload = json.loads(rfile.read(length) or b"{}")
+        check_rate_limit(ip, str(payload.get("action", "")) if isinstance(payload, dict) else "")
         return 200, handle(payload)
     except RateLimited as e:
         return 429, {"error": str(e)}
