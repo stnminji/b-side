@@ -300,13 +300,15 @@
   //  · 한 사람의 글은 최대 2개까지 (한 명이 목록을 다 채우지 않게) · 내 글은 빼고
   // DB 규칙(RLS)상 공개 글만 읽히고, is_public 조건도 함께 건다
   let notesSort = "foryou";
-  document.querySelectorAll(".notes-sort").forEach((b) => b.addEventListener("click", () => {
-    notesSort = b.dataset.sort;
+  function paintSort() {
     document.querySelectorAll(".notes-sort").forEach((x) => {
       const on = x.dataset.sort === notesSort;
       x.classList.toggle("ghost", !on);
       x.classList.toggle("active", on);
     });
+  }
+  document.querySelectorAll(".notes-sort").forEach((b) => b.addEventListener("click", () => {
+    notesSort = b.dataset.sort;
     loadRecentNotes();
   }));
 
@@ -328,14 +330,16 @@
     const s = await session();
     const myId = s ? s.user.id : null;
     rows = rows.filter((r) => r.user_id !== myId); // 내 글은 빼고
-    // 로그인 안 했으면 '나'를 모르므로 맞춤이 아니라 인기순(신선도 + 반응)이라고 정직하게 표시
-    const sortBtn = document.querySelector('.notes-sort[data-sort="foryou"]');
-    sortBtn.textContent = myId ? "나에게 맞춘 순" : "인기순";
+    // 로그인: 나에게 맞춘 순 · 인기순 · 최신순 / 비로그인: '나'를 모르므로 인기순 · 최신순만
+    document.querySelector('.notes-sort[data-sort="foryou"]').hidden = !myId;
+    if (!myId && notesSort === "foryou") notesSort = "popular";
+    paintSort();
     $("#notes-login-hint").hidden = !!myId;
     const counts = await window.loadSocialCounts((songs.data || []).map((r) => r.id));
 
-    if (notesSort === "foryou") {
-      const mine = myId ? await myTasteKeys(myId) : { artists: new Set(), tracks: new Set() };
+    if (notesSort === "foryou" || notesSort === "popular") {
+      // 인기순은 '나와의 관련'을 빼고 신선도 + 반응만
+      const mine = notesSort === "foryou" && myId ? await myTasteKeys(myId) : { artists: new Set(), tracks: new Set() };
       const now = Date.now();
       rows.forEach((r) => {
         const hours = (now - new Date(r.updated_at).getTime()) / 36e5;
