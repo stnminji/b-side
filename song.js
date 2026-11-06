@@ -94,6 +94,19 @@
     $("#song-matched").hidden = same;
     $("#song-matched").textContent = `'${song.query.title}'(으)로 검색해서 찾은 곡이에요. 음악 DB에는 '${song.title}'(으)로 등록돼 있어요.`;
     $("#song-genre").textContent = song.genre || "장르 정보 없음";
+    // 결에 등록된 아티스트면 직접 정리한 설명을 바로 보여 준다
+    const cur = song.curated;
+    $("#song-curated").hidden = !cur;
+    if (cur) {
+      $("#song-curated-sound").textContent = cur.sound + (cur.note ? ` (${cur.note})` : "");
+      $("#song-curated-mood").innerHTML = "";
+      (cur.mood || []).forEach((m) => {
+        const t = document.createElement("span");
+        t.className = "tag";
+        t.textContent = "#" + m;
+        $("#song-curated-mood").appendChild(t);
+      });
+    }
     $("#song-play").href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(`${song.artist} ${song.title}`);
     // 탭 추천은 곡이 바뀌면 다시 불러오게 비운다
     document.querySelectorAll('.song-panel[data-tab="band"] .result-list, .song-panel[data-tab="song"] .result-list')

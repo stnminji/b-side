@@ -493,3 +493,8 @@ span.listen-tip { margin-top: 6px; }
 /* 아티스트 대표곡 */
 .featured-row { background: #fbeee6; }
 .featured-no { width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+
+/* 결 큐레이션 설명 (등록된 아티스트의 곡) */
+.song-curated { margin: 4px 0 10px; padding: 12px 14px; border-radius: 12px; background: var(--soft); }
+.song-curated p { margin: 0 0 6px; font-size: 14px; line-height: 1.6; }
+.curated-label { font-size: 12px !important; font-weight: 800; color: var(--accent); letter-spacing: 0.5px; }

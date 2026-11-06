@@ -506,6 +506,10 @@ def _song_facts(payload):
         "cover": cover if cover.startswith("https://") else "",
         "genre": (ours["genre"] if ours else " · ".join(genres))[:40],
         "in_data": bool(ours),
+        # 결에 등록된 아티스트면 우리가 직접 정리한 설명을 바로 보여 준다 (AI를 기다리지 않음, AI가 실패해도 남음)
+        "curated": ({"sound": ours["sound"][:200], "mood": ours["mood"][:5],
+                     "note": next((x.get("note", "") for x in ours["songs"] if _norm(x["title"]) == _norm(ko_title(track["id"], track["title"]))), "")[:80]}
+                    if ours else None),
         "artist_id": int(track["artist"]["id"]),
         "isrc": isrc if re.match(r"^[A-Z]{2}[A-Z0-9]{3}[0-9]{7}$", isrc) else "",
         "source_link": f"https://www.deezer.com/track/{int(track['id'])}",  # 출처 표시용 (Deezer 이용 조건)
