@@ -22,3 +22,6 @@ supabase/.temp/
 supabase/.branches/
 _shot*
 *.png.tmp
+
+# 발표용 원본 캡처 (이메일 등 개인정보가 보일 수 있음)
+slides/
