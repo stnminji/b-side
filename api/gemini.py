@@ -392,16 +392,27 @@ def check_outside(b):
 
 # ---------- 2-2) 노래 검색: 곡 정보 + AI 소개말 ----------
 LISTEN_STYLE = """[듣기 제안 문구 쓰는 법]
-- 아래 6가지 유형 중 곡의 사운드·분위기에 가장 어울리는 것을 골라 생생하게 쓴다. 여러 곡을 쓸 때는 같은 유형을 반복하지 않는다.
-  ① 공연 현장: "공연장 맨 앞자리에 서 있다고 상상해 보세요", "슬램하기 좋은 곡이에요", "후렴에서 다 같이 떼창하고 싶어지는 곡이에요", "라이터 불빛이 어울리는 곡이에요"
-  ② 장면 상상: "비 오는 날 버스 창가에 기대 있다고 상상해 보세요"
-  ③ 상황: "새벽 산책길에 이어폰으로", "밤 드라이브에 볼륨을 조금 높여서"
+- 아래 유형 중 곡의 사운드·분위기에 가장 어울리는 것을 골라, 이 곡만을 위한 문장을 새로 쓴다. 여러 곡을 쓸 때는 같은 유형을 반복하지 않는다.
+  ① 공연 현장: 라이브에서 몸이 반응하는 모습 (뛰기·슬램·떼창·조명 등)으로 곡의 에너지를 전한다
+  ② 장면 상상: 이 곡이 배경음악이 될 구체적인 한 장면을 그려 준다
+  ③ 상황: 듣기 좋은 시간·장소·이동 수단을 구체적으로
   ④ 들을 포인트: 소리의 질감·흐름에 귀 기울이게 (곡의 구체적 구성을 모르면 쓰지 않는다)
-  ⑤ 함께 듣기: "친구와 이어폰 한쪽씩 나눠 듣기 좋아요"
-  ⑥ 감정: "마음이 복잡한 날, 아무 생각 없이 몸을 맡겨 보세요"
-- 예시 문장을 그대로 베끼지 않는다. 예시는 말투 참고용이고, 이 곡의 사운드·분위기에 맞게 새로 쓴다.
+  ⑤ 함께 듣기: 누구와, 어떻게 나눠 들으면 좋은지
+  ⑥ 감정: 어떤 마음일 때 이 곡이 곁에 있으면 좋은지
+- 흔한 문장(예: "~할 때 들어 보세요"만 바꾼 뻔한 말)보다 이 곡의 분위기가 느껴지는 단어를 넣는다.
 - 사실처럼 들리는 말(공연에서 인기가 많다, 차트 1위, 떼창으로 유명하다, 특정 악기 솔로가 있다 등)은 [정보]에 근거가 없으면 절대 쓰지 않는다.
   대신 곡의 성격으로 말한다. 예: "공연에서 인기가 많아요"(X) → "공연에서 다 같이 뛰기 좋은 곡이에요"(O)"""
+
+# 예전 프롬프트에 넣었던 예시 문장 (AI가 그대로 베끼면 버린다)
+_COPIED_TIPS = ["공연장 맨 앞자리에 서 있다고 상상해", "비 오는 날 버스 창가에 기대", "새벽 산책길에 이어폰으로",
+                "밤 드라이브에 볼륨을 조금 높여서", "친구와 이어폰 한쪽씩 나눠", "마음이 복잡한 날, 아무 생각 없이 몸을 맡겨",
+                "슬램하기 좋은 곡이에요", "라이터 불빛이 어울리는 곡"]
+
+
+def _fresh_tip(text):
+    """예시 문장을 그대로 베낀 제안이면 빈 칸으로 (반복되는 멘트 방지)"""
+    t = str(text or "")
+    return "" if any(c in t for c in _COPIED_TIPS) else t
 
 
 SONG_PROMPT = """너는 한국 인디 음악 큐레이터다. 아래 [곡 정보]의 노래를 처음 듣는 사람에게 소개하라.
@@ -409,6 +420,10 @@ SONG_PROMPT = """너는 한국 인디 음악 큐레이터다. 아래 [곡 정보
 규칙:
 1. 사실(발매일, 수상, 멤버, 가사 내용, 차트 순위 등)은 [곡 정보]에 있는 것만 쓴다. 모르는 사실은 지어내지 않는다.
 2. 소개는 이 곡의 사운드·분위기·어울리는 순간 위주로 쓴다. 이 곡을 잘 모르면 아티스트의 전반적인 스타일을 기준으로 쓰고, based_on을 "artist"로 한다.
+   단, [곡 정보]에 '아티스트 사운드'(결 큐레이션)가 있으면 그 설명은 이미 화면에 보이므로 같은 말을 되풀이하지 않는다.
+   이 곡 자체를 알 때만 곡에 대한 새로운 관점으로 쓰고, 이 곡을 잘 모르면 intro는 빈 문자열 ""로 둔다.
+   [곡 정보]에 '곡 이야기 (출처로 확인된 사실)'가 있으면(타이틀곡·OST·수상·후보·차트 등) 그 사실을 소개나 moment에 자연스럽게 녹여도 된다
+   (예: "한국대중음악상 후보에 오른 곡답게…", "드라마 OST로 쓰인 곡이라…"). 그 외의 수상·기록은 절대 지어내지 않는다.
 3. 짧고 친근한 존댓말.
    - genre: 장르 (15자 이내, 예: "드림팝 · 인디록")
    - intro: 소개말 2문장 (100자 이내)
@@ -425,10 +440,46 @@ JSON 형식으로만 답하라:
 {info}"""
 
 
+_FEATURED = None
+
+
+def _featured():
+    """결 대표곡 표: {'아티스트|제목' → 곡 번호}, {곡 번호 → (아티스트, 한국어 원제, 곡 이야기)}"""
+    global _FEATURED
+    if _FEATURED is None:
+        try:
+            with open(os.path.join(ROOT, "data", "featured_ids.json"), encoding="utf-8") as f:
+                ids = json.load(f)
+        except Exception:
+            ids = {}
+        rev = {}
+        for a in load_artists():
+            for x in a["songs"]:
+                tid = ids.get(_feat_key(a["name"], x["title"]))
+                if tid:
+                    rev[int(tid)] = (a["name"], x["title"], x.get("note", ""))
+        _FEATURED = (ids, rev)
+    return _FEATURED
+
+
+def _feat_key(artist, title):
+    return re.sub(r"[\s\W_]+", "", artist or "").lower() + "|" + re.sub(r"[\s\W_]+", "", re.sub(r"\s*[\(\[（].*?[\)\]）]", "", title or "")).lower()
+
+
 def find_track(artist, title):
     """Deezer에서 실제 곡을 찾는다. 없으면 None (지어내지 않음)
     Deezer에는 한국 곡이 영어 제목으로 등록된 경우가 많고(예: 한로로 '입춘' → 'Let Me Love My Youth'),
     같은 이름의 아티스트 프로필이 여러 개인 경우도 있어서(예: 잔나비) 여러 방법을 차례로 쓴다."""
+    # ⓪ 결 대표곡이면 미리 찾아 둔 곡 번호로 바로 (한국어 원제 ↔ 영어·로마자 제목 문제 없음)
+    names = curated_names()
+    tid = _featured()[0].get(_feat_key(names.get(_norm(artist), artist), title))
+    if tid:
+        try:
+            t = _get_json(f"https://api.deezer.com/track/{int(tid)}")
+            if t.get("id"):
+                return t
+        except Exception:
+            pass
     want_title = _norm(title)
     # 한국어 원제로 찾을 때, 음악 DB에 등록된 영어 제목도 후보로 (한국어 원제 표를 거꾸로)
     alt_titles = {want_title}
@@ -455,7 +506,14 @@ def find_track(artist, title):
         exact = [t for t in hits if name_ok(t) and (title_ok(t) or _norm(ko_title(t["id"], t["title"], t["artist"]["name"])) == want_title)]
         if exact:
             return exact[0]
-        # (제거) 제목이 달라도 그 아티스트의 곡이면 받아들이던 방식 → 엉뚱한 곡이 열리는 오류가 있어 쓰지 않는다
+        # (제거) 제목이 달라도 그 아티스트의 곡이면 무조건 받아들이던 방식 → 엉뚱한 곡이 열리는 오류가 있었음
+        # 대신: '제목만' 검색했을 때 이 아티스트의 곡이 딱 한 곡(버전 차이만)일 때만 받아들인다
+        #       (Deezer가 한국어 원제를 내부적으로 알고 찾아 준 경우. 예: 신인류 '정면돌파' → 'Attack!')
+        if q == title:
+            mine = [t for t in hits if t["artist"]["id"] in ids]
+            bases = {_title_key(t["title"]) for t in mine if _title_key(t["title"])}
+            if len(bases) == 1:
+                return mine[0]
     # 3) 마지막: 팬이 가장 많은 프로필의 앨범 수록곡을 직접 확인 (예: 'Echo'처럼 흔한 제목)
     for c in sorted(cands[:3], key=lambda c: -c.get("nb_fan", 0))[:2]:
         try:
@@ -591,9 +649,10 @@ def _song_facts(payload):
                  or _norm(a.get("name_en", "")) == _norm(track["artist"]["name"])), None)
     isrc = str(detail.get("isrc") or "").upper()
     cover = track["album"].get("cover_medium") or ""
+    feat = _featured()[1].get(int(track["id"]))  # (아티스트, 한국어 원제, 곡 이야기) 또는 None
     return track, ours, genres, {
         "track_id": int(track["id"]),
-        "title": ko_title(track["id"], track["title"], track["artist"]["name"]),
+        "title": feat[1] if feat else ko_title(track["id"], track["title"], track["artist"]["name"]),
         "artist": ours["name"] if ours else track["artist"]["name"],
         "album": ko_title(0, track["album"].get("title", ""), track["artist"]["name"])[:200],
         "release_date": album.get("release_date", ""),
@@ -602,7 +661,8 @@ def _song_facts(payload):
         "in_data": bool(ours),
         # 결에 등록된 아티스트면 우리가 직접 정리한 설명을 바로 보여 준다 (AI를 기다리지 않음, AI가 실패해도 남음)
         "curated": ({"sound": ours["sound"][:200], "mood": ours["mood"][:5],
-                     "note": next((x.get("note", "") for x in ours["songs"] if _norm(x["title"]) == _norm(ko_title(track["id"], track["title"], track["artist"]["name"]))), "")[:80]}
+                     "sources": [u for u in (ours.get("sources") or []) if str(u).startswith("https://")][:2],
+                     "note": (feat[2] if feat else next((x.get("note", "") for x in ours["songs"] if _norm(x["title"]) == _norm(ko_title(track["id"], track["title"], track["artist"]["name"]))), ""))[:80]}
                     if ours else None),
         "artist_id": int(track["artist"]["id"]),
         "isrc": isrc if re.match(r"^[A-Z]{2}[A-Z0-9]{3}[0-9]{7}$", isrc) else "",
@@ -629,16 +689,25 @@ def song_intro(payload):
             "발매일": facts["release_date"], "음악 DB 장르": genres}
     if ours:  # 우리가 직접 정리한 아티스트라면 그 정보도 같이 준다
         info.update({"아티스트 장르": ours["genre"], "아티스트 분위기": ours["mood"], "아티스트 사운드": ours["sound"]})
+        story = (facts.get("curated") or {}).get("note")
+        if story:
+            info["곡 이야기 (출처로 확인된 사실)"] = story
     # 유형을 서버가 무작위로 제안 → 같은 문장이 반복되지 않게 (곡과 안 맞으면 AI가 다른 유형을 고름)
     hint = random.choice(["① 공연 현장", "② 장면 상상", "③ 상황", "⑤ 함께 듣기", "⑥ 감정"])
     style = LISTEN_STYLE + f"\n- 이번에는 가능하면 '{hint}' 유형으로 써 본다 (곡과 안 어울리면 더 어울리는 유형으로)."
     ai = call_gemini([{"text": SONG_PROMPT.replace("{listen_style}", style).replace("{info}", json.dumps(info, ensure_ascii=False))}])
+    based = "artist" if ai.get("based_on") == "artist" else "song"
+    intro = str(ai.get("intro", ""))[:200]
+    if ours and based == "artist":
+        intro = ""  # 결 큐레이션(아티스트 설명)이 이미 보이므로, 아티스트 기준 소개는 반복이라 뺀다
+    curated_tags = {_norm(m) for m in (ours["mood"] if ours else [])}
+    tags = [str(t)[:20] for t in (ai.get("tags") or []) if _norm(str(t).lstrip("#")) not in curated_tags][:4]
     return {
         "genre": str(ai.get("genre") or facts["genre"])[:40],
-        "intro": str(ai.get("intro", ""))[:200],
-        "moment": str(ai.get("moment", ""))[:60],
-        "tags": [str(t)[:20] for t in (ai.get("tags") or [])][:4],
-        "based_on": "artist" if ai.get("based_on") == "artist" else "song",
+        "intro": intro,
+        "moment": _fresh_tip(ai.get("moment", ""))[:60],
+        "tags": tags,
+        "based_on": based,
     }
 
 
@@ -769,7 +838,8 @@ def artist_info(payload):
                 for t in got["top"]],
         "albums": albums[:10],
         # 대표곡: 직접 정리한 아티스트는 우리 데이터(한국어 원제) 그대로, 아니면 음악 DB 곡에서 최소 3곡
-        "featured": ([{"title": x["title"], "note": x.get("note", "")[:60]} for x in ours["songs"][:5]] if ours
+        "featured": ([{"title": x["title"], "note": x.get("note", "")[:60], "track_id": _featured()[0].get(_feat_key(ours["name"], x["title"]))}
+                      for x in ours["songs"][:5]] if ours
                      else [{"title": ko_title(t["id"], t["title"], a["name"])[:200], "track_id": t["id"], "note": ""} for t in got["top"][:5]]),
         "related": [{"artist_id": r["id"], "name": curated_names()[_norm(r["name"])], "picture": safe(r.get("picture_medium"))}
                     for r in got["related"] if _norm(r["name"]) in curated_names()],  # 인디 목록 안에서만
@@ -1032,7 +1102,7 @@ def discover(payload):
         cover = t.get("cover") or ""
         picks.append({"track_id": t["track_id"], "artist": t["artist"], "title": t["title"],
                       "cover": cover if cover.startswith("https://") else "", "reason": str(p.get("reason", ""))[:140],
-                      "tip": str(p.get("tip", ""))[:90]})
+                      "tip": _fresh_tip(p.get("tip", ""))[:90]})
     return {"picks": picks[:3]}
 
 
@@ -1049,14 +1119,16 @@ CONTRAST_PROMPT = """너는 한국 인디 음악 큐레이터다. [나의 취향
 4. [이미 아는 아티스트]는 고르지 않는다.
 5. 노래: 목록 안 아티스트는 hidden 또는 popular에 있는 제목 그대로, 목록 밖은 실제 발표곡의 정확한 제목만. 아티스트당 1~2곡.
 6. 짧고 친근한 존댓말.
-   - reason: 평소 취향과 '구체적으로' 무엇이 다른지 한 문장 (60자 이내, 예: "잔잔한 신스 대신 몰아치는 드럼과 변칙 박자")
+   - usual: [나의 취향 분석]에서 읽은 '평소 내가 즐겨 듣는 소리' (25자 이내, 예: "잔잔하고 몽글한 신스")
+   - this: 이 아티스트는 그와 어떻게 다른 소리인지 (30자 이내, 예: "몰아치는 드럼과 변칙 박자")
+   - reason: usual과 this를 한 문장으로 (60자 이내, "평소 ~를 즐겨 들었다면, 이 아티스트는 ~" 형식)
    - bridge: 그래도 통하는 공통점 한 문장 (50자 이내, "~는 같아요" 형식, 내 취향 분석의 단어를 근거로)
    - listen(선택): "이렇게 들어보면 어때요?" — 이 낯선 음악에 들어가는 데 도움이 될 한 문장 (50자 이내, 아래 [듣기 제안 문구 쓰는 법]을 따르고 아티스트마다 다른 유형으로). 뻔하거나 억지스러우면 빈 문자열 ""
    - 곡에 대해 확실하지 않은 사실은 지어내지 않는다 (listen은 상황·태도 위주로)
    - genre (15자 이내), point: 곡을 들어볼 이유 (20자 이내)
 
 JSON 형식으로만 답하라:
-{"bands": [{"name": "...", "genre": "...", "reason": "...", "bridge": "...", "listen": "...", "songs": [{"title": "...", "point": "..."}]}]}
+{"bands": [{"name": "...", "genre": "...", "usual": "...", "this": "...", "reason": "...", "bridge": "...", "listen": "...", "songs": [{"title": "...", "point": "..."}]}]}
 
 {listen_style}
 
@@ -1090,12 +1162,17 @@ def contrast(payload):
     result = call_gemini([{"text": prompt}])
     raw = result.get("bands", [])
     bridges = {str(b.get("name", "")).lower(): str(b.get("bridge", ""))[:100] for b in raw}
-    listens = {str(b.get("name", "")).lower(): str(b.get("listen", ""))[:100] for b in raw}
+    listens = {str(b.get("name", "")).lower(): _fresh_tip(b.get("listen", ""))[:100] for b in raw}
+    # '평소 나 / 이 곡' 비교 두 줄
+    usuals = {str(b.get("name", "")).lower(): str(b.get("usual", ""))[:50] for b in raw}
+    thises = {str(b.get("name", "")).lower(): str(b.get("this", ""))[:60] for b in raw}
     # 실존 검증 (목록 안: 우리 데이터의 곡 / 목록 밖: Deezer에 실제로 있는 곡만)
     bands = verify_bands(raw, artists, "", {k.lower() for k in known})
     for b in bands:
         b["bridge"] = bridges.get(b["name"].lower(), "")
         b["listen"] = listens.get(b["name"].lower(), "")
+        b["usual"] = usuals.get(b["name"].lower(), "")
+        b["this"] = thises.get(b["name"].lower(), "")
     return {"bands": bands}
 
 

@@ -543,3 +543,13 @@ span.listen-tip { margin-top: 6px; }
 .song-info.clickable { cursor: pointer; }
 .song-info.clickable:hover .song-title { text-decoration: underline; }
 .note-time { font-weight: 600; color: var(--muted); }
+/* 새로운 발견: 평소 나 / 이 아티스트 비교 */
+.compare-rows { display: flex; flex-direction: column; gap: 4px; }
+.cmp-row { display: flex; gap: 10px; align-items: baseline; }
+.cmp-key { flex-shrink: 0; width: 72px; font-size: 12px; font-weight: 800; color: var(--muted); }
+.cmp-row:last-child .cmp-key { color: var(--accent); }
+.cmp-row:last-child .cmp-val { font-weight: 700; }
+/* 곡 이야기 (출처로 확인된 사실) */
+.song-story { padding: 8px 10px; border-radius: 10px; background: var(--card); font-size: 14px; font-weight: 600; }
+.award-badge { display: inline-block; margin-right: 6px; padding: 1px 8px; border-radius: 999px; background: #c0643c; color: #fff; font-size: 11px; font-weight: 800; }
+#song-curated-src a { color: var(--muted); }

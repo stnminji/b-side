@@ -283,7 +283,16 @@
         const b = r.bands[i];
         if (!b) return;
         const reason = card.querySelector(".band-reason");
-        if (reason) reason.textContent = "다른 점 · " + b.reason;
+        if (reason && b.usual && b.this) {
+          // '평소 나는 이런데, 이 곡은 이렇다' 두 줄 비교
+          reason.textContent = "";
+          reason.className = "band-reason compare-rows";
+          [["평소 나", b.usual], ["이 아티스트", b.this]].forEach(([k, v]) => {
+            const row = el("span", "cmp-row");
+            row.append(el("b", "cmp-key", k), el("span", "cmp-val", v));
+            reason.appendChild(row);
+          });
+        } else if (reason) reason.textContent = "다른 점 · " + b.reason;
         if (b.bridge) {
           const bridge = el("p", "bridge");
           bridge.innerHTML = ic("link");

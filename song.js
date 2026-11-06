@@ -53,6 +53,7 @@
 
   // AI 소개는 따로 불러온다 (가장 오래 걸리는 부분이라, 곡 정보 페이지를 먼저 띄우기 위해)
   async function loadIntro(trackId) {
+    $("#song-intro").hidden = false;
     $("#song-intro").textContent = "AI가 이 노래를 소개하고 있어요…";
     $("#song-moment").textContent = "";
     $("#song-tags").innerHTML = "";
@@ -67,12 +68,15 @@
   }
   function paintIntro() {
     $("#song-genre").textContent = song.genre || "장르 정보 없음";
+    // 결 큐레이션이 있는 곡은 AI가 곡을 모르면 소개를 비운다 (같은 설명 반복 방지)
+    $("#song-intro").hidden = !song.intro && !!song.curated;
     $("#song-intro").textContent = song.intro
       ? song.intro + (song.based_on === "artist" ? " (아티스트 스타일 기준 AI 소개)" : " (AI 소개)")
       : "AI 소개를 불러오지 못했어요.";
     $("#song-moment").textContent = song.moment || "";
     if (song.moment) $("#song-moment").insertAdjacentHTML("afterbegin", ic("headphones"));
     $("#song-tags").innerHTML = "";
+    $("#song-tags").hidden = !(song.tags || []).length;
     (song.tags || []).forEach((t) => {
       const span = document.createElement("span");
       span.className = "tag";
@@ -100,7 +104,21 @@
     const cur = song.curated;
     $("#song-curated").hidden = !cur;
     if (cur) {
-      $("#song-curated-sound").textContent = cur.sound + (cur.note ? ` (${cur.note})` : "");
+      $("#song-curated-sound").textContent = cur.sound;
+      // 곡 이야기: 출처로 확인된 사실만 (타이틀곡·OST·차트·수상). 수상·후보는 배지로 강조
+      const story = $("#song-story");
+      story.hidden = !cur.note;
+      story.textContent = "";
+      if (cur.note) {
+        if (/수상|후보|올해의|대상/.test(cur.note)) story.appendChild(Object.assign(document.createElement("span"), { className: "award-badge", textContent: "🏆 수상·후보" }));
+        story.append("곡 이야기 · " + cur.note);
+      }
+      const src = $("#song-curated-src");
+      src.textContent = "";
+      (cur.sources || []).forEach((u, i) => {
+        const link = Object.assign(document.createElement("a"), { href: u, target: "_blank", rel: "noopener", textContent: `출처 ${i + 1}` });
+        src.append(i ? " · " : "정보 출처: ", link);
+      });
       $("#song-curated-mood").innerHTML = "";
       (cur.mood || []).forEach((m) => {
         const t = document.createElement("span");
