@@ -453,8 +453,9 @@ def find_track(artist, title):
 _KO_TITLES = None
 
 
-def ko_title(track_id, title):
-    """Deezer에 영어로 등록된 한국 곡이면 원래 한국어 제목으로 바꾼다 (표에 없으면 그대로)"""
+def ko_title(track_id, title, artist=""):
+    """Deezer에 영어로 등록된 한국 곡이면 원래 한국어 제목으로 바꾼다 (표에 없으면 그대로)
+    ① 곡 번호로 찾고 ② 없으면 '아티스트 + 영어 제목'으로 찾는다 (싱글·앨범 등 판마다 곡 번호가 달라서)"""
     global _KO_TITLES
     if _KO_TITLES is None:
         try:
@@ -462,7 +463,17 @@ def ko_title(track_id, title):
                 _KO_TITLES = json.load(f)
         except Exception:
             _KO_TITLES = {}
-    return _KO_TITLES.get(str(track_id), title)
+    hit = _KO_TITLES.get("by_id", {}).get(str(track_id))
+    if hit:
+        return hit
+    if artist:
+        key = _norm(artist) + "|" + re.sub(r"[\s\W_]+", "", re.sub(r"\s*[\(\[].*?[\)\]]", "", title or "")).lower()
+        hit = _KO_TITLES.get("by_title", {}).get(key)
+        if hit:
+            # '(Inst.)' 같은 버전 표기는 살려 둔다
+            ver = re.search(r"\s*[\(\[](inst\.?|instrumental|live|remaster(ed)?)[^\)\]]*[\)\]]\s*$", title or "", re.I)
+            return hit + (ver.group(0) if ver else "")
+    return title
 
 
 def _song_facts(payload):
@@ -500,7 +511,7 @@ def _song_facts(payload):
     cover = track["album"].get("cover_medium") or ""
     return track, ours, genres, {
         "track_id": int(track["id"]),
-        "title": ko_title(track["id"], track["title"]),
+        "title": ko_title(track["id"], track["title"], track["artist"]["name"]),
         "artist": ours["name"] if ours else track["artist"]["name"],
         "album": track["album"].get("title", "")[:200],
         "release_date": album.get("release_date", ""),
@@ -509,7 +520,7 @@ def _song_facts(payload):
         "in_data": bool(ours),
         # 결에 등록된 아티스트면 우리가 직접 정리한 설명을 바로 보여 준다 (AI를 기다리지 않음, AI가 실패해도 남음)
         "curated": ({"sound": ours["sound"][:200], "mood": ours["mood"][:5],
-                     "note": next((x.get("note", "") for x in ours["songs"] if _norm(x["title"]) == _norm(ko_title(track["id"], track["title"]))), "")[:80]}
+                     "note": next((x.get("note", "") for x in ours["songs"] if _norm(x["title"]) == _norm(ko_title(track["id"], track["title"], track["artist"]["name"]))), "")[:80]}
                     if ours else None),
         "artist_id": int(track["artist"]["id"]),
         "isrc": isrc if re.match(r"^[A-Z]{2}[A-Z0-9]{3}[0-9]{7}$", isrc) else "",
@@ -603,7 +614,7 @@ def search(payload):
         if t["id"] in seen:
             continue
         seen.add(t["id"])
-        track_list.append({"track_id": t["id"], "title": ko_title(t["id"], t["title"])[:200],
+        track_list.append({"track_id": t["id"], "title": ko_title(t["id"], t["title"], t["artist"]["name"])[:200],
                            "artist": curated.get(_norm(t["artist"]["name"]), t["artist"]["name"])[:100],
                            "album": t.get("album", {}).get("title", "")[:120],
                            "cover": safe(t.get("album", {}).get("cover_small"))})
@@ -668,12 +679,12 @@ def artist_info(payload):
         "fans": int(a.get("nb_fan") or 0),
         "albums_count": int(a.get("nb_album") or 0),
         "curated": {"genre": ours["genre"], "mood": ours["mood"], "sound": ours["sound"]} if ours else None,
-        "top": [{"track_id": t["id"], "title": ko_title(t["id"], t["title"])[:200], "album": t.get("album", {}).get("title", "")[:120]}
+        "top": [{"track_id": t["id"], "title": ko_title(t["id"], t["title"], a["name"])[:200], "album": t.get("album", {}).get("title", "")[:120]}
                 for t in got["top"]],
         "albums": albums[:10],
         # 대표곡: 직접 정리한 아티스트는 우리 데이터(한국어 원제) 그대로, 아니면 음악 DB 곡에서 최소 3곡
         "featured": ([{"title": x["title"], "note": x.get("note", "")[:60]} for x in ours["songs"][:5]] if ours
-                     else [{"title": ko_title(t["id"], t["title"])[:200], "track_id": t["id"], "note": ""} for t in got["top"][:5]]),
+                     else [{"title": ko_title(t["id"], t["title"], a["name"])[:200], "track_id": t["id"], "note": ""} for t in got["top"][:5]]),
         "related": [{"artist_id": r["id"], "name": curated_names()[_norm(r["name"])], "picture": safe(r.get("picture_medium"))}
                     for r in got["related"] if _norm(r["name"]) in curated_names()],  # 인디 목록 안에서만
         "source_link": f"https://www.deezer.com/artist/{a['id']}",

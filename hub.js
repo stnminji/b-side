@@ -21,11 +21,7 @@
   });
   $("#hub-social").addEventListener("click", () => window.openConnect());
   // 순환 4단계: 새로운 발견 (취향은 다르지만 공통점 하나로 이어 주는 추천)
-  $("#hub-discover").addEventListener("click", () => {
-    if (window.rememberPage) window.rememberPage();
-    $("#contrast-list").innerHTML = "";
-    showStep("step-discover");
-  });
+  $("#hub-discover").addEventListener("click", () => window.openDiscover());
 
   // 로그인이 필요한 메뉴는 먼저 확인하고, 안 했으면 로그인 창을 연다
   async function needLogin() {

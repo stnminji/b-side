@@ -17,6 +17,16 @@
   };
   let myProfile = null; // 내 감상 결 (taste_profiles)
 
+  // 마지막으로 찾은 결과를 이 브라우저에 사용자별로 기억 (화면을 나갔다 와도 다시 보이게)
+  const memKey = (kind, uid) => `gyeol:${kind}:${uid}`;
+  function remember(kind, uid, data) {
+    try { localStorage.setItem(memKey(kind, uid), JSON.stringify({ at: Date.now(), data })); } catch (e) {}
+  }
+  function recall(kind, uid) {
+    try { return JSON.parse(localStorage.getItem(memKey(kind, uid)) || "null"); } catch (e) { return null; }
+  }
+  const when = (t) => new Date(t).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "numeric", minute: "2-digit" });
+
   async function session() {
     const client = sb();
     if (!client) return null;
@@ -36,6 +46,8 @@
     }
     if (window.bsideEnsureProfile && !(await window.bsideEnsureProfile(s.user.id))) return;
     await loadMyTaste(s);
+    const last = recall("match", s.user.id);
+    if (last) renderMatches(last.data, last.at);
   };
 
   // 화면을 나가면(다른 화면으로 가면) 이 화면에 쓰여 있던 글자를 모두 비운다 (app.js의 showStep이 부름)
@@ -45,7 +57,7 @@
     $("#taste-me-tags").innerHTML = "";
     $("#match-list").innerHTML = "";
     $("#taste-consent").checked = false;
-    $("#taste-delete").hidden = true;
+    $("#btn-match").innerHTML = ic("link") + "취향이 닮은 사람 찾기";
   };
 
   // ----- ② 나의 감상 결 -----
@@ -62,10 +74,10 @@
       $("#taste-me-meta").textContent = "";
       $("#taste-consent").checked = false;
       $("#taste-consent").disabled = true;
-      $("#taste-delete").hidden = true;
+      $("#btn-analyze").innerHTML = ic("sparkle") + "AI로 취향 분석";
       return;
     }
-    $("#taste-delete").hidden = false;
+    $("#btn-analyze").innerHTML = ic("sparkle") + "분석 다시하기";
     $("#taste-me-summary").textContent = myProfile.summary;
     (myProfile.tags || []).forEach((t) => tags.appendChild(el("span", "tag", t)));
     $("#taste-me-meta").textContent = "마지막 분석: " + new Date(myProfile.updated_at).toLocaleString("ko-KR");
@@ -97,17 +109,6 @@
     btn.disabled = false;
   });
 
-  $("#taste-delete").addEventListener("click", async () => {
-    const s = await session();
-    if (!s || !myProfile) return;
-    if (!confirm("내 취향 분석을 지울까요? 다른 사람과의 AI 연결에서도 바로 빠져요.")) return;
-    const { error } = await sb().from("taste_profiles").delete().eq("user_id", s.user.id);
-    if (error) return alert("지우지 못했어요.");
-    myProfile = null;
-    paintTaste();
-    $("#taste-status").textContent = "취향 분석을 지웠어요.";
-  });
-
   $("#taste-consent").addEventListener("change", async (e) => {
     const s = await session();
     if (!s || !myProfile) return (e.target.checked = false);
@@ -136,12 +137,21 @@
     btn.disabled = true;
     list.textContent = "찾고 있어요… (AI 연결은 10초 안팎)";
     const [shared, ai] = await Promise.all([findShared(s), findByReason(s)]);
-    list.textContent = "";
-    renderGroup(list, "music", "같은 노래", shared.songs, "아직 내 곡을 공개로 저장·감상한 사람이 없어요.");
-    renderGroup(list, "mic", "같은 아티스트", shared.artists, "아직 같은 아티스트를 공개로 좋아하는 사람이 없어요.");
-    renderGroup(list, "sparkle", "같은 이유 (AI)", ai.people, ai.message);
+    const data = { shared, ai };
+    remember("match", s.user.id, data);
+    renderMatches(data, Date.now());
     btn.disabled = false;
   });
+
+  function renderMatches(data, at) {
+    const list = $("#match-list");
+    list.textContent = "";
+    list.appendChild(el("p", "hint small last-at", `마지막으로 찾은 결과 · ${when(at)}`));
+    renderGroup(list, "music", "같은 노래", data.shared.songs, "아직 내 곡을 공개로 저장·감상한 사람이 없어요.");
+    renderGroup(list, "mic", "같은 아티스트", data.shared.artists, "아직 같은 아티스트를 공개로 좋아하는 사람이 없어요.");
+    renderGroup(list, "sparkle", "같은 이유 (AI)", data.ai.people, data.ai.message);
+    $("#btn-match").innerHTML = ic("link") + "다시 찾기";
+  }
 
   // 같은 노래 / 같은 아티스트
   async function findShared(s) {
@@ -240,7 +250,32 @@
     list.appendChild(el("p", "hint", "AI가 평소와 다른 결의 음악을 고르고 있어요… (10~20초)"));
     try {
       const r = await callAI({ action: "contrast", token: s.access_token });
+      remember("contrast", s.user.id, r);
+      renderContrast(r, Date.now());
+    } catch (e) {
       list.innerHTML = "";
+      list.appendChild(el("p", "hint", e.message || "추천을 불러오지 못했어요. 잠시 후 다시 해 주세요."));
+    }
+    btn.disabled = false;
+  });
+
+  // 새로운 발견 화면 열기: 마지막 추천이 있으면 다시 보여 줌
+  window.openDiscover = async () => {
+    if (window.rememberPage) window.rememberPage();
+    showStep("step-discover");
+    $("#contrast-list").innerHTML = "";
+    $("#btn-contrast").innerHTML = ic("sparkle") + "다른 결의 인디 추천받기";
+    const s = await session();
+    const last = s && recall("contrast", s.user.id);
+    if (last) renderContrast(last.data, last.at);
+  };
+
+  function renderContrast(r, at) {
+    const list = $("#contrast-list");
+    list.innerHTML = "";
+    list.appendChild(el("p", "hint small last-at", `마지막으로 추천받은 결과 · ${when(at)}`));
+    $("#btn-contrast").innerHTML = ic("sparkle") + "다시 추천받기";
+    {
       // 추천 카드는 기존 모양을 그대로 쓰고, 카드마다 '다른 점'과 '공통점'을 붙인다
       appendBands(r.bands, list, false);
       [...list.querySelectorAll(".band")].forEach((card, i) => {
@@ -256,12 +291,8 @@
         }
         if (b.listen) (card.querySelector(".bridge") || reason || card).after(tipLine(b.listen));
       });
-    } catch (e) {
-      list.innerHTML = "";
-      list.appendChild(el("p", "hint", e.message || "추천을 불러오지 못했어요. 잠시 후 다시 해 주세요."));
     }
-    btn.disabled = false;
-  });
+  }
 
   // "이렇게 들어보면 어때요?" 한 줄 (헤드폰 아이콘 + 제안)
   function tipLine(text, tag = "p") {

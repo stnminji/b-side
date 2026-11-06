@@ -502,3 +502,4 @@ span.listen-tip { margin-top: 6px; }
 .band-head.clickable { cursor: pointer; border-radius: 12px; transition: background 0.15s ease; }
 .band-head.clickable:hover .band-name { text-decoration: underline; }
 .band-head.clickable:active { transform: scale(0.99); }
+.last-at { margin: 4px 0 2px; color: var(--muted); }
