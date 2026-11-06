@@ -53,13 +53,21 @@
       count("song_memos"), count("song_memos", true), count("artist_memos"), count("artist_memos", true), count("favorite_artists"),
     ]);
     $("#me-stats").innerHTML = "";
+    // 누르면 나의 음악 저장소의 해당 탭으로 (memos: 음악 / artists: 아티스트 — 좋아요와 감상이 함께 보임)
     [
-      ["노래 감상", sm.count, smp.count],
-      ["아티스트 감상", am.count, amp.count],
-      ["좋아요한 아티스트", fav.count, null],
-    ].forEach(([label, all, pub]) => {
-      const box = document.createElement("div");
+      ["노래 감상", sm.count, smp.count, "memos"],
+      ["아티스트 감상", am.count, amp.count, "artists"],
+      ["좋아요한 아티스트", fav.count, null, "artists"],
+    ].forEach(([label, all, pub, tab]) => {
+      const box = document.createElement("button");
+      box.type = "button";
       box.className = "me-stat";
+      box.title = "나의 음악 저장소에서 보기";
+      box.addEventListener("click", async () => {
+        if (window.rememberPage) window.rememberPage();
+        await window.showRecords();
+        window.selectRecordsTab(tab);
+      });
       const n = document.createElement("b");
       n.textContent = all || 0;
       const l = document.createElement("span");

@@ -528,3 +528,6 @@ span.listen-tip { margin-top: 6px; }
 #me-nick-input { flex: 1; margin: 0; }
 #btn-me { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #btn-logout { display: none !important; } /* 로그아웃은 나의 페이지 안에서 */
+.me-stat { border: 1px solid transparent; cursor: pointer; transition: transform 0.08s ease, border-color 0.15s ease; }
+.me-stat:hover { border-color: var(--accent); }
+.me-stat:active { transform: scale(0.97); }
