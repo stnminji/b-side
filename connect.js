@@ -328,6 +328,10 @@
     const s = await session();
     const myId = s ? s.user.id : null;
     rows = rows.filter((r) => r.user_id !== myId); // 내 글은 빼고
+    // 로그인 안 했으면 '나'를 모르므로 맞춤이 아니라 인기순(신선도 + 반응)이라고 정직하게 표시
+    const sortBtn = document.querySelector('.notes-sort[data-sort="foryou"]');
+    sortBtn.textContent = myId ? "나에게 맞춘 순" : "인기순";
+    $("#notes-login-hint").hidden = !!myId;
     const counts = await window.loadSocialCounts((songs.data || []).map((r) => r.id));
 
     if (notesSort === "foryou") {
