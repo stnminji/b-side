@@ -498,3 +498,7 @@ span.listen-tip { margin-top: 6px; }
 .song-curated { margin: 4px 0 10px; padding: 12px 14px; border-radius: 12px; background: var(--soft); }
 .song-curated p { margin: 0 0 6px; font-size: 14px; line-height: 1.6; }
 .curated-label { font-size: 12px !important; font-weight: 800; color: var(--accent); letter-spacing: 0.5px; }
+/* 추천 카드: 아티스트 이름·사진을 누르면 아티스트 페이지 */
+.band-head.clickable { cursor: pointer; border-radius: 12px; transition: background 0.15s ease; }
+.band-head.clickable:hover .band-name { text-decoration: underline; }
+.band-head.clickable:active { transform: scale(0.99); }

@@ -406,6 +406,11 @@ function appendBands(bands, target = $("#result-list"), track = true) {
     card.querySelector(".avatar-slot").replaceWith(avatar(b));
     // textContent로 넣어서 AI가 만든 글에 이상한 코드가 섞여도 안전하게 표시
     card.querySelector(".band-name").textContent = b.name;
+    // 아티스트 이름·사진을 누르면 아티스트 페이지로 (번호를 모르면 이름으로 찾아서)
+    const head = card.querySelector(".band-head");
+    head.classList.add("clickable");
+    head.title = "아티스트 페이지로";
+    head.addEventListener("click", () => window.openArtistByName && window.openArtistByName(b.name, b.artist_id));
     card.querySelector(".band-genre").textContent = b.genre;
     card.querySelector(".band-reason").textContent = b.reason;
     // 우리 데이터 밖에서 AI가 새로 찾은 아티스트 표시 (Deezer로 실존 확인됨)

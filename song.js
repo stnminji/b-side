@@ -314,6 +314,24 @@
   $("#artist-back").addEventListener("click", () => window.goBack());
   $("#song-back").addEventListener("click", () => window.goBack());
 
+  // 추천 카드처럼 아티스트 번호를 모를 때: 이름으로 음악 DB에서 찾아서 연다 (결 목록 안의 공식 프로필)
+  window.openArtistByName = async (name, artistId) => {
+    if (window.rememberPage) window.rememberPage();
+    if (artistId) return window.openArtist(artistId);
+    showStep("step-loading");
+    startLoadingSteps("음악을 찾고 있어요…", []);
+    try {
+      const r = await callAI({ action: "search", q: name });
+      const hit = r.artists.find((a) => a.name === name) || r.artists[0];
+      if (!hit) throw new Error("음악 DB에서 이 아티스트를 찾지 못했어요.");
+      window.openArtist(hit.artist_id);
+    } catch (e) {
+      stopLoadingSteps();
+      alert(e.message || "아티스트를 찾지 못했어요.");
+      window.goBack ? window.goBack() : showStep("step-home");
+    }
+  };
+
   window.openArtist = async (artistId) => {
     if (!artistId) return;
     showStep("step-loading");

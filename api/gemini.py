@@ -384,7 +384,8 @@ def check_outside(b):
         print(f"[검증] 버림: {b.get('name')} (Deezer에서 곡을 확인하지 못함)", flush=True)
         return None
     return {"name": b["name"], "genre": b.get("genre", ""), "image": image, "reason": b.get("reason", ""),
-            "songs": songs, "discovered": True}  # discovered: 우리 데이터 밖에서 AI가 새로 찾은 아티스트
+            "songs": songs, "discovered": True,  # discovered: 우리 데이터 밖에서 AI가 새로 찾은 아티스트
+            "artist_id": artist_id}  # 카드를 누르면 아티스트 페이지로
 
 
 # ---------- 2-2) 노래 검색: 곡 정보 + AI 소개말 ----------
